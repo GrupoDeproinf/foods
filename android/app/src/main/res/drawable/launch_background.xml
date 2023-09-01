@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/ic_launcher_background" />
+
+    <!-- You can insert your own image assets here -->
+    <item
+        android:drawable="@drawable/logosc"
+        android:width="300dp"
+        android:height="131dp"
+        android:gravity="center" />
+</layer-list>

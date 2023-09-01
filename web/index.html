@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Página Web de Salón Cantón.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="salon_canton">
+  <meta name="google-signin-client_id" content="1067265015919-h29f99hnsio1og0l95s8opoku1hr8ck9.apps.googleusercontent.com">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Salón Cantón</title>
+  <link rel="manifest" href="manifest.json">
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    var serviceWorkerVersion = null;
+  </script>
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js" defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiUIRQGEGMcMDdLX25U2QZ_sM-JhoMW_w"></script>
+</head>
+<body>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-messaging.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-functions.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        // navigator.serviceWorker.register("/flutter_service_worker.js");
+        navigator.serviceWorker.register("/firebase-messaging-sw.js");
+      });
+    }
+    </script>
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyBiUIRQGEGMcMDdLX25U2QZ_sM-JhoMW_w",
+  authDomain: "salon-canton.firebaseapp.com",
+  databaseURL: "https://salon-canton-default-rtdb.firebaseio.com",
+  projectId: "salon-canton",
+  storageBucket: "salon-canton.appspot.com",
+  messagingSenderId: "1067265015919",
+  appId: "1:1067265015919:web:3e5c6724a15c8583450d9a",
+  measurementId: "G-H0J8M0MHHB"
+    }
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig)
+  </script>
+  <script>
+    window.addEventListener('load', function(ev) {
+      // Download main.dart.js
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            appRunner.runApp();
+          });
+        }
+      });
+    });
+  </script>
+  <script src="assets/packages/libphonenumber_plugin/js/libphonenumber.js"></script>
+  <script src="assets/packages/libphonenumber_plugin/js/stringbuffer.js"></script>
+  <script src="main.dart.js" type="application/javascript"></script>
+</body>
+</html>
