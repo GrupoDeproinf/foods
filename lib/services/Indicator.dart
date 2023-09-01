@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/constants.dart';
+import 'package:custom_food/constants.dart';
 
 class Indicator extends StatelessWidget {
   Indicator({

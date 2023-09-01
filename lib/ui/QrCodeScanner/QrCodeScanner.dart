@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_qr_bar_scanner/qr_bar_scanner_camera.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/model/VendorModel.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/ui/vendorProductsScreen/newVendorProductsScreen.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/model/VendorModel.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/ui/vendorProductsScreen/newVendorProductsScreen.dart';
 
 class QrCodeScanner extends StatefulWidget {
   const QrCodeScanner({Key? key}) : super(key: key);

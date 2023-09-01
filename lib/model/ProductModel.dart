@@ -1,5 +1,5 @@
-import 'package:foodie_customer/model/ItemAttributes.dart';
-import 'package:foodie_customer/model/variant_info.dart';
+import 'package:custom_food/model/ItemAttributes.dart';
+import 'package:custom_food/model/variant_info.dart';
 
 class ProductModel {
   String categoryID;

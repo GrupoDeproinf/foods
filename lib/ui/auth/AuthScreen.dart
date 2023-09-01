@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/ui/container/ContainerScreen.dart';
-import 'package:foodie_customer/ui/login/LoginScreen.dart';
-import 'package:foodie_customer/ui/signUp/SignUpScreen.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/ui/container/ContainerScreen.dart';
+import 'package:custom_food/ui/login/LoginScreen.dart';
+import 'package:custom_food/ui/signUp/SignUpScreen.dart';
 
 class AuthScreen extends StatelessWidget {
   @override

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:foodie_customer/model/ProductModel.dart';
-import 'package:foodie_customer/model/variant_info.dart';
-import 'package:foodie_customer/ui/productDetailsScreen/ProductDetailsScreen.dart';
+import 'package:custom_food/model/ProductModel.dart';
+import 'package:custom_food/model/variant_info.dart';
+import 'package:custom_food/ui/productDetailsScreen/ProductDetailsScreen.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,4 +1,4 @@
-import 'package:foodie_customer/utils/DarkThemePreference.dart';
+import 'package:custom_food/utils/DarkThemePreference.dart';
 import 'package:flutter/foundation.dart';
 
 class DarkThemeProvider with ChangeNotifier {

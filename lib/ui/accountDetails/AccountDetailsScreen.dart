@@ -2,13 +2,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/AppGlobal.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/main.dart';
-import 'package:foodie_customer/model/User.dart';
-import 'package:foodie_customer/services/FirebaseHelper.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/ui/reauthScreen/reauth_user_screen.dart';
+import 'package:custom_food/AppGlobal.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/main.dart';
+import 'package:custom_food/model/User.dart';
+import 'package:custom_food/services/FirebaseHelper.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/ui/reauthScreen/reauth_user_screen.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class AccountDetailsScreen extends StatefulWidget {

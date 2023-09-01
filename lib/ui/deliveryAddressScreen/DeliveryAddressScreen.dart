@@ -1,15 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/main.dart';
-import 'package:foodie_customer/model/AddressModel.dart';
-import 'package:foodie_customer/model/DeliveryChargeModel.dart';
-import 'package:foodie_customer/model/User.dart';
-import 'package:foodie_customer/model/VendorModel.dart';
-import 'package:foodie_customer/services/FirebaseHelper.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/services/localDatabase.dart';
-import 'package:foodie_customer/ui/payment/PaymentScreen.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/main.dart';
+import 'package:custom_food/model/AddressModel.dart';
+import 'package:custom_food/model/DeliveryChargeModel.dart';
+import 'package:custom_food/model/User.dart';
+import 'package:custom_food/model/VendorModel.dart';
+import 'package:custom_food/services/FirebaseHelper.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/services/localDatabase.dart';
+import 'package:custom_food/ui/payment/PaymentScreen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:place_picker/place_picker.dart';
 

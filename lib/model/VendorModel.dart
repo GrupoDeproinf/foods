@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:foodie_customer/model/DeliveryChargeModel.dart';
-import 'package:foodie_customer/model/SpecialDiscountModel.dart';
+import 'package:custom_food/model/DeliveryChargeModel.dart';
+import 'package:custom_food/model/SpecialDiscountModel.dart';
 
 import '../constants.dart';
 import 'WorkingHoursModel.dart';

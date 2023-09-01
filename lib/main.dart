@@ -11,17 +11,17 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/model/CurrencyModel.dart';
-import 'package:foodie_customer/services/FirebaseHelper.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/services/localDatabase.dart';
-import 'package:foodie_customer/ui/auth/AuthScreen.dart';
-import 'package:foodie_customer/ui/container/ContainerScreen.dart';
-import 'package:foodie_customer/ui/onBoarding/OnBoardingScreen.dart';
-import 'package:foodie_customer/userPrefrence.dart';
-import 'package:foodie_customer/utils/DarkThemeProvider.dart';
-import 'package:foodie_customer/utils/Styles.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/model/CurrencyModel.dart';
+import 'package:custom_food/services/FirebaseHelper.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/services/localDatabase.dart';
+import 'package:custom_food/ui/auth/AuthScreen.dart';
+import 'package:custom_food/ui/container/ContainerScreen.dart';
+import 'package:custom_food/ui/onBoarding/OnBoardingScreen.dart';
+import 'package:custom_food/userPrefrence.dart';
+import 'package:custom_food/utils/DarkThemeProvider.dart';
+import 'package:custom_food/utils/Styles.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -145,7 +145,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       const NotificationDetails notificationDetails = NotificationDetails(
           android: AndroidNotificationDetails(
         "01",
-        "foodie_customer",
+        "custom_food",
         importance: Importance.max,
         icon: '@mipmap/ic_launcher',
         priority: Priority.high,

@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/services/FirebaseHelper.dart';
-import 'package:foodie_customer/services/helper.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/services/FirebaseHelper.dart';
+import 'package:custom_food/services/helper.dart';
 
 import 'language_model.dart';
 

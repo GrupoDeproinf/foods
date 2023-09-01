@@ -10,19 +10,19 @@
 // import 'package:image_picker/image_picker.dart';
 // import 'package:path_provider/path_provider.dart';
 // import 'package:permission_handler/permission_handler.dart';
-// import 'package:foodie_customer/constants.dart';
-// import 'package:foodie_customer/main.dart';
-// import 'package:foodie_customer/model/ChatModel.dart';
-// import 'package:foodie_customer/model/ChatVideoContainer.dart';
-// import 'package:foodie_customer/model/ConversationModel.dart';
-// import 'package:foodie_customer/model/HomeConversationModel.dart';
-// import 'package:foodie_customer/model/MessageData.dart';
-// import 'package:foodie_customer/model/User.dart';
-// import 'package:foodie_customer/services/FirebaseHelper.dart';
-// import 'package:foodie_customer/services/helper.dart';
-// import 'package:foodie_customer/ui/chat/PlayerWidget.dart';
-// import 'package:foodie_customer/ui/fullScreenImageViewer/FullScreenImageViewer.dart';
-// import 'package:foodie_customer/ui/fullScreenVideoViewer/FullScreenVideoViewer.dart';
+// import 'package:custom_food/constants.dart';
+// import 'package:custom_food/main.dart';
+// import 'package:custom_food/model/ChatModel.dart';
+// import 'package:custom_food/model/ChatVideoContainer.dart';
+// import 'package:custom_food/model/ConversationModel.dart';
+// import 'package:custom_food/model/HomeConversationModel.dart';
+// import 'package:custom_food/model/MessageData.dart';
+// import 'package:custom_food/model/User.dart';
+// import 'package:custom_food/services/FirebaseHelper.dart';
+// import 'package:custom_food/services/helper.dart';
+// import 'package:custom_food/ui/chat/PlayerWidget.dart';
+// import 'package:custom_food/ui/fullScreenImageViewer/FullScreenImageViewer.dart';
+// import 'package:custom_food/ui/fullScreenVideoViewer/FullScreenVideoViewer.dart';
 // import 'package:uuid/uuid.dart';
 //
 // enum RecordingState { HIDDEN, VISIBLE, Recording }

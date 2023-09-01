@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/constants.dart';
+import 'package:custom_food/constants.dart';
 
 class Styles {
   static ThemeData themeData(bool isDarkTheme, BuildContext context) {

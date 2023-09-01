@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/model/stripeIntentModel.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/model/stripeIntentModel.dart';
 import 'package:http/http.dart' as http;
 
 class StripeCreateIntent {

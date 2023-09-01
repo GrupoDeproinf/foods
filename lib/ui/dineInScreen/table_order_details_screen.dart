@@ -6,10 +6,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:foodie_customer/AppGlobal.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/model/BookTableModel.dart';
-import 'package:foodie_customer/services/helper.dart';
+import 'package:custom_food/AppGlobal.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/model/BookTableModel.dart';
+import 'package:custom_food/services/helper.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 

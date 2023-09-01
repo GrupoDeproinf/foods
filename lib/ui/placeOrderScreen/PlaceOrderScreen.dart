@@ -4,14 +4,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/main.dart';
-import 'package:foodie_customer/model/OrderModel.dart';
-import 'package:foodie_customer/services/FirebaseHelper.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/services/localDatabase.dart';
-import 'package:foodie_customer/ui/container/ContainerScreen.dart';
-import 'package:foodie_customer/ui/ordersScreen/OrdersScreen.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/main.dart';
+import 'package:custom_food/model/OrderModel.dart';
+import 'package:custom_food/services/FirebaseHelper.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/services/localDatabase.dart';
+import 'package:custom_food/ui/container/ContainerScreen.dart';
+import 'package:custom_food/ui/ordersScreen/OrdersScreen.dart';
 
 class PlaceOrderScreen extends StatefulWidget {
   final OrderModel orderModel;

@@ -2,14 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/AppGlobal.dart';
-import 'package:foodie_customer/main.dart';
-import 'package:foodie_customer/model/User.dart';
-import 'package:foodie_customer/model/VendorModel.dart';
-import 'package:foodie_customer/model/inbox_model.dart';
-import 'package:foodie_customer/services/FirebaseHelper.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/ui/chat_screen/chat_screen.dart';
+import 'package:custom_food/AppGlobal.dart';
+import 'package:custom_food/main.dart';
+import 'package:custom_food/model/User.dart';
+import 'package:custom_food/model/VendorModel.dart';
+import 'package:custom_food/model/inbox_model.dart';
+import 'package:custom_food/services/FirebaseHelper.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/ui/chat_screen/chat_screen.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 
 class InboxScreen extends StatefulWidget {

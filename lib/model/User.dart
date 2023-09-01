@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/model/AddressModel.dart';
-import 'package:foodie_customer/model/OrderModel.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/model/AddressModel.dart';
+import 'package:custom_food/model/OrderModel.dart';
 
 class User with ChangeNotifier {
   String email;

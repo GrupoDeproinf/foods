@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/main.dart';
-import 'package:foodie_customer/model/BookTableModel.dart';
-import 'package:foodie_customer/services/FirebaseHelper.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/ui/dineInScreen/table_order_details_screen.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/main.dart';
+import 'package:custom_food/model/BookTableModel.dart';
+import 'package:custom_food/services/FirebaseHelper.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/ui/dineInScreen/table_order_details_screen.dart';
 
 class HistoryTableBooking extends StatefulWidget {
   const HistoryTableBooking({Key? key}) : super(key: key);

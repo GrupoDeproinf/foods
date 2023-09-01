@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/ui/dineInScreen/HistoryTableBooking.dart';
-import 'package:foodie_customer/ui/dineInScreen/UpComingTableBooking.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/ui/dineInScreen/HistoryTableBooking.dart';
+import 'package:custom_food/ui/dineInScreen/UpComingTableBooking.dart';
 
 class MyBookingScreen extends StatefulWidget {
   const MyBookingScreen({Key? key}) : super(key: key);

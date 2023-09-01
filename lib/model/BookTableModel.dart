@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:foodie_customer/model/User.dart';
-import 'package:foodie_customer/model/VendorModel.dart';
+import 'package:custom_food/model/User.dart';
+import 'package:custom_food/model/VendorModel.dart';
 
 class BookTableModel {
   String authorID;

@@ -3,8 +3,8 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:foodie_customer/model/CurrencyModel.dart';
-import 'package:foodie_customer/model/VendorModel.dart';
+import 'package:custom_food/model/CurrencyModel.dart';
+import 'package:custom_food/model/VendorModel.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'model/TaxModel.dart';

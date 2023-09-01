@@ -3,12 +3,12 @@ import 'package:clipboard/clipboard.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/model/VendorModel.dart';
-import 'package:foodie_customer/model/offer_model.dart';
-import 'package:foodie_customer/services/FirebaseHelper.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/ui/vendorProductsScreen/newVendorProductsScreen.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/model/VendorModel.dart';
+import 'package:custom_food/model/offer_model.dart';
+import 'package:custom_food/services/FirebaseHelper.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/ui/vendorProductsScreen/newVendorProductsScreen.dart';
 
 class OffersScreen extends StatefulWidget {
   const OffersScreen({Key? key, required this.vendors}) : super(key: key);

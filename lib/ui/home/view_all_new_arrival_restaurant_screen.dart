@@ -2,12 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 // ignore: implementation_imports
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/AppGlobal.dart';
-import 'package:foodie_customer/main.dart';
-import 'package:foodie_customer/model/VendorModel.dart';
-import 'package:foodie_customer/services/FirebaseHelper.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/ui/vendorProductsScreen/newVendorProductsScreen.dart';
+import 'package:custom_food/AppGlobal.dart';
+import 'package:custom_food/main.dart';
+import 'package:custom_food/model/VendorModel.dart';
+import 'package:custom_food/services/FirebaseHelper.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/ui/vendorProductsScreen/newVendorProductsScreen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 

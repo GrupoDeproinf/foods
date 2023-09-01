@@ -5,16 +5,16 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/main.dart';
-import 'package:foodie_customer/model/User.dart';
-import 'package:foodie_customer/services/FirebaseHelper.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/ui/accountDetails/AccountDetailsScreen.dart';
-import 'package:foodie_customer/ui/auth/AuthScreen.dart';
-import 'package:foodie_customer/ui/contactUs/ContactUsScreen.dart';
-import 'package:foodie_customer/ui/reauthScreen/reauth_user_screen.dart';
-import 'package:foodie_customer/ui/settings/SettingsScreen.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/main.dart';
+import 'package:custom_food/model/User.dart';
+import 'package:custom_food/services/FirebaseHelper.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/ui/accountDetails/AccountDetailsScreen.dart';
+import 'package:custom_food/ui/auth/AuthScreen.dart';
+import 'package:custom_food/ui/contactUs/ContactUsScreen.dart';
+import 'package:custom_food/ui/reauthScreen/reauth_user_screen.dart';
+import 'package:custom_food/ui/settings/SettingsScreen.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {

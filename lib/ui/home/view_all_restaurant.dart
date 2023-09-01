@@ -2,15 +2,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/AppGlobal.dart';
-import 'package:foodie_customer/constants.dart';
-import 'package:foodie_customer/main.dart';
-import 'package:foodie_customer/model/FavouriteModel.dart';
-import 'package:foodie_customer/model/VendorModel.dart';
-import 'package:foodie_customer/services/FirebaseHelper.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/ui/auth/AuthScreen.dart';
-import 'package:foodie_customer/ui/vendorProductsScreen/newVendorProductsScreen.dart';
+import 'package:custom_food/AppGlobal.dart';
+import 'package:custom_food/constants.dart';
+import 'package:custom_food/main.dart';
+import 'package:custom_food/model/FavouriteModel.dart';
+import 'package:custom_food/model/VendorModel.dart';
+import 'package:custom_food/services/FirebaseHelper.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/ui/auth/AuthScreen.dart';
+import 'package:custom_food/ui/vendorProductsScreen/newVendorProductsScreen.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 
 class ViewAllRestaurant extends StatefulWidget {

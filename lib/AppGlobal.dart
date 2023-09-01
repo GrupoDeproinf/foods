@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie_customer/services/helper.dart';
-import 'package:foodie_customer/ui/cartScreen/CartScreen.dart';
-import 'package:foodie_customer/ui/mapView/MapViewScreen.dart';
-import 'package:foodie_customer/ui/searchScreen/SearchScreen.dart';
+import 'package:custom_food/services/helper.dart';
+import 'package:custom_food/ui/cartScreen/CartScreen.dart';
+import 'package:custom_food/ui/mapView/MapViewScreen.dart';
+import 'package:custom_food/ui/searchScreen/SearchScreen.dart';
 
 import 'constants.dart';
 

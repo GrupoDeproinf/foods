@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:foodie_customer/model/VendorModel.dart';
-import 'package:foodie_customer/services/helper.dart';
+import 'package:custom_food/model/VendorModel.dart';
+import 'package:custom_food/services/helper.dart';
 
 class ServicesScreen extends StatefulWidget {
   final VendorModel vendorModel;
