@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:custom_food/constants.dart';
@@ -18,6 +19,7 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../main.dart';
+import '../../services/web_cart/webCart.dart';
 import '../auth/AuthScreen.dart';
 import '../cartScreen/CartScreen.dart';
 import '../container/ContainerScreen.dart';
@@ -26,7 +28,8 @@ class NewVendorProductsScreen extends StatefulWidget {
   final VendorModel vendorModel;
   final String? objective;
 
-  const NewVendorProductsScreen({Key? key, required this.vendorModel, this.objective})
+  const NewVendorProductsScreen(
+      {Key? key, required this.vendorModel, this.objective})
       : super(key: key);
 
   @override
@@ -57,6 +60,7 @@ class NewVendorProductsScreenState extends State<NewVendorProductsScreen>
   bool pauseRectGetterIndex = false;
 
   late CartDatabase cartDatabase;
+  late WebCart webCart;
 
   @override
   void initState() {
@@ -135,16 +139,15 @@ class NewVendorProductsScreenState extends State<NewVendorProductsScreen>
     }
     print(vendorCateoryModel.length);
     var indice = 0;
-    if(widget.objective != null)
-    {
-      indice = vendorCateoryModel.indexWhere((element)=> element.id == widget.objective);
+    if (widget.objective != null) {
+      indice = vendorCateoryModel
+          .indexWhere((element) => element.id == widget.objective);
     }
     setState(() {
       tabController =
           TabController(length: vendorCateoryModel.length, vsync: this);
     });
-    if(widget.objective != null)
-    animateAndScrollTo(indice);
+    if (widget.objective != null) animateAndScrollTo(indice);
 
     await FireStoreUtils()
         .getOfferByVendorID(widget.vendorModel.id)
@@ -153,7 +156,9 @@ class NewVendorProductsScreenState extends State<NewVendorProductsScreen>
         offerList = value;
       });
     });
-    openCartStream();
+    if (!kIsWeb) {
+      openCartStream();
+    }
   }
 
   @override
@@ -229,13 +234,35 @@ class NewVendorProductsScreenState extends State<NewVendorProductsScreen>
         child: Row(
           children: [
             Expanded(
-              child: Text(
-                "Item Total".tr() +
-                    " $symbol" +
-                    priceTemp.toStringAsFixed(decimal),
-                style: const TextStyle(
-                    fontFamily: "Oswald", color: Colors.white, fontSize: 18),
-              ).tr(),
+              child: kIsWeb
+                  ? Consumer<WebCart>(
+                      builder: ((context, webCart, child) {
+                        var event = webCart.items;
+                        var monto = 0.0;
+                        for (var element in event) {
+                          monto +=
+                              (double.parse(element.price) * element.quantity);
+                        }
+                        return Text(
+                          "Item Total".tr() +
+                              " $symbol" +
+                              monto.toStringAsFixed(decimal),
+                          style: const TextStyle(
+                              fontFamily: "Oswald",
+                              color: Colors.white,
+                              fontSize: 18),
+                        ).tr();
+                      }),
+                    )
+                  : Text(
+                      "Item Total".tr() +
+                          " $symbol" +
+                          priceTemp.toStringAsFixed(decimal),
+                      style: const TextStyle(
+                          fontFamily: "Oswald",
+                          color: Colors.white,
+                          fontSize: 18),
+                    ).tr(),
             ),
             GestureDetector(
               onTap: () {
@@ -489,12 +516,11 @@ class NewVendorProductsScreenState extends State<NewVendorProductsScreen>
               ),
               errorWidget: (context, url, error) => Image.asset(
                 "assets/images/plato_generico.png",
-                height:
-                  60,
-              width: 60,
+                height: 60,
+                width: 60,
                 cacheHeight:
-                  (MediaQuery.of(context).size.height * 0.11).toInt(),
-              cacheWidth: (MediaQuery.of(context).size.width * 0.23).toInt(),
+                    (MediaQuery.of(context).size.height * 0.11).toInt(),
+                cacheWidth: (MediaQuery.of(context).size.width * 0.23).toInt(),
               ),
               // ClipRRect(
               //   child: Container(

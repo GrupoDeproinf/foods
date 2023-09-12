@@ -78,11 +78,14 @@ class OrderModel {
         this.payment = payment ?? null;
 
   factory OrderModel.fromJson(Map<String, dynamic> parsedJson) {
-    List<CartProduct> products =
-        parsedJson.containsKey('products') ? List<CartProduct>.from((parsedJson['products'] as List<dynamic>).map((e) => CartProduct.fromJson(e))).toList() : [].cast<CartProduct>();
+    List<CartProduct> products = parsedJson.containsKey('products')
+        ? List<CartProduct>.from((parsedJson['products'] as List<dynamic>)
+            .map((e) => CartProduct.fromJson(e))).toList()
+        : [].cast<CartProduct>();
 
     num discountVal = 0;
-    if (parsedJson['discount'] == null || parsedJson['discount'] == double.nan) {
+    if (parsedJson['discount'] == null ||
+        parsedJson['discount'] == double.nan) {
       discountVal = 0;
     } else if (parsedJson['discount'] is String) {
       discountVal = double.parse(parsedJson['discount']);
@@ -90,8 +93,12 @@ class OrderModel {
       discountVal = parsedJson['discount'];
     }
     return OrderModel(
-      address: parsedJson.containsKey('address') ? AddressModel.fromJson(parsedJson['address']) : AddressModel(),
-      author: parsedJson.containsKey('author') ? User.fromJson(parsedJson['author']) : User(),
+      address: parsedJson.containsKey('address')
+          ? AddressModel.fromJson(parsedJson['address'])
+          : AddressModel(),
+      author: parsedJson.containsKey('author')
+          ? User.fromJson(parsedJson['author'])
+          : User(),
       authorID: parsedJson['authorID'] ?? '',
       createdAt: parsedJson['createdAt'] ?? Timestamp.now(),
       id: parsedJson['id'] ?? '',
@@ -100,22 +107,41 @@ class OrderModel {
       discount: discountVal,
       couponCode: parsedJson['couponCode'] ?? '',
       couponId: parsedJson['couponId'] ?? '',
-      notes: (parsedJson["notes"] != null && parsedJson["notes"].toString().isNotEmpty) ? parsedJson["notes"] : "",
-      vendor: parsedJson.containsKey('vendor') ? VendorModel.fromJson(parsedJson['vendor']) : VendorModel(),
+      notes: (parsedJson["notes"] != null &&
+              parsedJson["notes"].toString().isNotEmpty)
+          ? parsedJson["notes"]
+          : "",
+      vendor: parsedJson.containsKey('vendor')
+          ? VendorModel.fromJson(parsedJson['vendor'])
+          : VendorModel(),
       vendorID: parsedJson['vendorID'] ?? '',
-      driver: parsedJson.containsKey('driver') ? User.fromJson(parsedJson['driver']) : null,
-      driverID: parsedJson.containsKey('driverID') ? parsedJson['driverID'] : null,
-      adminCommission: parsedJson["adminCommission"] != null ? parsedJson["adminCommission"] : "",
-      adminCommissionType: parsedJson["adminCommissionType"] != null ? parsedJson["adminCommissionType"] : "",
-      tipValue: parsedJson["tip_amount"] != null ? parsedJson["tip_amount"] : "",
+      driver: parsedJson.containsKey('driver')
+          ? User.fromJson(parsedJson['driver'])
+          : null,
+      driverID:
+          parsedJson.containsKey('driverID') ? parsedJson['driverID'] : null,
+      adminCommission: parsedJson["adminCommission"] != null
+          ? parsedJson["adminCommission"]
+          : "",
+      adminCommissionType: parsedJson["adminCommissionType"] != null
+          ? parsedJson["adminCommissionType"]
+          : "",
+      tipValue:
+          parsedJson["tip_amount"] != null ? parsedJson["tip_amount"] : "",
       specialDiscount: parsedJson["specialDiscount"] ?? {},
       takeAway: parsedJson["takeAway"] != null ? parsedJson["takeAway"] : false,
       //extras: parsedJson["extras"]!=null?parsedJson["extras"]:[],
       // extra_size: parsedJson["extras_price"]!=null?parsedJson["extras_price"]:"",
       deliveryCharge: parsedJson["deliveryCharge"],
       paymentMethod: parsedJson["payment_method"] ?? '',
-      payment: (parsedJson.containsKey('payment') && parsedJson['payment'] != null) ? PaymentModel.fromJson(parsedJson['payment']) : null,
-      taxModel: (parsedJson.containsKey('taxSetting') && parsedJson['taxSetting'] != null) ? TaxModel.fromJson(parsedJson['taxSetting']) : null,
+      payment:
+          (parsedJson.containsKey('payment') && parsedJson['payment'] != null)
+              ? PaymentModel.fromJson(parsedJson['payment'])
+              : null,
+      taxModel: (parsedJson.containsKey('taxSetting') &&
+              parsedJson['taxSetting'] != null)
+          ? TaxModel.fromJson(parsedJson['taxSetting'])
+          : null,
     );
   }
 

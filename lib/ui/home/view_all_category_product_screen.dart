@@ -17,13 +17,16 @@ import '../vendorProductsScreen/newVendorProductsScreen.dart';
 class ViewAllCategoryProductScreen extends StatefulWidget {
   VendorCategoryModel? vendorCategoryModel;
 
-  ViewAllCategoryProductScreen({Key? key, this.vendorCategoryModel}) : super(key: key);
+  ViewAllCategoryProductScreen({Key? key, this.vendorCategoryModel})
+      : super(key: key);
 
   @override
-  State<ViewAllCategoryProductScreen> createState() => _ViewAllCategoryProductScreenState();
+  State<ViewAllCategoryProductScreen> createState() =>
+      _ViewAllCategoryProductScreenState();
 }
 
-class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScreen> {
+class _ViewAllCategoryProductScreenState
+    extends State<ViewAllCategoryProductScreen> {
   List<VendorModel> productList = [];
   bool showLoader = true;
 
@@ -32,16 +35,15 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
 
   getData() {
     if (MyAppState.currentUser != null) {
-      lstFavourites = FireStoreUtils().getFavouriteRestaurant(MyAppState.currentUser!.userID);
+      lstFavourites = FireStoreUtils()
+          .getFavouriteRestaurant(MyAppState.currentUser!.userID);
       lstFavourites.then((event) {
         lstFav.clear();
         for (int a = 0; a < event.length; a++) {
           lstFav.add(event[a].restaurantId!);
         }
       });
-      setState(() {
-
-      });
+      setState(() {});
     }
   }
 
@@ -54,8 +56,10 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
   }
 
   getProductByCategoryId() async {
-
-    FireStoreUtils().getCategoryRestaurants(widget.vendorCategoryModel!.id.toString()).asBroadcastStream().listen((event) {
+    FireStoreUtils()
+        .getCategoryRestaurants(widget.vendorCategoryModel!.id.toString())
+        .asBroadcastStream()
+        .listen((event) {
       setState(() {
         productList = event;
       });
@@ -69,7 +73,8 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppGlobal.buildAppBar(context, widget.vendorCategoryModel!.title.toString()),
+      appBar: AppGlobal.buildAppBar(
+          context, widget.vendorCategoryModel!.title.toString()),
       body: showLoader
           ? Center(
               child: CircularProgressIndicator.adaptive(
@@ -90,7 +95,11 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
   }
 
   Widget buildVendorItemData(BuildContext context, VendorModel vendorModel) {
-    double distanceInMeters = Geolocator.distanceBetween(vendorModel.latitude, vendorModel.longitude, MyAppState.selectedPosotion.latitude, MyAppState.selectedPosotion.longitude);
+    double distanceInMeters = Geolocator.distanceBetween(
+        vendorModel.latitude,
+        vendorModel.longitude,
+        MyAppState.selectedPosotion.latitude,
+        MyAppState.selectedPosotion.longitude);
     double kilometer = distanceInMeters / 1000;
     double minutes = 1.2;
     double value = minutes * kilometer;
@@ -110,8 +119,14 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: isDarkMode(context) ? const Color(DarkContainerBorderColor) : Colors.grey.shade100, width: 1),
-              color: isDarkMode(context) ? const Color(DarkContainerColor) : Colors.white,
+              border: Border.all(
+                  color: isDarkMode(context)
+                      ? const Color(DarkContainerBorderColor)
+                      : Colors.grey.shade100,
+                  width: 1),
+              color: isDarkMode(context)
+                  ? const Color(DarkContainerColor)
+                  : Colors.white,
               boxShadow: [
                 isDarkMode(context)
                     ? const BoxShadow()
@@ -131,16 +146,22 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
                       imageUrl: getImageVAlidUrl(vendorModel.photo),
                       imageBuilder: (context, imageProvider) => Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20)),
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover),
                         ),
                       ),
                       placeholder: (context, url) => Center(
                           child: CircularProgressIndicator.adaptive(
-                        valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                        valueColor:
+                            AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
                       )),
                       errorWidget: (context, url, error) => ClipRRect(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20)),
                         child: Image.network(
                           AppGlobal.placeHolderImage!,
                           width: MediaQuery.of(context).size.width * 0.75,
@@ -159,12 +180,19 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
                           } else {
                             setState(() {
                               if (lstFav.contains(vendorModel.id) == true) {
-                                FavouriteModel favouriteModel = FavouriteModel(restaurantId: vendorModel.id, userId: MyAppState.currentUser!.userID);
-                                lstFav.removeWhere((item) => item == vendorModel.id);
-                                FireStoreUtils().removeFavouriteRestaurant(favouriteModel);
+                                FavouriteModel favouriteModel = FavouriteModel(
+                                    restaurantId: vendorModel.id,
+                                    userId: MyAppState.currentUser!.userID);
+                                lstFav.removeWhere(
+                                    (item) => item == vendorModel.id);
+                                FireStoreUtils()
+                                    .removeFavouriteRestaurant(favouriteModel);
                               } else {
-                                FavouriteModel favouriteModel = FavouriteModel(restaurantId: vendorModel.id, userId: MyAppState.currentUser!.userID);
-                                FireStoreUtils().setFavouriteRestaurant(favouriteModel);
+                                FavouriteModel favouriteModel = FavouriteModel(
+                                    restaurantId: vendorModel.id,
+                                    userId: MyAppState.currentUser!.userID);
+                                FireStoreUtils()
+                                    .setFavouriteRestaurant(favouriteModel);
                                 lstFav.add(vendorModel.id);
                               }
                             });
@@ -172,16 +200,17 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
                         },
                         child: lstFav.contains(vendorModel.id) == true
                             ? Icon(
-                          Icons.favorite,
-                          color: Color(COLOR_PRIMARY),
-                        )
+                                Icons.favorite,
+                                color: Color(COLOR_PRIMARY),
+                              )
                             : Icon(
-                          Icons.favorite_border,
-                          color: isDarkMode(context) ? Colors.white38 : Colors.black38,
-                        ),
+                                Icons.favorite_border,
+                                color: isDarkMode(context)
+                                    ? Colors.white38
+                                    : Colors.black38,
+                              ),
                       ),
                     ),
-
                     Positioned(
                       bottom: 10,
                       right: 10,
@@ -191,11 +220,17 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 5, vertical: 2),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(vendorModel.reviewsCount != 0 ? (vendorModel.reviewsSum / vendorModel.reviewsCount).toStringAsFixed(1) : 0.toString(),
+                              Text(
+                                  vendorModel.reviewsCount != 0
+                                      ? (vendorModel.reviewsSum /
+                                              vendorModel.reviewsCount)
+                                          .toStringAsFixed(1)
+                                      : 0.toString(),
                                   style: const TextStyle(
                                     fontFamily: "Oswald",
                                     letterSpacing: 0.5,
@@ -221,7 +256,14 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(vendorModel.title, maxLines: 1, style: TextStyle(fontFamily: "Oswald", fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.2)).tr(),
+                      Text(vendorModel.title,
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontFamily: "Oswald",
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.2))
+                          .tr(),
                       const SizedBox(
                         height: 5,
                       ),
@@ -229,12 +271,19 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
                         children: [
                           Icon(
                             Icons.location_pin,
-                            color:Color(COLOR_PRIMARY),
+                            color: Color(COLOR_PRIMARY),
                             size: 20,
                           ),
                           SizedBox(width: 5),
                           Expanded(
-                            child: Text(vendorModel.location, maxLines: 1, style: TextStyle(fontFamily: "Oswald", color: isDarkMode(context) ? Colors.white : Colors.black.withOpacity(0.60))).tr(),
+                            child: Text(vendorModel.location,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        fontFamily: "Oswald",
+                                        color: isDarkMode(context)
+                                            ? Colors.white
+                                            : Colors.black.withOpacity(0.60)))
+                                .tr(),
                           ),
                         ],
                       ),
@@ -245,7 +294,7 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
                         children: [
                           Icon(
                             Icons.timer_sharp,
-                            color:Color(COLOR_PRIMARY),
+                            color: Color(COLOR_PRIMARY),
                             size: 20,
                           ),
                           SizedBox(
@@ -256,15 +305,16 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
                             style: TextStyle(
                                 fontFamily: "Oswald",
                                 letterSpacing: 0.5,
-                                color: isDarkMode(context) ? Colors.white : Colors.black.withOpacity(0.60)),
+                                color: isDarkMode(context)
+                                    ? Colors.white
+                                    : Colors.black.withOpacity(0.60)),
                           ),
                           SizedBox(
                             width: 10,
                           ),
-
                           Icon(
                             Icons.my_location_sharp,
-                            color:Color(COLOR_PRIMARY),
+                            color: Color(COLOR_PRIMARY),
                             size: 20,
                           ),
                           SizedBox(
@@ -275,7 +325,9 @@ class _ViewAllCategoryProductScreenState extends State<ViewAllCategoryProductScr
                             style: TextStyle(
                                 fontFamily: "Oswald",
                                 letterSpacing: 0.5,
-                                color: isDarkMode(context) ? Colors.white : Colors.black.withOpacity(0.60)),
+                                color: isDarkMode(context)
+                                    ? Colors.white
+                                    : Colors.black.withOpacity(0.60)),
                           ).tr(),
                         ],
                       ),

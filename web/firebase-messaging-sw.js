@@ -6,12 +6,14 @@ importScripts("https://www.gstatic.com/firebasejs/7.20.0/firebase-messaging.js")
 
 
 firebase.initializeApp({
-    apiKey: 'AIzaSyALwJm8oqw2stNos7gHSMi4ngH-wI0jK20',
-    authDomain: 'saloncantontest.firebaseapp.com',
-    projectId: 'saloncantontest',
-    storageBucket: 'saloncantontest.appspot.com',
-    messagingSenderId: '847314641119',
-    appId: '1:847314641119:web:7a628e0b3f67c50774096a',
+    apiKey: "AIzaSyDLzaPBswS6nmwG0QtW7CHwLeyl8TYHsMA",
+  authDomain: "saloncantontest.firebaseapp.com",
+  databaseURL: "https://salon-canton-default-rtdb.firebaseio.com",
+  projectId: "saloncantontest",
+  storageBucket: "saloncantontest.appspot.com",
+  messagingSenderId: "847314641119",
+  appId: "1:847314641119:web:596d80bf7b1ac42474096a",
+  measurementId: "G-TR5HXHXCFB"
 });
 
 const messaging = firebase.messaging();

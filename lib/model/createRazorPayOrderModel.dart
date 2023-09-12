@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-CreateRazorPayOrderModel createRazorPayOrderModelFromJson(String str) => CreateRazorPayOrderModel.fromJson(json.decode(str));
+CreateRazorPayOrderModel createRazorPayOrderModelFromJson(String str) =>
+    CreateRazorPayOrderModel.fromJson(json.decode(str));
 
-String createRazorPayOrderModelToJson(CreateRazorPayOrderModel data) => json.encode(data.toJson());
+String createRazorPayOrderModelToJson(CreateRazorPayOrderModel data) =>
+    json.encode(data.toJson());
 
 class CreateRazorPayOrderModel {
   CreateRazorPayOrderModel({
@@ -37,7 +39,8 @@ class CreateRazorPayOrderModel {
   Notes notes;
   int createdAt;
 
-  factory CreateRazorPayOrderModel.fromJson(Map<String, dynamic> json) => CreateRazorPayOrderModel(
+  factory CreateRazorPayOrderModel.fromJson(Map<String, dynamic> json) =>
+      CreateRazorPayOrderModel(
         id: json["id"],
         entity: json["entity"],
         amount: json["amount"],

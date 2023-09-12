@@ -29,7 +29,11 @@ class _LanguageChooceScreenState extends State<LanguageChooseScreen> {
 
   void loadData() async {
     languageList.clear();
-    await FireStoreUtils.firestore.collection(Setting).doc("languages").get().then((value) {
+    await FireStoreUtils.firestore
+        .collection(Setting)
+        .doc("languages")
+        .get()
+        .then((value) {
       List list = value.data()!["list"];
       for (int i = 0; i < list.length; i++) {
         Map data = list[i];
@@ -73,7 +77,8 @@ class _LanguageChooceScreenState extends State<LanguageChooseScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: isDarkMode(context) ? Color(DARK_VIEWBG_COLOR) : Color(0xffFFFFFF),
+        backgroundColor:
+            isDarkMode(context) ? Color(DARK_VIEWBG_COLOR) : Color(0xffFFFFFF),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -85,16 +90,20 @@ class _LanguageChooceScreenState extends State<LanguageChooseScreen> {
                   return InkWell(
                     onTap: () {
                       setState(() {
-                        selectedLanguage = languageList[index].languageCode.toString();
+                        selectedLanguage =
+                            languageList[index].languageCode.toString();
                       });
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Container(
-                        decoration: languageList[index].languageCode == selectedLanguage
+                        decoration: languageList[index].languageCode ==
+                                selectedLanguage
                             ? BoxDecoration(
                                 border: Border.all(color: Color(COLOR_PRIMARY)),
-                                borderRadius: const BorderRadius.all(Radius.circular(5.0) //                 <--- border radius here
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(
+                                        5.0) //                 <--- border radius here
                                     ),
                               )
                             : null,
@@ -108,8 +117,11 @@ class _LanguageChooceScreenState extends State<LanguageChooseScreen> {
                                 width: 60,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left: 10, right: 10),
-                                child: Text(languageList[index].language.toString(), style: const TextStyle(fontSize: 16)),
+                                padding:
+                                    const EdgeInsets.only(left: 10, right: 10),
+                                child: Text(
+                                    languageList[index].language.toString(),
+                                    style: const TextStyle(fontSize: 16)),
                               )
                             ],
                           ),
@@ -150,7 +162,7 @@ class _LanguageChooceScreenState extends State<LanguageChooseScreen> {
                 context.setLocale(Locale("es"));
               }
 
-              setState((){});
+              setState(() {});
 
               if (widget.isContainer) {
                 SnackBar snack = SnackBar(

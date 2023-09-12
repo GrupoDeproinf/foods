@@ -10,7 +10,9 @@ class FullScreenVideoViewer extends StatefulWidget {
   final String heroTag;
   final File? videoFile;
 
-  const FullScreenVideoViewer({Key? key, required this.videoUrl, required this.heroTag, this.videoFile}) : super(key: key);
+  const FullScreenVideoViewer(
+      {Key? key, required this.videoUrl, required this.heroTag, this.videoFile})
+      : super(key: key);
 
   @override
   _FullScreenVideoViewerState createState() => _FullScreenVideoViewerState();
@@ -22,7 +24,9 @@ class _FullScreenVideoViewerState extends State<FullScreenVideoViewer> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.videoFile == null ? VideoPlayerController.network(widget.videoUrl) : VideoPlayerController.file(widget.videoFile!)
+    _controller = widget.videoFile == null
+        ? VideoPlayerController.network(widget.videoUrl)
+        : VideoPlayerController.file(widget.videoFile!)
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});
@@ -36,7 +40,8 @@ class _FullScreenVideoViewerState extends State<FullScreenVideoViewer> {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.black,
-        iconTheme: IconThemeData(color: Colors.white), systemOverlayStyle: SystemUiOverlayStyle.light,
+        iconTheme: IconThemeData(color: Colors.white),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
       body: Container(
           color: Colors.black,
@@ -55,11 +60,15 @@ class _FullScreenVideoViewerState extends State<FullScreenVideoViewer> {
         heroTag: widget.heroTag,
         onPressed: () {
           setState(() {
-            _controller.value.isPlaying ? _controller.pause() : _controller.play();
+            _controller.value.isPlaying
+                ? _controller.pause()
+                : _controller.play();
           });
         },
         child: Icon(
-          _controller.value.isPlaying ? CupertinoIcons.pause : CupertinoIcons.play_arrow_solid,
+          _controller.value.isPlaying
+              ? CupertinoIcons.pause
+              : CupertinoIcons.play_arrow_solid,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

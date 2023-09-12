@@ -116,7 +116,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       // total += element.quantity * double.parse(price!);
       discount = widget.orderModel.discount;
     });
-    total = (100 * total / 116);
+    if (widget.orderModel.vendor.country == "VE") total = (100 * total / 116);
     super.initState();
   }
 
@@ -1182,7 +1182,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   ),
                 ),
                 trailing: Text(
-                  widget.orderModel.paymentMethod == "Delivery con Efectivo"
+                  widget.orderModel.vendor.country == "VE" &&
+                          widget.orderModel.paymentMethod ==
+                              "Delivery con Efectivo"
                       ? symbol +
                           (((total + total * 0.16) * 1.03) +
                                   double.parse(

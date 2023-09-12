@@ -15,10 +15,12 @@ class ViewAllPopularFoodNearByScreen extends StatefulWidget {
   const ViewAllPopularFoodNearByScreen({Key? key}) : super(key: key);
 
   @override
-  _ViewAllPopularFoodNearByScreenState createState() => _ViewAllPopularFoodNearByScreenState();
+  _ViewAllPopularFoodNearByScreenState createState() =>
+      _ViewAllPopularFoodNearByScreenState();
 }
 
-class _ViewAllPopularFoodNearByScreenState extends State<ViewAllPopularFoodNearByScreen> {
+class _ViewAllPopularFoodNearByScreenState
+    extends State<ViewAllPopularFoodNearByScreen> {
   late Stream<List<VendorModel>> vendorsFuture;
   final fireStoreUtils = FireStoreUtils();
   Stream<List<VendorModel>>? lstAllStore;
@@ -66,7 +68,10 @@ class _ViewAllPopularFoodNearByScreenState extends State<ViewAllPopularFoodNearB
   getFoodType() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     setState(() {
-      selctedOrderTypeValue = sp.getString("foodType") == "" || sp.getString("foodType") == null ? "Delivery".tr() : sp.getString("foodType");
+      selctedOrderTypeValue =
+          sp.getString("foodType") == "" || sp.getString("foodType") == null
+              ? "Delivery".tr()
+              : sp.getString("foodType");
     });
   }
 
@@ -80,43 +85,51 @@ class _ViewAllPopularFoodNearByScreenState extends State<ViewAllPopularFoodNearB
         margin: const EdgeInsets.fromLTRB(10, 0, 0, 10),
         child: showLoader
             ? Center(
-          child: CircularProgressIndicator.adaptive(
-            valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
-          ),
-        )
+                child: CircularProgressIndicator.adaptive(
+                  valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                ),
+              )
             : lstNearByFood.isEmpty
-            ? showEmptyState('No top selling found'.tr(), context)
-            : ListView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            physics: const BouncingScrollPhysics(),
-            itemCount: lstNearByFood.length,
-            itemBuilder: (context, index) {
-              if (vendors.isNotEmpty) {
-                print("item name ${lstNearByFood[index].name}");
-                popularNearFoodVendorModel = null;
-                for (int a = 0; a < vendors.length; a++) {
-                  print(vendors[a].id.toString() + "===<><><><==" + lstNearByFood[index].vendorID);
-                  if (vendors[a].id == lstNearByFood[index].vendorID) {
-                    popularNearFoodVendorModel = vendors[a];
-                  }
-                }
-              }
-              return popularNearFoodVendorModel == null
-                  ? (totItem == 0 && index == (lstNearByFood.length - 1))
-                  ? showEmptyState('No top selling found'.tr(), context)
-                  : Container()
-                  : buildVendorItemData(context, index, popularNearFoodVendorModel!);
-            }),
+                ? showEmptyState('No top selling found'.tr(), context)
+                : ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: lstNearByFood.length,
+                    itemBuilder: (context, index) {
+                      if (vendors.isNotEmpty) {
+                        print("item name ${lstNearByFood[index].name}");
+                        popularNearFoodVendorModel = null;
+                        for (int a = 0; a < vendors.length; a++) {
+                          print(vendors[a].id.toString() +
+                              "===<><><><==" +
+                              lstNearByFood[index].vendorID);
+                          if (vendors[a].id == lstNearByFood[index].vendorID) {
+                            popularNearFoodVendorModel = vendors[a];
+                          }
+                        }
+                      }
+                      return popularNearFoodVendorModel == null
+                          ? (totItem == 0 &&
+                                  index == (lstNearByFood.length - 1))
+                              ? showEmptyState(
+                                  'No top selling found'.tr(), context)
+                              : Container()
+                          : buildVendorItemData(
+                              context, index, popularNearFoodVendorModel!);
+                    }),
       ),
     );
   }
 
-  Widget buildVendorItemData(BuildContext context, int index, VendorModel popularNearFoodVendorModel) {
+  Widget buildVendorItemData(
+      BuildContext context, int index, VendorModel popularNearFoodVendorModel) {
     totItem++;
     return GestureDetector(
       onTap: () {
-        print(popularNearFoodVendorModel.id.toString() + " *** " + popularNearFoodVendorModel.title.toString());
+        print(popularNearFoodVendorModel.id.toString() +
+            " *** " +
+            popularNearFoodVendorModel.title.toString());
         push(
           context,
           NewVendorProductsScreen(vendorModel: popularNearFoodVendorModel),
@@ -141,13 +154,14 @@ class _ViewAllPopularFoodNearByScreenState extends State<ViewAllPopularFoodNearB
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                    image: DecorationImage(
+                        image: imageProvider, fit: BoxFit.cover),
                   ),
                 ),
                 placeholder: (context, url) => Center(
                     child: CircularProgressIndicator.adaptive(
-                      valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
-                    )),
+                  valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                )),
                 errorWidget: (context, url, error) => ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: Image.network(
@@ -190,31 +204,42 @@ class _ViewAllPopularFoodNearByScreenState extends State<ViewAllPopularFoodNearB
                   const SizedBox(
                     height: 5,
                   ),
-                  lstNearByFood[index].disPrice == "" || lstNearByFood[index].disPrice == "0"
+                  lstNearByFood[index].disPrice == "" ||
+                          lstNearByFood[index].disPrice == "0"
                       ? Text(
-                    symbol + double.parse(lstNearByFood[index].price).toStringAsFixed(decimal),
-                    style: TextStyle(fontSize: 16, fontFamily: "Oswald", letterSpacing: 0.5, color: Color(COLOR_PRIMARY)),
-                  )
+                          symbol +
+                              double.parse(lstNearByFood[index].price)
+                                  .toStringAsFixed(decimal),
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: "Oswald",
+                              letterSpacing: 0.5,
+                              color: Color(COLOR_PRIMARY)),
+                        )
                       : Row(
-                    children: [
-                      Text(
-                        "$symbol${double.parse(lstNearByFood[index].disPrice.toString()).toStringAsFixed(decimal)}",
-                        style: TextStyle(
-                          fontFamily: "Oswald",
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(COLOR_PRIMARY),
+                          children: [
+                            Text(
+                              "$symbol${double.parse(lstNearByFood[index].disPrice.toString()).toStringAsFixed(decimal)}",
+                              style: TextStyle(
+                                fontFamily: "Oswald",
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Color(COLOR_PRIMARY),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              '$symbol${double.parse(lstNearByFood[index].price).toStringAsFixed(decimal)}',
+                              style: const TextStyle(
+                                  fontFamily: "Oswald",
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                  decoration: TextDecoration.lineThrough),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        '$symbol${double.parse(lstNearByFood[index].price).toStringAsFixed(decimal)}',
-                        style: const TextStyle(fontFamily: "Oswald", fontWeight: FontWeight.bold, color: Colors.grey, decoration: TextDecoration.lineThrough),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             )

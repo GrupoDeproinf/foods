@@ -57,12 +57,17 @@ class _DineInScreenState extends State<DineInScreen> {
   VendorModel? popularNearFoodVendorModel;
 
   _getLocation() async {
-    if (MyAppState.selectedPosotion.longitude == 0 && MyAppState.selectedPosotion.latitude == 0) {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).whenComplete(() {});
+    if (MyAppState.selectedPosotion.longitude == 0 &&
+        MyAppState.selectedPosotion.latitude == 0) {
+      Position position = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .whenComplete(() {});
       MyAppState.selectedPosotion = position;
     }
 
-    List<Placemark> placeMarks = await placemarkFromCoordinates(MyAppState.selectedPosotion.latitude, MyAppState.selectedPosotion.longitude);
+    List<Placemark> placeMarks = await placemarkFromCoordinates(
+        MyAppState.selectedPosotion.latitude,
+        MyAppState.selectedPosotion.longitude);
     Placemark placeMark = placeMarks[0];
     setState(() {
       currentLocation = placeMark.name.toString() +
@@ -81,7 +86,9 @@ class _DineInScreenState extends State<DineInScreen> {
       AddressModel userAddress = AddressModel(
           name: MyAppState.currentUser!.fullName(),
           postalCode: placeMark.postalCode.toString(),
-          line1: placeMark.name.toString() + ", " + placeMark.subLocality.toString(),
+          line1: placeMark.name.toString() +
+              ", " +
+              placeMark.subLocality.toString(),
           line2: placeMark.administrativeArea.toString(),
           country: placeMark.country.toString(),
           city: placeMark.locality.toString(),
@@ -153,12 +160,19 @@ class _DineInScreenState extends State<DineInScreen> {
 
   void getData() {
     fireStoreUtils.getRestaurantNearBy().whenComplete(() {
-      lstVendor = fireStoreUtils.getVendors1(path: "isDineIn").asBroadcastStream();
-      lstAllRestaurant = fireStoreUtils.getAllDineInRestaurants().asBroadcastStream();
-      lstNewArrivalRestaurant = fireStoreUtils.getVendorsForNewArrival(path: "isDineIn").asBroadcastStream();
-      lstPopularRestaurant = fireStoreUtils.getPopularsVendors(path: "isDineIn").asBroadcastStream();
+      lstVendor =
+          fireStoreUtils.getVendors1(path: "isDineIn").asBroadcastStream();
+      lstAllRestaurant =
+          fireStoreUtils.getAllDineInRestaurants().asBroadcastStream();
+      lstNewArrivalRestaurant = fireStoreUtils
+          .getVendorsForNewArrival(path: "isDineIn")
+          .asBroadcastStream();
+      lstPopularRestaurant = fireStoreUtils
+          .getPopularsVendors(path: "isDineIn")
+          .asBroadcastStream();
       if (MyAppState.currentUser != null) {
-        lstFavourites = fireStoreUtils.getFavouriteRestaurant(MyAppState.currentUser!.userID);
+        lstFavourites = fireStoreUtils
+            .getFavouriteRestaurant(MyAppState.currentUser!.userID);
         lstFavourites.then((event) {
           lstFav.clear();
           for (int a = 0; a < event.length; a++) {
@@ -174,7 +188,9 @@ class _DineInScreenState extends State<DineInScreen> {
         restaurantAllLst.clear();
         restaurantAllLst.addAll(event);
         for (int a = 0; a < restaurantAllLst.length; a++) {
-          if ((restaurantAllLst[a].reviewsSum / restaurantAllLst[a].reviewsCount) >= 4.0) {
+          if ((restaurantAllLst[a].reviewsSum /
+                  restaurantAllLst[a].reviewsCount) >=
+              4.0) {
             popularRestaurantLst.add(restaurantAllLst[a]);
           }
         }
@@ -184,15 +200,24 @@ class _DineInScreenState extends State<DineInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLocationAvail = (MyAppState.selectedPosotion.latitude == 0 && MyAppState.selectedPosotion.longitude == 0);
+    bool isLocationAvail = (MyAppState.selectedPosotion.latitude == 0 &&
+        MyAppState.selectedPosotion.longitude == 0);
     return Scaffold(
-      backgroundColor: isDarkMode(context) ? Color(DARK_COLOR) : Color(0xffFFFFFF),
+      backgroundColor:
+          isDarkMode(context) ? Color(DARK_COLOR) : Color(0xffFFFFFF),
       body: isLocationAvail
-          ? showEmptyState("notHaveYourLocation", context, description: "locationSearchingRestaurants".tr(), action: () async {
-              LocationResult result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => PlacePicker(GOOGLE_API_KEY)));
+          ? showEmptyState("notHaveYourLocation", context,
+              description: "locationSearchingRestaurants".tr(),
+              action: () async {
+              LocationResult result = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => PlacePicker(GOOGLE_API_KEY)));
 
               setState(() {
-                MyAppState.selectedPosotion = Position.fromMap({'latitude': result.latLng!.latitude, 'longitude': result.latLng!.longitude});
+                MyAppState.selectedPosotion = Position.fromMap({
+                  'latitude': result.latLng!.latitude,
+                  'longitude': result.latLng!.longitude
+                });
 
                 currentLocation = result.formattedAddress;
                 getData();
@@ -215,14 +240,23 @@ class _DineInScreenState extends State<DineInScreen> {
                           width: 20,
                         ),
                         Expanded(
-                          child: Text(currentLocation.toString(), maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: Color(COLOR_PRIMARY), fontFamily: "Poppinsr")).tr(),
+                          child: Text(currentLocation.toString(),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      color: Color(COLOR_PRIMARY),
+                                      fontFamily: "Poppinsr"))
+                              .tr(),
                         ),
                         InkWell(
                           onTap: () {
                             Navigator.of(context)
                                 .push(PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) => CurrentAddressChangeScreen(),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      CurrentAddressChangeScreen(),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
                                 return child;
                               },
                             ))
@@ -237,15 +271,24 @@ class _DineInScreenState extends State<DineInScreen> {
                           },
                           child: Container(
                             padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                            decoration: BoxDecoration(borderRadius: new BorderRadius.circular(10), color: Colors.black12, boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ]),
-                            child: Text("Change", style: TextStyle(fontSize: 14, color: Color(COLOR_PRIMARY), fontFamily: "Poppinsr")).tr(),
+                            decoration: BoxDecoration(
+                                borderRadius: new BorderRadius.circular(10),
+                                color: Colors.black12,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(
+                                        0, 3), // changes position of shadow
+                                  ),
+                                ]),
+                            child: Text("Change",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Color(COLOR_PRIMARY),
+                                        fontFamily: "Poppinsr"))
+                                .tr(),
                           ),
                         ),
                       ],
@@ -253,7 +296,14 @@ class _DineInScreenState extends State<DineInScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 5, left: 10),
-                    child: Text("Find your restaurant", style: TextStyle(fontSize: 24, color: isDarkMode(context) ? Colors.white : Color(0xFF333333), fontFamily: "Poppinssb")).tr(),
+                    child: Text("Find your restaurant",
+                            style: TextStyle(
+                                fontSize: 24,
+                                color: isDarkMode(context)
+                                    ? Colors.white
+                                    : Color(0xFF333333),
+                                fontFamily: "Poppinssb"))
+                        .tr(),
                   ),
                   buildDineInTitleRow(
                     titleValue: "Categories".tr(),
@@ -268,30 +318,39 @@ class _DineInScreenState extends State<DineInScreen> {
                     },
                   ),
                   Container(
-                    color: isDarkMode(context) ? Color(DARK_COLOR) : Color(0xffFFFFFF),
+                    color: isDarkMode(context)
+                        ? Color(DARK_COLOR)
+                        : Color(0xffFFFFFF),
                     child: FutureBuilder<List<VendorCategoryModel>>(
                         future: cuisinesFuture,
                         initialData: [],
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting)
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting)
                             return Center(
                               child: CircularProgressIndicator.adaptive(
-                                valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                                valueColor: AlwaysStoppedAnimation(
+                                    Color(COLOR_PRIMARY)),
                               ),
                             );
 
-                          if (snapshot.hasData || (snapshot.data?.isNotEmpty ?? false)) {
+                          if (snapshot.hasData ||
+                              (snapshot.data?.isNotEmpty ?? false)) {
                             return Container(
                                 height: 150,
                                 child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: snapshot.data!.length >= 15 ? 15 : snapshot.data!.length,
+                                  itemCount: snapshot.data!.length >= 15
+                                      ? 15
+                                      : snapshot.data!.length,
                                   itemBuilder: (context, index) {
-                                    return buildCategoryItem(snapshot.data![index]);
+                                    return buildCategoryItem(
+                                        snapshot.data![index]);
                                   },
                                 ));
                           } else {
-                            return showEmptyState('No Categories'.tr(), context);
+                            return showEmptyState(
+                                'No Categories'.tr(), context);
                           }
                         }),
                   ),
@@ -312,11 +371,13 @@ class _DineInScreenState extends State<DineInScreen> {
                         if (snapshot.connectionState == ConnectionState.waiting)
                           return Center(
                             child: CircularProgressIndicator.adaptive(
-                              valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                              valueColor:
+                                  AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
                             ),
                           );
 
-                        if (snapshot.hasData || (snapshot.data?.isNotEmpty ?? false)) {
+                        if (snapshot.hasData ||
+                            (snapshot.data?.isNotEmpty ?? false)) {
                           newArrivalLst = snapshot.data!;
 
                           return Container(
@@ -326,10 +387,15 @@ class _DineInScreenState extends State<DineInScreen> {
                                   shrinkWrap: true,
                                   scrollDirection: Axis.horizontal,
                                   physics: BouncingScrollPhysics(),
-                                  itemCount: newArrivalLst.length >= 15 ? 15 : newArrivalLst.length,
-                                  itemBuilder: (context, index) => buildNewArrivalItem(newArrivalLst[index])));
+                                  itemCount: newArrivalLst.length >= 15
+                                      ? 15
+                                      : newArrivalLst.length,
+                                  itemBuilder: (context, index) =>
+                                      buildNewArrivalItem(
+                                          newArrivalLst[index])));
                         } else {
-                          return showEmptyState('No Restaurant found'.tr(), context);
+                          return showEmptyState(
+                              'No Restaurant found'.tr(), context);
                         }
                       }),
                   Padding(
@@ -353,26 +419,34 @@ class _DineInScreenState extends State<DineInScreen> {
                         if (snapshot.connectionState == ConnectionState.waiting)
                           return Center(
                             child: CircularProgressIndicator.adaptive(
-                              valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                              valueColor:
+                                  AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
                             ),
                           );
 
-                        if (snapshot.hasData || (snapshot.data?.isNotEmpty ?? false)) {
+                        if (snapshot.hasData ||
+                            (snapshot.data?.isNotEmpty ?? false)) {
                           lstNearByFood = snapshot.data!;
 
                           return Container(
                               height: MediaQuery.of(context).size.height * 0.32,
                               margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                               child: lstNearByFood.isEmpty
-                                  ? showEmptyState('No Restaurant found'.tr(), context)
+                                  ? showEmptyState(
+                                      'No Restaurant found'.tr(), context)
                                   : ListView.builder(
                                       shrinkWrap: true,
                                       scrollDirection: Axis.horizontal,
                                       physics: BouncingScrollPhysics(),
-                                      itemCount: lstNearByFood.length >= 15 ? 15 : lstNearByFood.length,
-                                      itemBuilder: (context, index) => buildNewArrivalItem(lstNearByFood[index])));
+                                      itemCount: lstNearByFood.length >= 15
+                                          ? 15
+                                          : lstNearByFood.length,
+                                      itemBuilder: (context, index) =>
+                                          buildNewArrivalItem(
+                                              lstNearByFood[index])));
                         } else {
-                          return showEmptyState('No Restaurant found'.tr(), context);
+                          return showEmptyState(
+                              'No Restaurant found'.tr(), context);
                         }
                       }),
                   Padding(
@@ -388,14 +462,17 @@ class _DineInScreenState extends State<DineInScreen> {
                         stream: lstAllRestaurant,
                         initialData: [],
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting)
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting)
                             return Center(
                               child: CircularProgressIndicator.adaptive(
-                                valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                                valueColor: AlwaysStoppedAnimation(
+                                    Color(COLOR_PRIMARY)),
                               ),
                             );
 
-                          if (snapshot.hasData || (snapshot.data?.isNotEmpty ?? false)) {
+                          if (snapshot.hasData ||
+                              (snapshot.data?.isNotEmpty ?? false)) {
                             vendors.clear();
                             vendors.addAll(snapshot.data!);
                             return Container(
@@ -406,10 +483,12 @@ class _DineInScreenState extends State<DineInScreen> {
                                   scrollDirection: Axis.vertical,
                                   physics: BouncingScrollPhysics(),
                                   itemCount: vendors.length,
-                                  itemBuilder: (context, index) => buildAllRestaurantsData(vendors[index])),
+                                  itemBuilder: (context, index) =>
+                                      buildAllRestaurantsData(vendors[index])),
                             );
                           } else {
-                            return showEmptyState('No Restaurant found'.tr(), context);
+                            return showEmptyState(
+                                'No Restaurant found'.tr(), context);
                           }
                         });
                   }),
@@ -420,8 +499,12 @@ class _DineInScreenState extends State<DineInScreen> {
   }
 
   Future<void> getTempLocation() async {
-    if (MyAppState.currentUser == null && MyAppState.selectedPosotion.longitude != 0 && MyAppState.selectedPosotion.latitude != 0) {
-      List<Placemark> placemarks = await placemarkFromCoordinates(MyAppState.selectedPosotion.latitude, MyAppState.selectedPosotion.longitude);
+    if (MyAppState.currentUser == null &&
+        MyAppState.selectedPosotion.longitude != 0 &&
+        MyAppState.selectedPosotion.latitude != 0) {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          MyAppState.selectedPosotion.latitude,
+          MyAppState.selectedPosotion.longitude);
       Placemark placeMark = placemarks[0];
       setState(() {
         currentLocation = placeMark.name.toString() +
@@ -441,8 +524,13 @@ class _DineInScreenState extends State<DineInScreen> {
     if (MyAppState.currentUser != null) {
       if (MyAppState.currentUser!.location.latitude != 0 &&
           MyAppState.currentUser!.location.longitude != 0) {
-        MyAppState.selectedPosotion = Position.fromMap({'latitude': MyAppState.currentUser!.location.latitude, 'longitude': MyAppState.currentUser!.location.longitude});
-        List<Placemark> placemarks = await placemarkFromCoordinates(MyAppState.selectedPosotion.latitude, MyAppState.selectedPosotion.longitude);
+        MyAppState.selectedPosotion = Position.fromMap({
+          'latitude': MyAppState.currentUser!.location.latitude,
+          'longitude': MyAppState.currentUser!.location.longitude
+        });
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+            MyAppState.selectedPosotion.latitude,
+            MyAppState.selectedPosotion.longitude);
         Placemark placeMark = placemarks[0];
         setState(() {
           currentLocation = placeMark.name.toString() +
@@ -485,12 +573,16 @@ class _DineInScreenState extends State<DineInScreen> {
                 imageBuilder: (context, imageProvider) => Container(
                   height: MediaQuery.of(context).size.height * 0.11,
                   width: MediaQuery.of(context).size.width * 0.22,
-                  decoration: BoxDecoration(border: Border.all(width: 4, color: Color(COLOR_PRIMARY)), borderRadius: BorderRadius.circular(25)),
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 4, color: Color(COLOR_PRIMARY)),
+                      borderRadius: BorderRadius.circular(25)),
                   child: Container(
                     decoration: BoxDecoration(
                         border: Border.all(
                           width: 4,
-                          color: isDarkMode(context) ? Color(DARK_COLOR) : Color(0xffE0E2EA),
+                          color: isDarkMode(context)
+                              ? Color(DARK_COLOR)
+                              : Color(0xffE0E2EA),
                         ),
                         borderRadius: BorderRadius.circular(30)),
                     child: Container(
@@ -540,7 +632,9 @@ class _DineInScreenState extends State<DineInScreen> {
                     maxLines: 2,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: isDarkMode(context) ? Colors.white : Color(0xFF000000),
+                      color: isDarkMode(context)
+                          ? Colors.white
+                          : Color(0xFF000000),
                       fontFamily: "Poppinsr",
                     )).tr(),
               )
@@ -566,18 +660,26 @@ class _DineInScreenState extends State<DineInScreen> {
           child: Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: isDarkMode(context) ? Colors.grey.shade900 : Colors.grey.shade100, width: 0.1),
+                border: Border.all(
+                    color: isDarkMode(context)
+                        ? Colors.grey.shade900
+                        : Colors.grey.shade100,
+                    width: 0.1),
                 boxShadow: [
                   isDarkMode(context)
                       ? BoxShadow()
                       : BoxShadow(
-                          color: isDarkMode(context) ? Colors.grey.shade600 : Colors.grey.shade400,
+                          color: isDarkMode(context)
+                              ? Colors.grey.shade600
+                              : Colors.grey.shade400,
                           blurRadius: 8.0,
                           spreadRadius: 1.2,
                           offset: Offset(0.2, 0.2),
                         ),
                 ],
-                color: isDarkMode(context) ? Color(DARK_CARD_BG_COLOR) : Colors.white),
+                color: isDarkMode(context)
+                    ? Color(DARK_CARD_BG_COLOR)
+                    : Colors.white),
             child: Column(
               children: [
                 Expanded(
@@ -587,7 +689,8 @@ class _DineInScreenState extends State<DineInScreen> {
                   imageBuilder: (context, imageProvider) => Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                      image: DecorationImage(
+                          image: imageProvider, fit: BoxFit.cover),
                     ),
                   ),
                   placeholder: (context, url) => Center(
@@ -614,7 +717,9 @@ class _DineInScreenState extends State<DineInScreen> {
                           style: TextStyle(
                             fontFamily: "Poppinssm",
                             letterSpacing: 0.5,
-                            color: isDarkMode(context) ? Colors.white : Color(0xff000000),
+                            color: isDarkMode(context)
+                                ? Colors.white
+                                : Color(0xff000000),
                           )).tr(),
                       SizedBox(
                         height: 10,
@@ -626,7 +731,9 @@ class _DineInScreenState extends State<DineInScreen> {
                           ImageIcon(
                             AssetImage('assets/images/location3x.png'),
                             size: 15,
-                            color: isDarkMode(context) ? Colors.white60 : Color(0xff9091A4),
+                            color: isDarkMode(context)
+                                ? Colors.white60
+                                : Color(0xff9091A4),
                           ),
                           SizedBox(
                             width: 5,
@@ -638,7 +745,9 @@ class _DineInScreenState extends State<DineInScreen> {
                                 style: TextStyle(
                                   fontFamily: "Poppinssr",
                                   letterSpacing: 0.5,
-                                  color: isDarkMode(context) ? Colors.grey.shade400 : Color(0xff555353),
+                                  color: isDarkMode(context)
+                                      ? Colors.grey.shade400
+                                      : Color(0xff555353),
                                 )),
                           ),
                           Padding(
@@ -650,17 +759,24 @@ class _DineInScreenState extends State<DineInScreen> {
                                   width: 5,
                                   decoration: new BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: isDarkMode(context) ? Colors.grey.shade300 : Color(0xff555353),
+                                    color: isDarkMode(context)
+                                        ? Colors.grey.shade300
+                                        : Color(0xff555353),
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 10.0),
-                                  child: Text(getKm(vendorModel.latitude, vendorModel.longitude)! + " km",
+                                  child: Text(
+                                      getKm(vendorModel.latitude,
+                                              vendorModel.longitude)! +
+                                          " km",
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontFamily: "Poppinssr",
-                                        color: isDarkMode(context) ? Colors.grey.shade300 : Color(0xff555353),
+                                        color: isDarkMode(context)
+                                            ? Colors.grey.shade300
+                                            : Color(0xff555353),
                                       )),
                                 ),
                               ],
@@ -681,18 +797,26 @@ class _DineInScreenState extends State<DineInScreen> {
                                   color: Color(COLOR_PRIMARY),
                                 ),
                                 SizedBox(width: 3),
-                                Text(vendorModel.reviewsCount != 0 ? '${(vendorModel.reviewsSum / vendorModel.reviewsCount).toStringAsFixed(1)}' : 0.toString(),
+                                Text(
+                                    vendorModel.reviewsCount != 0
+                                        ? '${(vendorModel.reviewsSum / vendorModel.reviewsCount).toStringAsFixed(1)}'
+                                        : 0.toString(),
                                     style: TextStyle(
                                       fontFamily: "Poppinssr",
                                       letterSpacing: 0.5,
-                                      color: isDarkMode(context) ? Colors.white : Color(0xff000000),
+                                      color: isDarkMode(context)
+                                          ? Colors.white
+                                          : Color(0xff000000),
                                     )),
                                 SizedBox(width: 3),
-                                Text('(${vendorModel.reviewsCount.toStringAsFixed(1)})',
+                                Text(
+                                    '(${vendorModel.reviewsCount.toStringAsFixed(1)})',
                                     style: TextStyle(
                                       fontFamily: "Poppinssr",
                                       letterSpacing: 0.5,
-                                      color: isDarkMode(context) ? Colors.white60 : Color(0xff666666),
+                                      color: isDarkMode(context)
+                                          ? Colors.white60
+                                          : Color(0xff666666),
                                     )),
                               ],
                             ),
@@ -711,7 +835,11 @@ class _DineInScreenState extends State<DineInScreen> {
   }
 
   String? getKm(double latitude, double longitude) {
-    double distanceInMeters = Geolocator.distanceBetween(latitude, longitude, MyAppState.selectedPosotion.latitude, MyAppState.selectedPosotion.longitude);
+    double distanceInMeters = Geolocator.distanceBetween(
+        latitude,
+        longitude,
+        MyAppState.selectedPosotion.latitude,
+        MyAppState.selectedPosotion.longitude);
     double kilometer = distanceInMeters / 1000;
 
     return kilometer.toStringAsFixed(2).toString();
@@ -743,7 +871,8 @@ class _DineInScreenState extends State<DineInScreen> {
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                    image: DecorationImage(
+                        image: imageProvider, fit: BoxFit.cover),
                   ),
                 ),
                 placeholder: (context, url) => Center(
@@ -774,7 +903,9 @@ class _DineInScreenState extends State<DineInScreen> {
                           style: TextStyle(
                             fontFamily: "Poppinssm",
                             fontSize: 16,
-                            color: isDarkMode(context) ? Colors.white : Color(0xff000000),
+                            color: isDarkMode(context)
+                                ? Colors.white
+                                : Color(0xff000000),
                           ),
                           maxLines: 1,
                         ),
@@ -783,12 +914,18 @@ class _DineInScreenState extends State<DineInScreen> {
                         onTap: () {
                           setState(() {
                             if (lstFav.contains(vendor.id) == true) {
-                              FavouriteModel favouriteModel = FavouriteModel(restaurantId: vendor.id, userId: MyAppState.currentUser!.userID);
+                              FavouriteModel favouriteModel = FavouriteModel(
+                                  restaurantId: vendor.id,
+                                  userId: MyAppState.currentUser!.userID);
                               lstFav.removeWhere((item) => item == vendor.id);
-                              fireStoreUtils.removeFavouriteRestaurant(favouriteModel);
+                              fireStoreUtils
+                                  .removeFavouriteRestaurant(favouriteModel);
                             } else {
-                              FavouriteModel favouriteModel = FavouriteModel(restaurantId: vendor.id, userId: MyAppState.currentUser!.userID);
-                              fireStoreUtils.setFavouriteRestaurant(favouriteModel);
+                              FavouriteModel favouriteModel = FavouriteModel(
+                                  restaurantId: vendor.id,
+                                  userId: MyAppState.currentUser!.userID);
+                              fireStoreUtils
+                                  .setFavouriteRestaurant(favouriteModel);
                               lstFav.add(vendor.id);
                             }
                           });
@@ -800,7 +937,9 @@ class _DineInScreenState extends State<DineInScreen> {
                               )
                             : Icon(
                                 Icons.favorite_border,
-                                color: isDarkMode(context) ? Colors.white60 : Colors.black38,
+                                color: isDarkMode(context)
+                                    ? Colors.white60
+                                    : Colors.black38,
                               ),
                       )
                     ],
@@ -817,7 +956,9 @@ class _DineInScreenState extends State<DineInScreen> {
                           maxLines: 1,
                           style: TextStyle(
                             fontFamily: "Poppinssm",
-                            color: isDarkMode(context) ? Colors.grey.shade300 : Color(0xff9091A4),
+                            color: isDarkMode(context)
+                                ? Colors.grey.shade300
+                                : Color(0xff9091A4),
                           ),
                         ),
                       ),
@@ -830,17 +971,23 @@ class _DineInScreenState extends State<DineInScreen> {
                               width: 5,
                               decoration: new BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: isDarkMode(context) ? Colors.grey.shade300 : Color(0xff555353),
+                                color: isDarkMode(context)
+                                    ? Colors.grey.shade300
+                                    : Color(0xff555353),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 10.0),
-                              child: Text(getKm(vendor.latitude, vendor.longitude)! + " km",
+                              child: Text(
+                                  getKm(vendor.latitude, vendor.longitude)! +
+                                      " km",
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontFamily: "Poppinssr",
-                                    color: isDarkMode(context) ? Colors.grey.shade300 : Color(0xff555353),
+                                    color: isDarkMode(context)
+                                        ? Colors.grey.shade300
+                                        : Color(0xff555353),
                                   )),
                             ),
                           ],
@@ -860,18 +1007,25 @@ class _DineInScreenState extends State<DineInScreen> {
                         color: Color(COLOR_PRIMARY),
                       ),
                       SizedBox(width: 3),
-                      Text(vendor.reviewsCount != 0 ? '${(vendor.reviewsSum / vendor.reviewsCount).toStringAsFixed(1)}' : 0.toString(),
+                      Text(
+                          vendor.reviewsCount != 0
+                              ? '${(vendor.reviewsSum / vendor.reviewsCount).toStringAsFixed(1)}'
+                              : 0.toString(),
                           style: TextStyle(
                             fontFamily: "Poppinssr",
                             letterSpacing: 0.5,
-                            color: isDarkMode(context) ? Colors.white : Color(0xff000000),
+                            color: isDarkMode(context)
+                                ? Colors.white
+                                : Color(0xff000000),
                           )),
                       SizedBox(width: 3),
                       Text('(${vendor.reviewsCount.toStringAsFixed(1)})',
                           style: TextStyle(
                             fontFamily: "Poppinssr",
                             letterSpacing: 0.5,
-                            color: isDarkMode(context) ? Colors.grey.shade300 : Color(0xff666666),
+                            color: isDarkMode(context)
+                                ? Colors.grey.shade300
+                                : Color(0xff666666),
                           )),
                       SizedBox(width: 5),
                     ],
@@ -910,14 +1064,23 @@ class buildDineInTitleRow extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(titleValue.tr(), style: TextStyle(color: isDarkMode(context) ? Colors.white : Color(0xFF000000), fontSize: 16, fontFamily: "Oswald")),
+              Text(titleValue.tr(),
+                  style: TextStyle(
+                      color: isDarkMode(context)
+                          ? Colors.white
+                          : Color(0xFF000000),
+                      fontSize: 16,
+                      fontFamily: "Oswald")),
               isViewAll!
                   ? Container()
                   : GestureDetector(
                       onTap: () {
                         onClick!.call();
                       },
-                      child: Text('View All'.tr(), style: TextStyle(color: Color(COLOR_PRIMARY), fontFamily: "Oswald")),
+                      child: Text('View All'.tr(),
+                          style: TextStyle(
+                              color: Color(COLOR_PRIMARY),
+                              fontFamily: "Oswald")),
                     ),
             ],
           ),

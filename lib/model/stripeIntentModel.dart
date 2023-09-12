@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-StripeCreateIntentModel stripeCreateIntentModelFromJson(String str) => StripeCreateIntentModel.fromJson(json.decode(str));
+StripeCreateIntentModel stripeCreateIntentModelFromJson(String str) =>
+    StripeCreateIntentModel.fromJson(json.decode(str));
 
-String stripeCreateIntentModelToJson(StripeCreateIntentModel data) => json.encode(data.toJson());
+String stripeCreateIntentModelToJson(StripeCreateIntentModel data) =>
+    json.encode(data.toJson());
 
 class StripeCreateIntentModel {
   StripeCreateIntentModel({
@@ -17,7 +19,8 @@ class StripeCreateIntentModel {
   bool success;
   Data data;
 
-  factory StripeCreateIntentModel.fromJson(Map<String, dynamic> json) => StripeCreateIntentModel(
+  factory StripeCreateIntentModel.fromJson(Map<String, dynamic> json) =>
+      StripeCreateIntentModel(
         success: json["success"],
         data: Data.fromJson(json["data"]),
       );
@@ -135,8 +138,10 @@ class Data {
         nextAction: json["next_action"],
         onBehalfOf: json["on_behalf_of"],
         paymentMethod: json["payment_method"],
-        paymentMethodOptions: PaymentMethodOptions.fromJson(json["payment_method_options"]),
-        paymentMethodTypes: List<String>.from(json["payment_method_types"].map((x) => x)),
+        paymentMethodOptions:
+            PaymentMethodOptions.fromJson(json["payment_method_options"]),
+        paymentMethodTypes:
+            List<String>.from(json["payment_method_types"].map((x) => x)),
         processing: json["processing"],
         receiptEmail: json["receipt_email"],
         review: json["review"],
@@ -177,7 +182,8 @@ class Data {
         "on_behalf_of": onBehalfOf,
         "payment_method": paymentMethod,
         "payment_method_options": paymentMethodOptions.toJson(),
-        "payment_method_types": List<dynamic>.from(paymentMethodTypes.map((x) => x)),
+        "payment_method_types":
+            List<dynamic>.from(paymentMethodTypes.map((x) => x)),
         "processing": processing,
         "receipt_email": receiptEmail,
         "review": review,
@@ -231,7 +237,8 @@ class PaymentMethodOptions {
 
   Card card;
 
-  factory PaymentMethodOptions.fromJson(Map<String, dynamic> json) => PaymentMethodOptions(
+  factory PaymentMethodOptions.fromJson(Map<String, dynamic> json) =>
+      PaymentMethodOptions(
         card: Card.fromJson(json["card"]),
       );
 

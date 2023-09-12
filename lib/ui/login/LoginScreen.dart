@@ -52,7 +52,7 @@ class _LoginScreen extends State<LoginScreen> {
                       fontWeight: FontWeight.bold),
                 ).tr(),
               ),
-      
+
               /// email address text field, visible when logging with email
               /// and password
               ConstrainedBox(
@@ -61,7 +61,7 @@ class _LoginScreen extends State<LoginScreen> {
                   padding:
                       const EdgeInsets.only(top: 32.0, right: 24.0, left: 24.0),
                   child: TextFormField(
-                    autofillHints: [AutofillHints.username],
+                      autofillHints: [AutofillHints.username],
                       textAlignVertical: TextAlignVertical.center,
                       textInputAction: TextInputAction.next,
                       validator: validateEmail,
@@ -93,7 +93,7 @@ class _LoginScreen extends State<LoginScreen> {
                       )),
                 ),
               ),
-      
+
               /// password text field, visible when logging with email and
               /// password
               ConstrainedBox(
@@ -145,7 +145,7 @@ class _LoginScreen extends State<LoginScreen> {
                       )),
                 ),
               ),
-      
+
               /// forgot password text, navigates user to ResetPasswordScreen
               /// and this is only visible when logging with email and password
               Padding(
@@ -165,7 +165,7 @@ class _LoginScreen extends State<LoginScreen> {
                   ),
                 ),
               ),
-      
+
               /// the main action button of the screen, this is hidden if we
               /// received the code from firebase
               /// the action and the title is base on the state,
@@ -174,7 +174,8 @@ class _LoginScreen extends State<LoginScreen> {
               /// * logging with phone number: submits the phone number to
               /// firebase and await for code verification
               Padding(
-                padding: const EdgeInsets.only(right: 40.0, left: 40.0, top: 40),
+                padding:
+                    const EdgeInsets.only(right: 40.0, left: 40.0, top: 40),
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(minWidth: double.infinity),
                   child: ElevatedButton(
@@ -194,7 +195,8 @@ class _LoginScreen extends State<LoginScreen> {
                         fontFamily: "Oswald",
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: isDarkMode(context) ? Colors.black : Colors.white,
+                        color:
+                            isDarkMode(context) ? Colors.black : Colors.white,
                       ),
                     ),
                     onPressed: () => _login(),
@@ -208,11 +210,12 @@ class _LoginScreen extends State<LoginScreen> {
                     'or',
                     style: TextStyle(
                         fontFamily: "Oswald",
-                        color: isDarkMode(context) ? Colors.white : Colors.black),
+                        color:
+                            isDarkMode(context) ? Colors.white : Colors.black),
                   ).tr(),
                 ),
               ),
-      
+
               /// Google login button
               Padding(
                 padding:
@@ -224,7 +227,8 @@ class _LoginScreen extends State<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
                               child: Image.asset(
                                 'assets/images/google_logo.png',
                                 // color: Colors.grey.shade200,
@@ -260,7 +264,8 @@ class _LoginScreen extends State<LoginScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return CircularProgressIndicator.adaptive(
-                        valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                        valueColor:
+                            AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
                       );
                     }
                     if (!snapshot.hasData || (snapshot.data != true)) {
@@ -281,7 +286,7 @@ class _LoginScreen extends State<LoginScreen> {
                     }
                   },
                 ),
-      
+
               // /// switch between login with phone number and email login states
               // Padding(
               //   padding: EdgeInsets.only(top: 10, right: 40, left: 40),

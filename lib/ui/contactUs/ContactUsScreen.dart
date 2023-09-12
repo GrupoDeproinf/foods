@@ -47,30 +47,44 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
         Material(
             elevation: 2,
             color: isDarkMode(context) ? Colors.black12 : Colors.white,
-            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0, left: 16, top: 16),
-                child: Text(
-                  "ourAddress",
-                  style: TextStyle(color: isDarkMode(context) ? Colors.white : Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
-                ).tr(),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0, left: 16, top: 16, bottom: 16),
-                child: Text(address.replaceAll(r'\n', '\n')),
-              ),
-              ListTile(
-                title: Text(
-                  'Email Us',
-                  style: TextStyle(color: isDarkMode(context) ? Colors.white : Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
-                ).tr(),
-                subtitle: Text('$email'),
-                trailing: Icon(
-                  CupertinoIcons.chevron_forward,
-                  color: isDarkMode(context) ? Colors.white54 : Colors.black54,
-                ),
-              )
-            ]))
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(right: 16.0, left: 16, top: 16),
+                    child: Text(
+                      "ourAddress",
+                      style: TextStyle(
+                          color:
+                              isDarkMode(context) ? Colors.white : Colors.black,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
+                    ).tr(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        right: 16.0, left: 16, top: 16, bottom: 16),
+                    child: Text(address.replaceAll(r'\n', '\n')),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Email Us',
+                      style: TextStyle(
+                          color:
+                              isDarkMode(context) ? Colors.white : Colors.black,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
+                    ).tr(),
+                    subtitle: Text('$email'),
+                    trailing: Icon(
+                      CupertinoIcons.chevron_forward,
+                      color:
+                          isDarkMode(context) ? Colors.white54 : Colors.black54,
+                    ),
+                  )
+                ]))
       ]),
     );
   }

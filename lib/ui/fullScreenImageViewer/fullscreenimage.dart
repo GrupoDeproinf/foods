@@ -8,7 +8,8 @@ class FullScreenImage extends StatelessWidget {
   final String? imageUrl;
   final File? imageFile;
 
-  const FullScreenImage({Key? key, this.imageUrl, this.imageFile}) : super(key: key);
+  const FullScreenImage({Key? key, this.imageUrl, this.imageFile})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +17,15 @@ class FullScreenImage extends StatelessWidget {
         appBar: AppBar(
           elevation: 0.0,
           backgroundColor: Colors.black,
-          iconTheme: IconThemeData(color: Colors.white), systemOverlayStyle: SystemUiOverlayStyle.light,
+          iconTheme: IconThemeData(color: Colors.white),
+          systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
         body: Container(
           color: Colors.black,
           child: PhotoView(
-            imageProvider: imageFile == null ? NetworkImage(imageUrl!) : Image.file(imageFile!).image,
+            imageProvider: imageFile == null
+                ? NetworkImage(imageUrl!)
+                : Image.file(imageFile!).image,
           ),
         ));
   }

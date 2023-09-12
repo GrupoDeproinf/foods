@@ -16,10 +16,12 @@ import 'package:url_launcher/url_launcher.dart';
 class TableOrderDetailsScreen extends StatefulWidget {
   final BookTableModel bookTableModel;
 
-  const TableOrderDetailsScreen({Key? key, required this.bookTableModel}) : super(key: key);
+  const TableOrderDetailsScreen({Key? key, required this.bookTableModel})
+      : super(key: key);
 
   @override
-  State<TableOrderDetailsScreen> createState() => _TableOrderDetailsScreenState();
+  State<TableOrderDetailsScreen> createState() =>
+      _TableOrderDetailsScreenState();
 }
 
 class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
@@ -47,8 +49,12 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
       }
     } else if (widget.bookTableModel.status == ORDER_STATUS_CONFIRMED) {
       bookStatus = 'Confirmed';
-      polyLinesFuture = polylinePoints.getRouteBetweenCoordinates(GOOGLE_API_KEY, PointLatLng(widget.bookTableModel.vendor.latitude, widget.bookTableModel.vendor.longitude),
-          PointLatLng(widget.bookTableModel.author.location.latitude, widget.bookTableModel.author.location.longitude));
+      polyLinesFuture = polylinePoints.getRouteBetweenCoordinates(
+          GOOGLE_API_KEY,
+          PointLatLng(widget.bookTableModel.vendor.latitude,
+              widget.bookTableModel.vendor.longitude),
+          PointLatLng(widget.bookTableModel.author.location.latitude,
+              widget.bookTableModel.author.location.longitude));
       isVisible = false;
     } else if (widget.bookTableModel.status == ORDER_STATUS_REJECTED) {
       bookStatus = 'Rejected';
@@ -58,15 +64,20 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
   }
 
   void setMarkerIcon() async {
-    driverIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(44, 44)), 'assets/images/location_black3x.png');
-    storeIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(44, 44)), 'assets/images/location_orange3x.png');
+    driverIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(size: Size(44, 44)),
+        'assets/images/location_black3x.png');
+    storeIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(size: Size(44, 44)),
+        'assets/images/location_orange3x.png');
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: isDarkMode(context) ? Color(DARK_COLOR) : Color(0xffFFFFFF),
+      backgroundColor:
+          isDarkMode(context) ? Color(DARK_COLOR) : Color(0xffFFFFFF),
       appBar: AppGlobal.buildSimpleAppBar(context, ""),
       body: SingleChildScrollView(
         child: Padding(
@@ -78,7 +89,8 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                   Container(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -116,17 +128,24 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                 ),
                 child: Card(
                   elevation: 5,
-                  color: isDarkMode(context) ? Color(DARK_CARD_BG_COLOR) : Color(0xffFFFFFF),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  color: isDarkMode(context)
+                      ? Color(DARK_CARD_BG_COLOR)
+                      : Color(0xffFFFFFF),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10.0, vertical: 12),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            SizedBox(height: 22, child: Icon(Icons.check_circle, color: Color(COLOR_PRIMARY))),
+                            SizedBox(
+                                height: 22,
+                                child: Icon(Icons.check_circle,
+                                    color: Color(COLOR_PRIMARY))),
                             SizedBox(
                               height: 36,
                               child: Column(
@@ -134,19 +153,31 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                                 children: [
                                   Text(
                                     "|",
-                                    style: TextStyle(fontWeight: FontWeight.bold, color: Color(COLOR_PRIMARY), fontSize: 8),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(COLOR_PRIMARY),
+                                        fontSize: 8),
                                   ),
                                   Text(
                                     "|",
-                                    style: TextStyle(fontWeight: FontWeight.bold, color: Color(COLOR_PRIMARY), fontSize: 8),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(COLOR_PRIMARY),
+                                        fontSize: 8),
                                   ),
                                   Text(
                                     "|",
-                                    style: TextStyle(fontWeight: FontWeight.bold, color: Color(COLOR_PRIMARY), fontSize: 8),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(COLOR_PRIMARY),
+                                        fontSize: 8),
                                   ),
                                   Text(
                                     "|",
-                                    style: TextStyle(fontWeight: FontWeight.bold, color: Color(COLOR_PRIMARY), fontSize: 8),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(COLOR_PRIMARY),
+                                        fontSize: 8),
                                   ),
                                 ],
                               ),
@@ -165,7 +196,8 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                         ),
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 3),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -178,7 +210,8 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12.0),
                                   child: Divider(
                                     color: Colors.grey.shade400,
                                     thickness: 0.8,
@@ -187,7 +220,9 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                                 Text(
                                   "$bookStatus",
                                   style: TextStyle(
-                                    color: (bookStatus == 'Confirmed') ? Colors.green : Color(COLOR_PRIMARY),
+                                    color: (bookStatus == 'Confirmed')
+                                        ? Colors.green
+                                        : Color(COLOR_PRIMARY),
                                     fontWeight: FontWeight.w600,
                                     fontSize: 16,
                                   ),
@@ -195,11 +230,13 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                                 Visibility(
                                   visible: isVisible,
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0),
                                     child: Opacity(
                                       opacity: 0.7,
                                       child: Text(
-                                        "Your request is in processing. ".tr() + "it may \ntake up to 3 mins.".tr(),
+                                        "Your request is in processing. ".tr() +
+                                            "it may \ntake up to 3 mins.".tr(),
                                         textAlign: TextAlign.start,
                                       ),
                                     ),
@@ -220,22 +257,30 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 5),
                       child: Text(
                         "Booking Details".tr(),
-                        style: TextStyle(color: Color(COLOR_PRIMARY), fontSize: 16, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                            color: Color(COLOR_PRIMARY),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600),
                       ),
                     ),
                     Card(
-                      color: isDarkMode(context) ? Color(DARK_CARD_BG_COLOR) : Color(0xffFFFFFF),
+                      color: isDarkMode(context)
+                          ? Color(DARK_CARD_BG_COLOR)
+                          : Color(0xffFFFFFF),
                       elevation: 5,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
                       child: Column(
                         children: [
                           buildDetails(
                             iconsData: Icons.person_outline,
                             title: "Name".tr(),
-                            value: "${widget.bookTableModel.guestFirstName} ${widget.bookTableModel.guestLastName}",
+                            value:
+                                "${widget.bookTableModel.guestFirstName} ${widget.bookTableModel.guestLastName}",
                           ),
                           buildDetails(
                             iconsData: Icons.local_phone_outlined,
@@ -245,7 +290,8 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                           buildDetails(
                             iconsData: Icons.date_range,
                             title: "Date".tr(),
-                            value: "${DateFormat("MMM dd, yyyy 'at' hh:mm a").format(widget.bookTableModel.date.toDate())}",
+                            value:
+                                "${DateFormat("MMM dd, yyyy 'at' hh:mm a").format(widget.bookTableModel.date.toDate())}",
                           ),
                           buildDetails(
                             iconsData: Icons.people_outline,
@@ -255,7 +301,8 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                           buildDetails(
                             iconsData: Icons.discount,
                             title: "Discount",
-                            value: "${widget.bookTableModel.discount} ${widget.bookTableModel.discountType == "amount" ? symbol : "%"} off",
+                            value:
+                                "${widget.bookTableModel.discount} ${widget.bookTableModel.discountType == "amount" ? symbol : "%"} off",
                           ),
                         ],
                       ),
@@ -267,10 +314,14 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10.0, vertical: 5),
                     child: Text(
                       "Restaurant Details".tr(),
-                      style: TextStyle(color: Color(COLOR_PRIMARY), fontSize: 16, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          color: Color(COLOR_PRIMARY),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
                   Row(
@@ -289,7 +340,10 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                         children: [
                           InkWell(
                             onTap: () {
-                              launchUrl(createCoordinatesUrl(widget.bookTableModel.vendor.latitude, widget.bookTableModel.vendor.longitude, widget.bookTableModel.vendor.title));
+                              launchUrl(createCoordinatesUrl(
+                                  widget.bookTableModel.vendor.latitude,
+                                  widget.bookTableModel.vendor.longitude,
+                                  widget.bookTableModel.vendor.title));
                             },
                             child: Transform.rotate(
                               angle: 3.14,
@@ -298,7 +352,8 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                                   color: Colors.grey.shade200,
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
-                                    child: Icon(Icons.subdirectory_arrow_left, color: Color(COLOR_PRIMARY), size: 22),
+                                    child: Icon(Icons.subdirectory_arrow_left,
+                                        color: Color(COLOR_PRIMARY), size: 22),
                                   ),
                                 ),
                               ),
@@ -306,22 +361,26 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                           ),
                           InkWell(
                             onTap: () {
-                              if (widget.bookTableModel.vendor.phonenumber.isNotEmpty) {
+                              if (widget.bookTableModel.vendor.phonenumber
+                                  .isNotEmpty) {
                                 final Uri launchUri = Uri(
                                   scheme: 'tel',
-                                  path: widget.bookTableModel.vendor.phonenumber,
+                                  path:
+                                      widget.bookTableModel.vendor.phonenumber,
                                 );
                                 launchUrl(launchUri);
                               }
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
                               child: ClipOval(
                                 child: Container(
                                   color: Colors.grey.shade200,
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
-                                    child: Icon(Icons.phone, color: Color(COLOR_PRIMARY), size: 22),
+                                    child: Icon(Icons.phone,
+                                        color: Color(COLOR_PRIMARY), size: 22),
                                   ),
                                 ),
                               ),
@@ -334,7 +393,8 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20.0, horizontal: 12),
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(24),
@@ -354,7 +414,10 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
     );
   }
 
-  buildDetails({required IconData iconsData, required String title, required String value}) {
+  buildDetails(
+      {required IconData iconsData,
+      required String title,
+      required String value}) {
     return ListTile(
       enabled: false,
       dense: true,
@@ -368,11 +431,15 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
       ),
       title: Text(
         title,
-        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: isDarkMode(context) ? Colors.white : Colors.black),
+        style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+            color: isDarkMode(context) ? Colors.white : Colors.black),
       ),
       subtitle: Text(
         value,
-        style: TextStyle(color: isDarkMode(context) ? Colors.white : Colors.black),
+        style:
+            TextStyle(color: isDarkMode(context) ? Colors.white : Colors.black),
       ),
     );
   }
@@ -385,7 +452,8 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
             if (snapshot.data!.status == 'OK') {
               polylineCoordinates.clear();
               for (PointLatLng point in snapshot.data!.points) {
-                polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+                polylineCoordinates
+                    .add(LatLng(point.latitude, point.longitude));
               }
             }
             polylines.clear();
@@ -398,7 +466,8 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                     position: polylineCoordinates.first,
                     icon: driverIcon,
                     infoWindow: InfoWindow(
-                      title: '${orderModel.guestFirstName} ${orderModel.guestLastName}',
+                      title:
+                          '${orderModel.guestFirstName} ${orderModel.guestLastName}',
                     ),
                   ),
                 );
@@ -414,7 +483,8 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                 );
 
                 Polyline polyline = Polyline(
-                  polylineId: PolylineId('polyline_id_${orderModel.author.firstName.isEmpty ? 'user' : orderModel.author.firstName.isEmpty}_to_${orderModel.vendor.title}'),
+                  polylineId: PolylineId(
+                      'polyline_id_${orderModel.author.firstName.isEmpty ? 'user' : orderModel.author.firstName.isEmpty}_to_${orderModel.vendor.title}'),
                   color: isDarkMode(context) ? Colors.white : Colors.black,
                   width: 5,
                   points: polylineCoordinates,
@@ -434,15 +504,19 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
                     myLocationEnabled: true,
                     myLocationButtonEnabled: true,
                     compassEnabled: true,
-                    gestureRecognizers: Set()..add(Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())),
+                    gestureRecognizers: Set()
+                      ..add(Factory<OneSequenceGestureRecognizer>(
+                          () => EagerGestureRecognizer())),
                     markers: Set<Marker>.from(mapMarkers),
                     polylines: Set<Polyline>.of(polylines),
                     mapType: MapType.normal,
                     initialCameraPosition: CameraPosition(
-                      target: LatLng(orderModel.vendor.latitude, orderModel.vendor.longitude),
+                      target: LatLng(orderModel.vendor.latitude,
+                          orderModel.vendor.longitude),
                       zoom: 15,
                     ),
-                    onMapCreated: (controller) => _onMapCreated(controller, orderModel),
+                    onMapCreated: (controller) =>
+                        _onMapCreated(controller, orderModel),
                   ),
                 ),
               ),
@@ -452,7 +526,8 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
         });
   }
 
-  void _onMapCreated(GoogleMapController controller, BookTableModel orderModel) {
+  void _onMapCreated(
+      GoogleMapController controller, BookTableModel orderModel) {
     print("tedtal12");
     _mapController = controller;
     if (isDarkMode(context))
@@ -462,7 +537,11 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
           'met'
           'ry","stylers": [{"color": "#242f3e"}]},{"featureType": "all","elementType": "labels.text.stroke","stylers": [{"lightness": -80}]},{"featureType": "administrative","elementType": "labels.text.fill","stylers": [{"color": "#746855"}]},{"featureType": "administrative.locality","elementType": "labels.text.fill","stylers": [{"color": "#d59563"}]},{"featureType": "poi","elementType": "labels.text.fill","stylers": [{"color": "#d59563"}]},{"featureType": "poi.park","elementType": "geometry","stylers": [{"color": "#263c3f"}]},{"featureType": "poi.park","elementType": "labels.text.fill","stylers": [{"color": "#6b9a76"}]},{"featureType": "road","elementType": "geometry.fill","stylers": [{"color": "#2b3544"}]},{"featureType": "road","elementType": "labels.text.fill","stylers": [{"color": "#9ca5b3"}]},{"featureType": "road.arterial","elementType": "geometry.fill","stylers": [{"color": "#38414e"}]},{"featureType": "road.arterial","elementType": "geometry.stroke","stylers": [{"color": "#212a37"}]},{"featureType": "road.highway","elementType": "geometry.fill","stylers": [{"color": "#746855"}]},{"featureType": "road.highway","elementType": "geometry.stroke","stylers": [{"color": "#1f2835"}]},{"featureType": "road.highway","elementType": "labels.text.fill","stylers": [{"color": "#f3d19c"}]},{"featureType": "road.local","elementType": "geometry.fill","stylers": [{"color": "#38414e"}]},{"featureType": "road.local","elementType": "geometry.stroke","stylers": [{"color": "#212a37"}]},{"featureType": "transit","elementType": "geometry","stylers": [{"color": "#2f3948"}]},{"featureType": "transit.station","elementType": "labels.text.fill","stylers": [{"color": "#d59563"}]},{"featureType": "water","elementType": "geometry","stylers": [{"color": "#17263c"}]},{"featureType": "water","elementType": "labels.text.fill","stylers": [{"color": "#515c6d"}]},{"featureType": "water","elementType": "labels.text.stroke","stylers": [{"lightness": -20}]}]');
     if (orderModel.status == ORDER_STATUS_IN_TRANSIT) {
-      updateCameraLocation(LatLng(orderModel.vendor.latitude, orderModel.vendor.longitude), LatLng(orderModel.author.location.latitude, orderModel.author.location.longitude), _mapController);
+      updateCameraLocation(
+          LatLng(orderModel.vendor.latitude, orderModel.vendor.longitude),
+          LatLng(orderModel.author.location.latitude,
+              orderModel.author.location.longitude),
+          _mapController);
     }
   }
 
@@ -475,12 +554,17 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
 
     LatLngBounds bounds;
 
-    if (source.latitude > destination.latitude && source.longitude > destination.longitude) {
+    if (source.latitude > destination.latitude &&
+        source.longitude > destination.longitude) {
       bounds = LatLngBounds(southwest: destination, northeast: source);
     } else if (source.longitude > destination.longitude) {
-      bounds = LatLngBounds(southwest: LatLng(source.latitude, destination.longitude), northeast: LatLng(destination.latitude, source.longitude));
+      bounds = LatLngBounds(
+          southwest: LatLng(source.latitude, destination.longitude),
+          northeast: LatLng(destination.latitude, source.longitude));
     } else if (source.latitude > destination.latitude) {
-      bounds = LatLngBounds(southwest: LatLng(destination.latitude, source.longitude), northeast: LatLng(source.latitude, destination.longitude));
+      bounds = LatLngBounds(
+          southwest: LatLng(destination.latitude, source.longitude),
+          northeast: LatLng(source.latitude, destination.longitude));
     } else {
       bounds = LatLngBounds(southwest: source, northeast: destination);
     }
@@ -490,7 +574,8 @@ class _TableOrderDetailsScreenState extends State<TableOrderDetailsScreen> {
     return checkCameraLocation(cameraUpdate, mapController);
   }
 
-  Future<void> checkCameraLocation(CameraUpdate cameraUpdate, GoogleMapController mapController) async {
+  Future<void> checkCameraLocation(
+      CameraUpdate cameraUpdate, GoogleMapController mapController) async {
     mapController.animateCamera(cameraUpdate);
     LatLngBounds l1 = await mapController.getVisibleRegion();
     LatLngBounds l2 = await mapController.getVisibleRegion();

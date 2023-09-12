@@ -59,12 +59,16 @@ class User with ChangeNotifier {
       this.orderRequestData})
       : this.lastOnlineTimestamp = lastOnlineTimestamp ?? Timestamp.now(),
         this.settings = settings ?? UserSettings(),
-        this.appIdentifier = kIsWeb ? "Flutter Uber Eats Consumer Web" : 'Flutter Uber Eats Consumer ${Platform.operatingSystem}',
+        this.appIdentifier = kIsWeb
+            ? "Salón Cantón Web"
+            : 'Salón Cantón ${Platform.operatingSystem}',
         this.shippingAddress = shippingAddress ?? AddressModel(),
         this.location = location ?? UserLocation();
 
   String fullName() {
-    return ((email.isEmpty) && (phoneNumber.isEmpty)) ? 'Login to Manage' : '$firstName $lastName';
+    return ((email.isEmpty) && (phoneNumber.isEmpty))
+        ? 'Login to Manage'
+        : '$firstName $lastName';
   }
 
   factory User.fromJson(Map<String, dynamic> parsedJson) {
@@ -75,13 +79,19 @@ class User with ChangeNotifier {
         lastName: parsedJson['lastName'] ?? '',
         active: parsedJson['active'] ?? true,
         lastOnlineTimestamp: parsedJson['lastOnlineTimestamp'],
-        settings: parsedJson.containsKey('settings') ? UserSettings.fromJson(parsedJson['settings']) : UserSettings(),
+        settings: parsedJson.containsKey('settings')
+            ? UserSettings.fromJson(parsedJson['settings'])
+            : UserSettings(),
         phoneNumber: parsedJson['phoneNumber'] ?? '',
         userID: parsedJson['id'] ?? parsedJson['userID'] ?? '',
         profilePictureURL: parsedJson['profilePictureURL'] ?? '',
         fcmToken: parsedJson['fcmToken'] ?? '',
-        location: parsedJson.containsKey('location') ? UserLocation.fromJson(parsedJson['location']) : UserLocation(),
-        shippingAddress: parsedJson.containsKey('shippingAddress') ? AddressModel.fromJson(parsedJson['shippingAddress']) : AddressModel(),
+        location: parsedJson.containsKey('location')
+            ? UserLocation.fromJson(parsedJson['location'])
+            : UserLocation(),
+        shippingAddress: parsedJson.containsKey('shippingAddress')
+            ? AddressModel.fromJson(parsedJson['shippingAddress'])
+            : AddressModel(),
         stripeCustomer: parsedJson['stripeCustomer'] ?? null,
         role: parsedJson['role'] ?? '',
         defaultRestaurant: parsedJson['default_restaurant'] ?? null,
@@ -91,7 +101,9 @@ class User with ChangeNotifier {
         inProgressOrderID: parsedJson['inProgressOrderID'],
         rotation: parsedJson['rotation'] ?? 0.0,
         vendorID: parsedJson['vendorID'] ?? '',
-        orderRequestData: parsedJson.containsKey('orderRequestData') ? OrderModel.fromJson(parsedJson['orderRequestData']) : null);
+        orderRequestData: parsedJson.containsKey('orderRequestData')
+            ? OrderModel.fromJson(parsedJson['orderRequestData'])
+            : null);
   }
 
   factory User.fromPayload(Map<String, dynamic> parsedJson) {
@@ -101,15 +113,22 @@ class User with ChangeNotifier {
         firstName: parsedJson['firstName'] ?? '',
         lastName: parsedJson['lastName'] ?? '',
         active: parsedJson['active'] ?? true,
-        lastOnlineTimestamp: Timestamp.fromMillisecondsSinceEpoch(parsedJson['lastOnlineTimestamp']),
-        settings: parsedJson.containsKey('settings') ? UserSettings.fromJson(parsedJson['settings']) : UserSettings(),
+        lastOnlineTimestamp: Timestamp.fromMillisecondsSinceEpoch(
+            parsedJson['lastOnlineTimestamp']),
+        settings: parsedJson.containsKey('settings')
+            ? UserSettings.fromJson(parsedJson['settings'])
+            : UserSettings(),
         phoneNumber: parsedJson['phoneNumber'] ?? '',
         rotation: parsedJson['rotation'] ?? 0.0,
         userID: parsedJson['id'] ?? parsedJson['userID'] ?? '',
         profilePictureURL: parsedJson['profilePictureURL'] ?? '',
         fcmToken: parsedJson['fcmToken'] ?? '',
-        location: parsedJson.containsKey('location') ? UserLocation.fromJson(parsedJson['location']) : UserLocation(),
-        shippingAddress: parsedJson.containsKey('shippingAddress') ? AddressModel.fromJson(parsedJson['shippingAddress']) : AddressModel(),
+        location: parsedJson.containsKey('location')
+            ? UserLocation.fromJson(parsedJson['location'])
+            : UserLocation(),
+        shippingAddress: parsedJson.containsKey('shippingAddress')
+            ? AddressModel.fromJson(parsedJson['shippingAddress'])
+            : AddressModel(),
         stripeCustomer: parsedJson['stripeCustomer'] ?? '',
         role: parsedJson['role'] ?? '',
         carName: parsedJson['carName'] ?? '',
@@ -117,7 +136,9 @@ class User with ChangeNotifier {
         carPictureURL: parsedJson['carPictureURL'] ?? '',
         inProgressOrderID: parsedJson['inProgressOrderID'],
         vendorID: parsedJson['vendorID'] ?? '',
-        orderRequestData: parsedJson.containsKey('orderRequestData') ? OrderModel.fromJson(parsedJson['orderRequestData']) : null);
+        orderRequestData: parsedJson.containsKey('orderRequestData')
+            ? OrderModel.fromJson(parsedJson['orderRequestData'])
+            : null);
   }
 
   Map<String, dynamic> toJson() {
@@ -203,7 +224,11 @@ class UserSettings {
 
   bool promotions;
 
-  UserSettings({this.pushNewMessages = true, this.orderUpdates = true, this.newArrivals = true, this.promotions = true});
+  UserSettings(
+      {this.pushNewMessages = true,
+      this.orderUpdates = true,
+      this.newArrivals = true,
+      this.promotions = true});
 
   factory UserSettings.fromJson(Map<dynamic, dynamic> parsedJson) {
     return UserSettings(

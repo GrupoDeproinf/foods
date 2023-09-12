@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-PayTmCurrencyCodeErrorModel payTmCurrencyCodeErrorModelFromJson(String str) => PayTmCurrencyCodeErrorModel.fromJson(json.decode(str));
+PayTmCurrencyCodeErrorModel payTmCurrencyCodeErrorModelFromJson(String str) =>
+    PayTmCurrencyCodeErrorModel.fromJson(json.decode(str));
 
-String payTmCurrencyCodeErrorModelToJson(PayTmCurrencyCodeErrorModel data) => json.encode(data.toJson());
+String payTmCurrencyCodeErrorModelToJson(PayTmCurrencyCodeErrorModel data) =>
+    json.encode(data.toJson());
 
 class PayTmCurrencyCodeErrorModel {
   PayTmCurrencyCodeErrorModel({
@@ -17,7 +19,8 @@ class PayTmCurrencyCodeErrorModel {
   Head head;
   Body body;
 
-  factory PayTmCurrencyCodeErrorModel.fromJson(Map<String, dynamic> json) => PayTmCurrencyCodeErrorModel(
+  factory PayTmCurrencyCodeErrorModel.fromJson(Map<String, dynamic> json) =>
+      PayTmCurrencyCodeErrorModel(
         head: Head.fromJson(json["head"]),
         body: Body.fromJson(json["body"]),
       );

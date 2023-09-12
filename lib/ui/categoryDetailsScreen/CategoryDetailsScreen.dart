@@ -14,7 +14,9 @@ class CategoryDetailsScreen extends StatefulWidget {
   final VendorCategoryModel category;
   final bool isDineIn;
 
-  const CategoryDetailsScreen({Key? key, required this.category, required this.isDineIn}) : super(key: key);
+  const CategoryDetailsScreen(
+      {Key? key, required this.category, required this.isDineIn})
+      : super(key: key);
 
   @override
   _CategoryDetailsScreenState createState() => _CategoryDetailsScreenState();
@@ -27,13 +29,16 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    categoriesFuture = fireStoreUtils.getVendorsByCuisineID(widget.category.id.toString(), isDinein: widget.isDineIn);
+    categoriesFuture = fireStoreUtils.getVendorsByCuisineID(
+        widget.category.id.toString(),
+        isDinein: widget.isDineIn);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppGlobal.buildSimpleAppBar(context, widget.category.title.toString()),
+      appBar: AppGlobal.buildSimpleAppBar(
+          context, widget.category.title.toString()),
       body: StreamBuilder<List<VendorModel>>(
         stream: categoriesFuture,
         initialData: [],
@@ -48,13 +53,13 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
             );
           if (!snapshot.hasData || (snapshot.data?.isEmpty ?? true)) {
             return Center(
-              child: showEmptyState(
-                'No Restaurant found'.tr(), context),
+              child: showEmptyState('No Restaurant found'.tr(), context),
             );
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) => buildVendorItem(snapshot.data![index]),
+              itemBuilder: (context, index) =>
+                  buildVendorItem(snapshot.data![index]),
             );
           }
         },
@@ -99,7 +104,10 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                 child: CachedNetworkImage(
                   imageUrl: getImageVAlidUrl(vendorModel.photo),
                   imageBuilder: (context, imageProvider) => Container(
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        image: DecorationImage(
+                            image: imageProvider, fit: BoxFit.cover)),
                   ),
                   placeholder: (context, url) => Center(
                       child: CircularProgressIndicator.adaptive(
@@ -121,7 +129,9 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                     maxLines: 1,
                     style: TextStyle(
                       fontSize: 16,
-                      color: isDarkMode(context) ? Colors.grey.shade400 : Colors.grey.shade800,
+                      color: isDarkMode(context)
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade800,
                       fontFamily: 'Poppinssb',
                     )),
                 subtitle: Text(vendorModel.location,
@@ -141,20 +151,30 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Wrap(spacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: <Widget>[
-                        Icon(
-                          Icons.star,
-                          size: 20,
-                          color: Color(COLOR_PRIMARY),
-                        ),
-                        Text(
-                          (vendorModel.reviewsCount != 0) ? (vendorModel.reviewsSum / vendorModel.reviewsCount).toStringAsFixed(1) : "0",
-                          style: TextStyle(
-                            fontFamily: 'Poppinssb',
-                          ),
-                        ),
-                        Visibility(visible: vendorModel.reviewsCount != 0, child: Text("(${vendorModel.reviewsCount.toStringAsFixed(1)})")),
-                      ]),
+                      Wrap(
+                          spacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              Icons.star,
+                              size: 20,
+                              color: Color(COLOR_PRIMARY),
+                            ),
+                            Text(
+                              (vendorModel.reviewsCount != 0)
+                                  ? (vendorModel.reviewsSum /
+                                          vendorModel.reviewsCount)
+                                      .toStringAsFixed(1)
+                                  : "0",
+                              style: TextStyle(
+                                fontFamily: 'Poppinssb',
+                              ),
+                            ),
+                            Visibility(
+                                visible: vendorModel.reviewsCount != 0,
+                                child: Text(
+                                    "(${vendorModel.reviewsCount.toStringAsFixed(1)})")),
+                          ]),
                     ],
                   ),
                 ),

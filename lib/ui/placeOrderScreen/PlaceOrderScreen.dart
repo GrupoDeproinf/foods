@@ -16,7 +16,8 @@ import 'package:custom_food/ui/ordersScreen/OrdersScreen.dart';
 class PlaceOrderScreen extends StatefulWidget {
   final OrderModel orderModel;
 
-  const PlaceOrderScreen({Key? key, required this.orderModel}) : super(key: key);
+  const PlaceOrderScreen({Key? key, required this.orderModel})
+      : super(key: key);
 
   @override
   _PlaceOrderScreenState createState() => _PlaceOrderScreenState();
@@ -55,7 +56,12 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
           ListTile(
             title: Text(
               'Placing Order...'.tr(),
-              style: TextStyle(color: isDarkMode(context) ? Colors.grey.shade300 : Colors.grey.shade800, fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: isDarkMode(context)
+                      ? Colors.grey.shade300
+                      : Colors.grey.shade800,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
             ),
             trailing: Container(
               width: 24,
@@ -73,7 +79,12 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                   contentPadding: EdgeInsets.symmetric(horizontal: 40),
                   title: Text(
                     '${widget.orderModel.address.line1} ${widget.orderModel.address.line2} ${widget.orderModel.address.city}',
-                    style: TextStyle(color: isDarkMode(context) ? Colors.grey.shade300 : Colors.grey.shade800, fontWeight: FontWeight.w500, fontSize: 17),
+                    style: TextStyle(
+                        color: isDarkMode(context)
+                            ? Colors.grey.shade300
+                            : Colors.grey.shade800,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 17),
                   ),
                   subtitle: Text('Deliver to door'.tr()),
                   leading: Icon(
@@ -91,7 +102,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             title: Text(
               'Your order, {}'.tr(args: ['${widget.orderModel.address.name}']),
               style: TextStyle(
-                color: isDarkMode(context) ? Colors.grey.shade300 : Colors.grey.shade800,
+                color: isDarkMode(context)
+                    ? Colors.grey.shade300
+                    : Colors.grey.shade800,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -110,7 +123,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 child: Row(
                   children: [
                     Container(
-                      color: isDarkMode(context) ? Colors.grey.shade700 : Colors.grey.shade200,
+                      color: isDarkMode(context)
+                          ? Colors.grey.shade700
+                          : Colors.grey.shade200,
                       padding: EdgeInsets.all(6),
                       child: Text('${index + 1}'),
                     ),
@@ -118,7 +133,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                     Text(
                       '${widget.orderModel.products[index].name}',
                       style: TextStyle(
-                        color: isDarkMode(context) ? Colors.grey.shade300 : Colors.grey.shade800,
+                        color: isDarkMode(context)
+                            ? Colors.grey.shade300
+                            : Colors.grey.shade800,
                         fontWeight: FontWeight.w500,
                       ),
                     )
@@ -135,7 +152,10 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
   animateOut() {
     print(widget.orderModel.vendor.fcmToken.toString() + "{}{}{}{======TOKEN");
-    FireStoreUtils.sendFcmMessage("newOrder".tr(), '${MyAppState.currentUser!.firstName}' + "hasOrdered", widget.orderModel.vendor.fcmToken);
+    FireStoreUtils.sendFcmMessage(
+        "newOrder".tr(),
+        '${MyAppState.currentUser!.firstName}' + "hasOrdered",
+        widget.orderModel.vendor.fcmToken);
 
     Provider.of<CartDatabase>(context, listen: false).deleteAllProducts();
 

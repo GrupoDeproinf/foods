@@ -17,7 +17,13 @@ class ReAuthUserScreen extends StatefulWidget {
   final String? phoneNumber;
   final bool deleteUser;
 
-  ReAuthUserScreen({Key? key, required this.provider, this.email, this.phoneNumber, required this.deleteUser}) : super(key: key);
+  ReAuthUserScreen(
+      {Key? key,
+      required this.provider,
+      this.email,
+      this.phoneNumber,
+      required this.deleteUser})
+      : super(key: key);
 
   @override
   _ReAuthUserScreenState createState() => _ReAuthUserScreenState();
@@ -88,7 +94,8 @@ class _ReAuthUserScreenState extends State<ReAuthUserScreen> {
             onPressed: () async => passwordButtonPressed(),
             child: Text(
               'Verify'.tr(),
-              style: TextStyle(color: isDarkMode(context) ? Colors.black : Colors.white),
+              style: TextStyle(
+                  color: isDarkMode(context) ? Colors.black : Colors.white),
             ),
           ),
         ),
@@ -102,7 +109,8 @@ class _ReAuthUserScreenState extends State<ReAuthUserScreen> {
         child: Text(
           'Facebook Verify'.tr(),
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
       icon: Padding(
@@ -142,7 +150,9 @@ class _ReAuthUserScreenState extends State<ReAuthUserScreen> {
           return apple.AppleSignInButton(
             cornerRadius: 12.0,
             type: apple.ButtonType.continueButton,
-            style: isDarkMode(context) ? apple.ButtonStyle.white : apple.ButtonStyle.black,
+            style: isDarkMode(context)
+                ? apple.ButtonStyle.white
+                : apple.ButtonStyle.black,
             onPressed: () => appleButtonPressed(),
           );
         }
@@ -167,7 +177,9 @@ class _ReAuthUserScreenState extends State<ReAuthUserScreen> {
                 fieldHeight: 40,
                 fieldWidth: 40,
                 activeColor: Color(COLOR_PRIMARY),
-                activeFillColor: isDarkMode(context) ? Colors.grey.shade700 : Colors.grey.shade100,
+                activeFillColor: isDarkMode(context)
+                    ? Colors.grey.shade700
+                    : Colors.grey.shade100,
                 selectedFillColor: Colors.transparent,
                 selectedColor: Color(COLOR_PRIMARY),
                 inactiveColor: Colors.grey.shade600,
@@ -202,7 +214,10 @@ class _ReAuthUserScreenState extends State<ReAuthUserScreen> {
     } else {
       await showProgress(context, "Verifying".tr(), false);
       try {
-        auth.UserCredential? result = await FireStoreUtils.reAuthUser(widget.provider, email: MyAppState.currentUser!.email, password: _passwordController.text);
+        auth.UserCredential? result = await FireStoreUtils.reAuthUser(
+            widget.provider,
+            email: MyAppState.currentUser!.email,
+            password: _passwordController.text);
         if (result == null) {
           await hideProgress();
           showAlertDialog(
@@ -213,7 +228,8 @@ class _ReAuthUserScreenState extends State<ReAuthUserScreen> {
           );
         } else {
           if (result.user != null) {
-            if (widget.email != null) await result.user!.updateEmail(widget.email!);
+            if (widget.email != null)
+              await result.user!.updateEmail(widget.email!);
             await hideProgress();
             Navigator.pop(context, true);
           } else {
@@ -258,7 +274,8 @@ class _ReAuthUserScreenState extends State<ReAuthUserScreen> {
       } else {
         token = await facebookAuth.accessToken;
       }
-      if (token != null) await FireStoreUtils.reAuthUser(widget.provider, accessToken: token);
+      if (token != null)
+        await FireStoreUtils.reAuthUser(widget.provider, accessToken: token);
       await hideProgress();
       Navigator.pop(context, true);
     } catch (e, s) {
@@ -277,7 +294,8 @@ class _ReAuthUserScreenState extends State<ReAuthUserScreen> {
     try {
       await showProgress(context, "Verifying".tr(), false);
       final appleCredential = await apple.TheAppleSignIn.performRequests([
-        apple.AppleIdRequest(requestedScopes: [apple.Scope.email, apple.Scope.fullName])
+        apple.AppleIdRequest(
+            requestedScopes: [apple.Scope.email, apple.Scope.fullName])
       ]);
       if (appleCredential.error != null) {
         showAlertDialog(
@@ -288,7 +306,8 @@ class _ReAuthUserScreenState extends State<ReAuthUserScreen> {
         );
       }
       if (appleCredential.status == apple.AuthorizationStatus.authorized) {
-        await FireStoreUtils.reAuthUser(widget.provider, appleCredential: appleCredential);
+        await FireStoreUtils.reAuthUser(widget.provider,
+            appleCredential: appleCredential);
       }
       await hideProgress();
       Navigator.pop(context, true);
@@ -365,10 +384,14 @@ class _ReAuthUserScreenState extends State<ReAuthUserScreen> {
     try {
       if (_verificationID != null) {
         if (widget.deleteUser) {
-          await FireStoreUtils.reAuthUser(widget.provider, verificationId: _verificationID!, smsCode: code);
+          await FireStoreUtils.reAuthUser(widget.provider,
+              verificationId: _verificationID!, smsCode: code);
         } else {
-          auth.PhoneAuthCredential credential = auth.PhoneAuthProvider.credential(smsCode: code, verificationId: _verificationID!);
-          await auth.FirebaseAuth.instance.currentUser!.updatePhoneNumber(credential);
+          auth.PhoneAuthCredential credential =
+              auth.PhoneAuthProvider.credential(
+                  smsCode: code, verificationId: _verificationID!);
+          await auth.FirebaseAuth.instance.currentUser!
+              .updatePhoneNumber(credential);
         }
         await hideProgress();
         Navigator.pop(context, true);

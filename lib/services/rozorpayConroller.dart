@@ -8,8 +8,10 @@ import 'package:custom_food/userPrefrence.dart';
 import 'package:http/http.dart' as http;
 
 class RazorPayController {
-  Future<CreateRazorPayOrderModel?> createOrderRazorPay({required int amount, bool isTopup = false}) async {
-    final String orderId = isTopup ? UserPreference.getPaymentId() : UserPreference.getOrderId();
+  Future<CreateRazorPayOrderModel?> createOrderRazorPay(
+      {required int amount, bool isTopup = false}) async {
+    final String orderId =
+        isTopup ? UserPreference.getPaymentId() : UserPreference.getOrderId();
     RazorPayModel razorPayData = UserPreference.getRazorPayData();
     debugPrint(razorPayData.razorpayKey);
     debugPrint("we Enter In");

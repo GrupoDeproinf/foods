@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:custom_food/AppGlobal.dart';
@@ -27,6 +28,9 @@ import 'package:custom_food/ui/vendorProductsScreen/review.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../services/web_cart/webCarProduct.dart';
+import '../../services/web_cart/webCart.dart';
+
 class ProductDetailsScreen extends StatefulWidget {
   final ProductModel productModel;
   final VendorModel vendorModel;
@@ -40,7 +44,8 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  late CartDatabase cartDatabase;
+  late CartDatabase? cartDatabase;
+  late WebCart? webCart;
 
   String radioItem = '';
   int id = -1;
@@ -172,11 +177,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       reviewAttributeList = value;
     });
 
-    await FireStoreUtils().getReviewList(widget.productModel.id).then((value) {
-      setState(() {
-        reviewList = value;
-      });
-    });
+    // await FireStoreUtils().getReviewList(widget.productModel.id).then((value) {
+    //   setState(() {
+    //     reviewList = value;
+    //   });
+    // });
 
     await FireStoreUtils.getProductListByCategoryId(
             widget.productModel.categoryID.toString())
@@ -205,10 +210,54 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   void didChangeDependencies() {
-    cartDatabase = Provider.of<CartDatabase>(context, listen: true);
+    if (!kIsWeb) {
+      cartDatabase = Provider.of<CartDatabase>(context, listen: true);
+      cartDatabase!.allCartProducts.then((value) {
+        final bool _productIsInList = value.any((product) =>
+            product.id ==
+            widget.productModel.id +
+                "~" +
+                (variants!
+                        .where((element) =>
+                            element.variantSku == selectedVariants.join('-'))
+                        .isNotEmpty
+                    ? variants!
+                        .where((element) =>
+                            element.variantSku == selectedVariants.join('-'))
+                        .first
+                        .variantId
+                        .toString()
+                    : ""));
+        if (_productIsInList) {
+          CartProduct element = value.firstWhere((product) =>
+              product.id ==
+              widget.productModel.id +
+                  "~" +
+                  (variants!
+                          .where((element) =>
+                              element.variantSku == selectedVariants.join('-'))
+                          .isNotEmpty
+                      ? variants!
+                          .where((element) =>
+                              element.variantSku == selectedVariants.join('-'))
+                          .first
+                          .variantId
+                          .toString()
+                      : ""));
 
-    cartDatabase.allCartProducts.then((value) {
-      final bool _productIsInList = value.any((product) =>
+          setState(() {
+            productQnt = element.quantity;
+          });
+        } else {
+          setState(() {
+            productQnt = 0;
+          });
+        }
+      });
+    } else {
+      webCart = Provider.of<WebCart>(context, listen: true);
+      print("Ya tengo la base de datos");
+      final bool _productIsInList = webCart!.items.any((product) =>
           product.id ==
           widget.productModel.id +
               "~" +
@@ -224,7 +273,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       .toString()
                   : ""));
       if (_productIsInList) {
-        CartProduct element = value.firstWhere((product) =>
+        WebCartProduct element = webCart!.items.firstWhere((product) =>
             product.id ==
             widget.productModel.id +
                 "~" +
@@ -248,7 +297,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           productQnt = 0;
         });
       }
-    });
+    }
+
     super.didChangeDependencies();
   }
 
@@ -278,7 +328,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           },
                           allowImplicitScrolling: true,
                           itemBuilder: (context, index) => CachedNetworkImage(
-                                imageUrl: getImageVAlidUrl(productImage[index]) == placeholderImage ? "" : getImageVAlidUrl(productImage[index]),
+                                imageUrl:
+                                    getImageVAlidUrl(productImage[index]) ==
+                                            placeholderImage
+                                        ? ""
+                                        : getImageVAlidUrl(productImage[index]),
                                 imageBuilder: (context, imageProvider) =>
                                     Container(
                                   decoration: BoxDecoration(
@@ -294,10 +348,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 )),
                                 errorWidget: (context, url, error) =>
                                     Image.asset(
-                "assets/images/plato_generico2.png",
-                height: MediaQuery.of(context).size.height * 0.50,
-                fit: BoxFit.contain,
-              ),
+                                  "assets/images/plato_generico2.png",
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.50,
+                                  fit: BoxFit.contain,
+                                ),
                                 fit: BoxFit.contain,
                               )),
                     ),
@@ -671,7 +726,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     }
                                                   });
 
-                                                  await cartDatabase
+                                                  await cartDatabase!
                                                       .allCartProducts
                                                       .then((value) {
                                                     final bool _productIsInList = value.any((product) =>
@@ -1046,6 +1101,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   setState(() {
                                                     productQnt = 1;
                                                   });
+
                                                   addtocard(widget.productModel,
                                                       true);
                                                 } else {
@@ -1956,280 +2012,280 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   //     ],
                   //   ),
                   // ),
-                  Visibility(
-                    visible: reviewList.isNotEmpty,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: ListView.builder(
-                            itemCount:
-                                reviewList.length > 10 ? 10 : reviewList.length,
-                            shrinkWrap: true,
-                            padding: EdgeInsets.zero,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(
-                                        10), //border corner radius
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey
-                                            .withOpacity(0.5), //color of shadow
-                                        spreadRadius: 3, //spread radius
-                                        blurRadius: 7, // blur radius
-                                        offset: const Offset(
-                                            0, 2), // changes position of shadow
-                                        //first paramerter of offset is left-right
-                                        //second parameter is top to down
-                                      ),
-                                      //you can set more BoxShadow() here
-                                    ],
-                                  ), // Change this
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            CachedNetworkImage(
-                                              height: 45,
-                                              width: 45,
-                                              imageUrl: getImageVAlidUrl(
-                                                  reviewList[index]
-                                                      .profile
-                                                      .toString()),
-                                              imageBuilder:
-                                                  (context, imageProvider) =>
-                                                      Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(35),
-                                                  image: DecorationImage(
-                                                      image: imageProvider,
-                                                      fit: BoxFit.cover),
-                                                ),
-                                              ),
-                                              placeholder: (context, url) =>
-                                                  Center(
-                                                      child:
-                                                          CircularProgressIndicator
-                                                              .adaptive(
-                                                valueColor:
-                                                    AlwaysStoppedAnimation(
-                                                        Color(COLOR_PRIMARY)),
-                                              )),
-                                              errorWidget: (context, url,
-                                                      error) =>
-                                                  ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              35),
-                                                      child: Image.network(
-                                                        placeholderImage,
-                                                        fit: BoxFit.cover,
-                                                      )),
-                                              fit: BoxFit.cover,
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    reviewList[index]
-                                                        .uname
-                                                        .toString(),
-                                                    style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        letterSpacing: 1,
-                                                        fontSize: 16),
-                                                  ),
-                                                  RatingBar.builder(
-                                                    ignoreGestures: true,
-                                                    initialRating:
-                                                        reviewList[index]
-                                                                .rating ??
-                                                            0.0,
-                                                    minRating: 1,
-                                                    itemSize: 22,
-                                                    direction: Axis.horizontal,
-                                                    allowHalfRating: true,
-                                                    itemCount: 5,
-                                                    itemPadding:
-                                                        const EdgeInsets.only(
-                                                            top: 5.0),
-                                                    itemBuilder: (context, _) =>
-                                                        Icon(
-                                                      Icons.star,
-                                                      color:
-                                                          Color(COLOR_PRIMARY),
-                                                    ),
-                                                    onRatingUpdate:
-                                                        (double rate) {
-                                                      // ratings = rate;
-                                                      // print(ratings);
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Text(
-                                                orderDate(reviewList[index]
-                                                    .createdAt),
-                                                style: TextStyle(
-                                                    color: isDarkMode(context)
-                                                        ? Colors.grey.shade200
-                                                        : const Color(
-                                                            0XFF555353),
-                                                    fontFamily: "Poppinsr")),
-                                          ],
-                                        ),
-                                        Text(
-                                            reviewList[index]
-                                                .comment
-                                                .toString(),
-                                            style: TextStyle(
-                                                color: Colors.black
-                                                    .withOpacity(0.70),
-                                                fontWeight: FontWeight.w400,
-                                                letterSpacing: 1,
-                                                fontSize: 14)),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        reviewList[index].photos!.isNotEmpty
-                                            ? SizedBox(
-                                                height: 75,
-                                                child: ListView.builder(
-                                                  itemCount: reviewList[index]
-                                                      .photos!
-                                                      .length,
-                                                  shrinkWrap: true,
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  itemBuilder:
-                                                      (context, index1) {
-                                                    return Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              6.0),
-                                                      child: CachedNetworkImage(
-                                                        height: 65,
-                                                        width: 65,
-                                                        imageUrl:
-                                                            getImageVAlidUrl(
-                                                                reviewList[index]
-                                                                        .photos![
-                                                                    index1]),
-                                                        imageBuilder: (context,
-                                                                imageProvider) =>
-                                                            Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            image: DecorationImage(
-                                                                image:
-                                                                    imageProvider,
-                                                                fit: BoxFit
-                                                                    .cover),
-                                                          ),
-                                                        ),
-                                                        placeholder: (context,
-                                                                url) =>
-                                                            Center(
-                                                                child:
-                                                                    CircularProgressIndicator
-                                                                        .adaptive(
-                                                          valueColor:
-                                                              AlwaysStoppedAnimation(
-                                                                  Color(
-                                                                      COLOR_PRIMARY)),
-                                                        )),
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            ClipRRect(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                                child: Image
-                                                                    .network(
-                                                                  placeholderImage,
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                )),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              )
-                                            : Container()
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height * 0.06,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(COLOR_PRIMARY),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    side: BorderSide(
-                                      color: Color(COLOR_PRIMARY),
-                                    ),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'See All Reviews',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                      color: Colors.white),
-                                ).tr(),
-                                onPressed: () {
-                                  push(
-                                    context,
-                                    Review(
-                                      productModel: widget.productModel,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // Visibility(
+                  //   visible: reviewList.isNotEmpty,
+                  //   child: Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       Padding(
+                  //         padding: const EdgeInsets.all(4.0),
+                  //         child: ListView.builder(
+                  //           itemCount:
+                  //               reviewList.length > 10 ? 10 : reviewList.length,
+                  //           shrinkWrap: true,
+                  //           padding: EdgeInsets.zero,
+                  //           physics: const NeverScrollableScrollPhysics(),
+                  //           itemBuilder: (context, index) {
+                  //             return Padding(
+                  //               padding: const EdgeInsets.all(8.0),
+                  //               child: Container(
+                  //                 decoration: BoxDecoration(
+                  //                   color: Colors.white,
+                  //                   borderRadius: BorderRadius.circular(
+                  //                       10), //border corner radius
+                  //                   boxShadow: [
+                  //                     BoxShadow(
+                  //                       color: Colors.grey
+                  //                           .withOpacity(0.5), //color of shadow
+                  //                       spreadRadius: 3, //spread radius
+                  //                       blurRadius: 7, // blur radius
+                  //                       offset: const Offset(
+                  //                           0, 2), // changes position of shadow
+                  //                       //first paramerter of offset is left-right
+                  //                       //second parameter is top to down
+                  //                     ),
+                  //                     //you can set more BoxShadow() here
+                  //                   ],
+                  //                 ), // Change this
+                  //                 child: Padding(
+                  //                   padding: const EdgeInsets.all(10.0),
+                  //                   child: Column(
+                  //                     crossAxisAlignment:
+                  //                         CrossAxisAlignment.start,
+                  //                     children: [
+                  //                       Row(
+                  //                         crossAxisAlignment:
+                  //                             CrossAxisAlignment.start,
+                  //                         children: [
+                  //                           CachedNetworkImage(
+                  //                             height: 45,
+                  //                             width: 45,
+                  //                             imageUrl: getImageVAlidUrl(
+                  //                                 reviewList[index]
+                  //                                     .profile
+                  //                                     .toString()),
+                  //                             imageBuilder:
+                  //                                 (context, imageProvider) =>
+                  //                                     Container(
+                  //                               decoration: BoxDecoration(
+                  //                                 borderRadius:
+                  //                                     BorderRadius.circular(35),
+                  //                                 image: DecorationImage(
+                  //                                     image: imageProvider,
+                  //                                     fit: BoxFit.cover),
+                  //                               ),
+                  //                             ),
+                  //                             placeholder: (context, url) =>
+                  //                                 Center(
+                  //                                     child:
+                  //                                         CircularProgressIndicator
+                  //                                             .adaptive(
+                  //                               valueColor:
+                  //                                   AlwaysStoppedAnimation(
+                  //                                       Color(COLOR_PRIMARY)),
+                  //                             )),
+                  //                             errorWidget: (context, url,
+                  //                                     error) =>
+                  //                                 ClipRRect(
+                  //                                     borderRadius:
+                  //                                         BorderRadius.circular(
+                  //                                             35),
+                  //                                     child: Image.network(
+                  //                                       placeholderImage,
+                  //                                       fit: BoxFit.cover,
+                  //                                     )),
+                  //                             fit: BoxFit.cover,
+                  //                           ),
+                  //                           const SizedBox(
+                  //                             width: 10,
+                  //                           ),
+                  //                           Expanded(
+                  //                             child: Column(
+                  //                               crossAxisAlignment:
+                  //                                   CrossAxisAlignment.start,
+                  //                               children: [
+                  //                                 Text(
+                  //                                   reviewList[index]
+                  //                                       .uname
+                  //                                       .toString(),
+                  //                                   style: const TextStyle(
+                  //                                       color: Colors.black,
+                  //                                       fontWeight:
+                  //                                           FontWeight.w600,
+                  //                                       letterSpacing: 1,
+                  //                                       fontSize: 16),
+                  //                                 ),
+                  //                                 RatingBar.builder(
+                  //                                   ignoreGestures: true,
+                  //                                   initialRating:
+                  //                                       reviewList[index]
+                  //                                               .rating ??
+                  //                                           0.0,
+                  //                                   minRating: 1,
+                  //                                   itemSize: 22,
+                  //                                   direction: Axis.horizontal,
+                  //                                   allowHalfRating: true,
+                  //                                   itemCount: 5,
+                  //                                   itemPadding:
+                  //                                       const EdgeInsets.only(
+                  //                                           top: 5.0),
+                  //                                   itemBuilder: (context, _) =>
+                  //                                       Icon(
+                  //                                     Icons.star,
+                  //                                     color:
+                  //                                         Color(COLOR_PRIMARY),
+                  //                                   ),
+                  //                                   onRatingUpdate:
+                  //                                       (double rate) {
+                  //                                     // ratings = rate;
+                  //                                     // print(ratings);
+                  //                                   },
+                  //                                 ),
+                  //                               ],
+                  //                             ),
+                  //                           ),
+                  //                           Text(
+                  //                               orderDate(reviewList[index]
+                  //                                   .createdAt),
+                  //                               style: TextStyle(
+                  //                                   color: isDarkMode(context)
+                  //                                       ? Colors.grey.shade200
+                  //                                       : const Color(
+                  //                                           0XFF555353),
+                  //                                   fontFamily: "Poppinsr")),
+                  //                         ],
+                  //                       ),
+                  //                       Text(
+                  //                           reviewList[index]
+                  //                               .comment
+                  //                               .toString(),
+                  //                           style: TextStyle(
+                  //                               color: Colors.black
+                  //                                   .withOpacity(0.70),
+                  //                               fontWeight: FontWeight.w400,
+                  //                               letterSpacing: 1,
+                  //                               fontSize: 14)),
+                  //                       const SizedBox(
+                  //                         height: 10,
+                  //                       ),
+                  //                       reviewList[index].photos!.isNotEmpty
+                  //                           ? SizedBox(
+                  //                               height: 75,
+                  //                               child: ListView.builder(
+                  //                                 itemCount: reviewList[index]
+                  //                                     .photos!
+                  //                                     .length,
+                  //                                 shrinkWrap: true,
+                  //                                 scrollDirection:
+                  //                                     Axis.horizontal,
+                  //                                 itemBuilder:
+                  //                                     (context, index1) {
+                  //                                   return Padding(
+                  //                                     padding:
+                  //                                         const EdgeInsets.all(
+                  //                                             6.0),
+                  //                                     child: CachedNetworkImage(
+                  //                                       height: 65,
+                  //                                       width: 65,
+                  //                                       imageUrl:
+                  //                                           getImageVAlidUrl(
+                  //                                               reviewList[index]
+                  //                                                       .photos![
+                  //                                                   index1]),
+                  //                                       imageBuilder: (context,
+                  //                                               imageProvider) =>
+                  //                                           Container(
+                  //                                         decoration:
+                  //                                             BoxDecoration(
+                  //                                           borderRadius:
+                  //                                               BorderRadius
+                  //                                                   .circular(
+                  //                                                       10),
+                  //                                           image: DecorationImage(
+                  //                                               image:
+                  //                                                   imageProvider,
+                  //                                               fit: BoxFit
+                  //                                                   .cover),
+                  //                                         ),
+                  //                                       ),
+                  //                                       placeholder: (context,
+                  //                                               url) =>
+                  //                                           Center(
+                  //                                               child:
+                  //                                                   CircularProgressIndicator
+                  //                                                       .adaptive(
+                  //                                         valueColor:
+                  //                                             AlwaysStoppedAnimation(
+                  //                                                 Color(
+                  //                                                     COLOR_PRIMARY)),
+                  //                                       )),
+                  //                                       errorWidget: (context,
+                  //                                               url, error) =>
+                  //                                           ClipRRect(
+                  //                                               borderRadius:
+                  //                                                   BorderRadius
+                  //                                                       .circular(
+                  //                                                           10),
+                  //                                               child: Image
+                  //                                                   .network(
+                  //                                                 placeholderImage,
+                  //                                                 fit: BoxFit
+                  //                                                     .cover,
+                  //                                               )),
+                  //                                       fit: BoxFit.cover,
+                  //                                     ),
+                  //                                   );
+                  //                                 },
+                  //                               ),
+                  //                             )
+                  //                           : Container()
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             );
+                  //           },
+                  //         ),
+                  //       ),
+                  //       Center(
+                  //         child: Padding(
+                  //           padding: const EdgeInsets.symmetric(
+                  //               horizontal: 20, vertical: 10),
+                  //           child: SizedBox(
+                  //             width: MediaQuery.of(context).size.width,
+                  //             height: MediaQuery.of(context).size.height * 0.06,
+                  //             child: ElevatedButton(
+                  //               style: ElevatedButton.styleFrom(
+                  //                 backgroundColor: Color(COLOR_PRIMARY),
+                  //                 shape: RoundedRectangleBorder(
+                  //                   borderRadius: BorderRadius.circular(10.0),
+                  //                   side: BorderSide(
+                  //                     color: Color(COLOR_PRIMARY),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               child: const Text(
+                  //                 'See All Reviews',
+                  //                 style: TextStyle(
+                  //                     fontWeight: FontWeight.w600,
+                  //                     fontSize: 16,
+                  //                     color: Colors.white),
+                  //               ).tr(),
+                  //               onPressed: () {
+                  //                 push(
+                  //                   context,
+                  //                   Review(
+                  //                     productModel: widget.productModel,
+                  //                   ),
+                  //                 );
+                  //               },
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -2295,106 +2351,221 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         addOnVal = addOnVal + double.parse(addAddonsDemo.price!);
       }
     }
-    List<CartProduct> cartProducts = await cartDatabase.allCartProducts;
-    if (productQnt > 1) {
-      var joinTitleString = "";
-      String mainPrice = "";
-      List<AddAddonsDemo> lstAddOns = [];
-      List<String> lstAddOnsTemp = [];
-      double extrasPrice = 0.0;
+    print("Estoy aquí");
+    if (kIsWeb) {
+      print("Es web");
+      List<WebCartProduct> cartProducts = webCart!.items;
+      print(cartProducts);
+      if (productQnt > 1) {
+        var joinTitleString = "";
+        String mainPrice = "";
+        List<AddAddonsDemo> lstAddOns = [];
+        List<String> lstAddOnsTemp = [];
+        double extrasPrice = 0.0;
 
-      SharedPreferences sp = await SharedPreferences.getInstance();
-      String addOns =
-          sp.getString("musics_key") != null ? sp.getString('musics_key')! : "";
+        SharedPreferences sp = await SharedPreferences.getInstance();
+        String addOns = sp.getString("musics_key") != null
+            ? sp.getString('musics_key')!
+            : "";
 
-      bool isAddSame = false;
-      if (!isAddSame) {
-        if (productModel.disPrice != null &&
-            productModel.disPrice!.isNotEmpty &&
-            double.parse(productModel.disPrice!) != 0) {
-          mainPrice = productModel.disPrice!;
-        } else {
-          mainPrice = productModel.price;
-        }
-      }
-
-      if (addOns.isNotEmpty) {
-        lstAddOns = AddAddonsDemo.decode(addOns);
-        for (int a = 0; a < lstAddOns.length; a++) {
-          AddAddonsDemo newAddonsObject = lstAddOns[a];
-          if (newAddonsObject.categoryID == widget.productModel.id) {
-            if (newAddonsObject.isCheck == true) {
-              lstAddOnsTemp.add(newAddonsObject.name!);
-              extrasPrice += (double.parse(newAddonsObject.price!));
-            }
+        bool isAddSame = false;
+        if (!isAddSame) {
+          if (productModel.disPrice != null &&
+              productModel.disPrice!.isNotEmpty &&
+              double.parse(productModel.disPrice!) != 0) {
+            mainPrice = productModel.disPrice!;
+          } else {
+            mainPrice = productModel.price;
           }
         }
 
-        joinTitleString = lstAddOnsTemp.join(",");
-      }
+        if (addOns.isNotEmpty) {
+          lstAddOns = AddAddonsDemo.decode(addOns);
+          for (int a = 0; a < lstAddOns.length; a++) {
+            AddAddonsDemo newAddonsObject = lstAddOns[a];
+            if (newAddonsObject.categoryID == widget.productModel.id) {
+              if (newAddonsObject.isCheck == true) {
+                lstAddOnsTemp.add(newAddonsObject.name!);
+                extrasPrice += (double.parse(newAddonsObject.price!));
+              }
+            }
+          }
 
-      final bool _productIsInList = cartProducts.any((product) =>
-          product.id ==
-          productModel.id +
-              "~" +
-              (productModel.variantInfo != null
-                  ? productModel.variantInfo!.variantId.toString()
-                  : ""));
-      if (_productIsInList) {
-        CartProduct element = cartProducts.firstWhere((product) =>
+          joinTitleString = lstAddOnsTemp.join(",");
+        }
+
+        final bool _productIsInList = cartProducts.any((product) =>
             product.id ==
             productModel.id +
                 "~" +
                 (productModel.variantInfo != null
                     ? productModel.variantInfo!.variantId.toString()
                     : ""));
+        if (_productIsInList) {
+          WebCartProduct element = cartProducts.firstWhere((product) =>
+              product.id ==
+              productModel.id +
+                  "~" +
+                  (productModel.variantInfo != null
+                      ? productModel.variantInfo!.variantId.toString()
+                      : ""));
 
-        await cartDatabase.updateProduct(CartProduct(
-            id: element.id,
-            name: element.name,
-            photo: element.photo,
-            price: element.price,
-            vendorID: element.vendorID,
-            quantity:
-                isIncerementQuantity ? element.quantity + 1 : element.quantity,
-            category_id: element.category_id,
-            extras_price: extrasPrice.toString(),
-            extras: joinTitleString,
-            discountPrice: element.discountPrice!));
+          await webCart!.updateProduct(WebCartProduct(
+              id: element.id,
+              name: element.name,
+              photo: element.photo,
+              price: element.price,
+              vendorID: element.vendorID,
+              quantity: isIncerementQuantity
+                  ? element.quantity + 1
+                  : element.quantity,
+              category_id: element.category_id,
+              extras_price: extrasPrice.toString(),
+              extras: joinTitleString,
+              discountPrice: element.discountPrice!));
+        } else {
+          await webCart!.updateProduct(WebCartProduct(
+              id: productModel.id +
+                  "~" +
+                  (productModel.variantInfo != null
+                      ? productModel.variantInfo!.variantId.toString()
+                      : ""),
+              name: productModel.name,
+              photo: productModel.photo,
+              price: mainPrice,
+              discountPrice: productModel.disPrice,
+              vendorID: productModel.vendorID,
+              quantity: productQnt,
+              extras_price: extrasPrice.toString(),
+              extras: joinTitleString,
+              category_id: productModel.categoryID,
+              variant_info: productModel.variantInfo));
+        }
+        setState(() {});
       } else {
-        await cartDatabase.updateProduct(CartProduct(
-            id: productModel.id +
+        if (cartProducts.isEmpty) {
+          print("Debería entrar aquí");
+          await webCart!
+              .addProduct(productModel, webCart!, isIncerementQuantity);
+        } else {
+          if (cartProducts[0].vendorID == widget.vendorModel.id) {
+            await webCart!
+                .addProduct(productModel, webCart!, isIncerementQuantity);
+          } else {
+            await webCart!
+                .addProduct(productModel, webCart!, isIncerementQuantity);
+
+            if (isAddOnApplied && addOnVal > 0) {
+              priceTemp += (addOnVal * productQnt);
+            }
+          }
+        }
+      }
+      print(webCart!.items);
+    } else {
+      List<CartProduct> cartProducts = await cartDatabase!.allCartProducts;
+      if (productQnt > 1) {
+        var joinTitleString = "";
+        String mainPrice = "";
+        List<AddAddonsDemo> lstAddOns = [];
+        List<String> lstAddOnsTemp = [];
+        double extrasPrice = 0.0;
+
+        SharedPreferences sp = await SharedPreferences.getInstance();
+        String addOns = sp.getString("musics_key") != null
+            ? sp.getString('musics_key')!
+            : "";
+
+        bool isAddSame = false;
+        if (!isAddSame) {
+          if (productModel.disPrice != null &&
+              productModel.disPrice!.isNotEmpty &&
+              double.parse(productModel.disPrice!) != 0) {
+            mainPrice = productModel.disPrice!;
+          } else {
+            mainPrice = productModel.price;
+          }
+        }
+
+        if (addOns.isNotEmpty) {
+          lstAddOns = AddAddonsDemo.decode(addOns);
+          for (int a = 0; a < lstAddOns.length; a++) {
+            AddAddonsDemo newAddonsObject = lstAddOns[a];
+            if (newAddonsObject.categoryID == widget.productModel.id) {
+              if (newAddonsObject.isCheck == true) {
+                lstAddOnsTemp.add(newAddonsObject.name!);
+                extrasPrice += (double.parse(newAddonsObject.price!));
+              }
+            }
+          }
+
+          joinTitleString = lstAddOnsTemp.join(",");
+        }
+
+        final bool _productIsInList = cartProducts.any((product) =>
+            product.id ==
+            productModel.id +
                 "~" +
                 (productModel.variantInfo != null
                     ? productModel.variantInfo!.variantId.toString()
-                    : ""),
-            name: productModel.name,
-            photo: productModel.photo,
-            price: mainPrice,
-            discountPrice: productModel.disPrice,
-            vendorID: productModel.vendorID,
-            quantity: productQnt,
-            extras_price: extrasPrice.toString(),
-            extras: joinTitleString,
-            category_id: productModel.categoryID,
-            variant_info: productModel.variantInfo));
-      }
-      //  });
-      setState(() {});
-    } else {
-      if (cartProducts.isEmpty) {
-        cartDatabase.addProduct(
-            productModel, cartDatabase, isIncerementQuantity);
-      } else {
-        if (cartProducts[0].vendorID == widget.vendorModel.id) {
-          cartDatabase.addProduct(
-              productModel, cartDatabase, isIncerementQuantity);
-        } else {
-          cartDatabase.addProduct(
-              productModel, cartDatabase, isIncerementQuantity);
+                    : ""));
+        if (_productIsInList) {
+          CartProduct element = cartProducts.firstWhere((product) =>
+              product.id ==
+              productModel.id +
+                  "~" +
+                  (productModel.variantInfo != null
+                      ? productModel.variantInfo!.variantId.toString()
+                      : ""));
 
-          if (isAddOnApplied && addOnVal > 0) {
-            priceTemp += (addOnVal * productQnt);
+          await cartDatabase!.updateProduct(CartProduct(
+              id: element.id,
+              name: element.name,
+              photo: element.photo,
+              price: element.price,
+              vendorID: element.vendorID,
+              quantity: isIncerementQuantity
+                  ? element.quantity + 1
+                  : element.quantity,
+              category_id: element.category_id,
+              extras_price: extrasPrice.toString(),
+              extras: joinTitleString,
+              discountPrice: element.discountPrice!));
+        } else {
+          await cartDatabase!.updateProduct(CartProduct(
+              id: productModel.id +
+                  "~" +
+                  (productModel.variantInfo != null
+                      ? productModel.variantInfo!.variantId.toString()
+                      : ""),
+              name: productModel.name,
+              photo: productModel.photo,
+              price: mainPrice,
+              discountPrice: productModel.disPrice,
+              vendorID: productModel.vendorID,
+              quantity: productQnt,
+              extras_price: extrasPrice.toString(),
+              extras: joinTitleString,
+              category_id: productModel.categoryID,
+              variant_info: productModel.variantInfo));
+        }
+        //  });
+        setState(() {});
+      } else {
+        if (cartProducts.isEmpty) {
+          cartDatabase!
+              .addProduct(productModel, cartDatabase!, isIncerementQuantity);
+        } else {
+          if (cartProducts[0].vendorID == widget.vendorModel.id) {
+            cartDatabase!
+                .addProduct(productModel, cartDatabase!, isIncerementQuantity);
+          } else {
+            cartDatabase!
+                .addProduct(productModel, cartDatabase!, isIncerementQuantity);
+
+            if (isAddOnApplied && addOnVal > 0) {
+              priceTemp += (addOnVal * productQnt);
+            }
           }
         }
       }
@@ -2408,65 +2579,48 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       AddAddonsDemo addAddonsDemo = lstTemp[i];
       addOnVal = addOnVal + double.parse(addAddonsDemo.price!);
     }
-    List<CartProduct> cartProducts = await cartDatabase.allCartProducts;
+    if (kIsWeb) {
+      List<WebCartProduct> cartProducts = webCart!.items;
+      debugPrint("---->$productQnt");
+      if (productQnt >= 1) {
+        var joinTitleString = "";
+        String mainPrice = "";
+        List<AddAddonsDemo> lstAddOns = [];
+        List<String> lstAddOnsTemp = [];
+        double extrasPrice = 0.0;
 
-    debugPrint("---->$productQnt");
-    if (productQnt >= 1) {
-      //setState(() async {
+        SharedPreferences sp = await SharedPreferences.getInstance();
+        String addOns = sp.getString("musics_key") != null
+            ? sp.getString('musics_key')!
+            : "";
 
-      var joinTitleString = "";
-      String mainPrice = "";
-      List<AddAddonsDemo> lstAddOns = [];
-      List<String> lstAddOnsTemp = [];
-      double extrasPrice = 0.0;
-
-      SharedPreferences sp = await SharedPreferences.getInstance();
-      String addOns =
-          sp.getString("musics_key") != null ? sp.getString('musics_key')! : "";
-
-      bool isAddSame = false;
-      if (!isAddSame) {
-        if (productModel.disPrice != null &&
-            productModel.disPrice!.isNotEmpty &&
-            double.parse(productModel.disPrice!) != 0) {
-          mainPrice = productModel.disPrice!;
-        } else {
-          mainPrice = productModel.price;
-        }
-      }
-
-      if (addOns.isNotEmpty) {
-        lstAddOns = AddAddonsDemo.decode(addOns);
-        for (int a = 0; a < lstAddOns.length; a++) {
-          AddAddonsDemo newAddonsObject = lstAddOns[a];
-          if (newAddonsObject.categoryID == widget.productModel.id) {
-            if (newAddonsObject.isCheck == true) {
-              lstAddOnsTemp.add(newAddonsObject.name!);
-              extrasPrice += (double.parse(newAddonsObject.price!));
-            }
+        bool isAddSame = false;
+        if (!isAddSame) {
+          if (productModel.disPrice != null &&
+              productModel.disPrice!.isNotEmpty &&
+              double.parse(productModel.disPrice!) != 0) {
+            mainPrice = productModel.disPrice!;
+          } else {
+            mainPrice = productModel.price;
           }
         }
 
-        joinTitleString = lstAddOnsTemp.join(",");
-      }
+        if (addOns.isNotEmpty) {
+          lstAddOns = AddAddonsDemo.decode(addOns);
+          for (int a = 0; a < lstAddOns.length; a++) {
+            AddAddonsDemo newAddonsObject = lstAddOns[a];
+            if (newAddonsObject.categoryID == widget.productModel.id) {
+              if (newAddonsObject.isCheck == true) {
+                lstAddOnsTemp.add(newAddonsObject.name!);
+                extrasPrice += (double.parse(newAddonsObject.price!));
+              }
+            }
+          }
 
-      final bool _productIsInList = cartProducts.any((product) =>
-          product.id ==
-          productModel.id +
-              "~" +
-              (variants!
-                      .where((element) =>
-                          element.variantSku == selectedVariants.join('-'))
-                      .isNotEmpty
-                  ? variants!
-                      .where((element) =>
-                          element.variantSku == selectedVariants.join('-'))
-                      .first
-                      .variantId
-                      .toString()
-                  : ""));
-      if (_productIsInList) {
-        CartProduct element = cartProducts.firstWhere((product) =>
+          joinTitleString = lstAddOnsTemp.join(",");
+        }
+
+        final bool _productIsInList = cartProducts.any((product) =>
             product.id ==
             productModel.id +
                 "~" +
@@ -2481,21 +2635,125 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         .variantId
                         .toString()
                     : ""));
-        await cartDatabase.updateProduct(CartProduct(
-            id: element.id,
-            name: element.name,
-            photo: element.photo,
-            price: element.price,
-            vendorID: element.vendorID,
-            quantity:
-                isIncerementQuantity ? element.quantity - 1 : element.quantity,
-            category_id: element.category_id,
-            extras_price: extrasPrice.toString(),
-            extras: joinTitleString,
-            discountPrice: element.discountPrice!));
+        if (_productIsInList) {
+          WebCartProduct element = cartProducts.firstWhere((product) =>
+              product.id ==
+              productModel.id +
+                  "~" +
+                  (variants!
+                          .where((element) =>
+                              element.variantSku == selectedVariants.join('-'))
+                          .isNotEmpty
+                      ? variants!
+                          .where((element) =>
+                              element.variantSku == selectedVariants.join('-'))
+                          .first
+                          .variantId
+                          .toString()
+                      : ""));
+          await webCart!.updateProduct(WebCartProduct(
+              id: element.id,
+              name: element.name,
+              photo: element.photo,
+              price: element.price,
+              vendorID: element.vendorID,
+              quantity: isIncerementQuantity
+                  ? element.quantity - 1
+                  : element.quantity,
+              category_id: element.category_id,
+              extras_price: extrasPrice.toString(),
+              extras: joinTitleString,
+              discountPrice: element.discountPrice!));
+        } else {
+          await webCart!.updateProduct(WebCartProduct(
+              id: productModel.id +
+                  "~" +
+                  (variants!
+                          .where((element) =>
+                              element.variantSku == selectedVariants.join('-'))
+                          .isNotEmpty
+                      ? variants!
+                          .where((element) =>
+                              element.variantSku == selectedVariants.join('-'))
+                          .first
+                          .variantId
+                          .toString()
+                      : ""),
+              name: productModel.name,
+              photo: productModel.photo,
+              price: mainPrice,
+              discountPrice: productModel.disPrice,
+              vendorID: productModel.vendorID,
+              quantity: productQnt,
+              extras_price: extrasPrice.toString(),
+              extras: joinTitleString,
+              category_id: productModel.categoryID,
+              variant_info: productModel.variantInfo));
+        }
       } else {
-        await cartDatabase.updateProduct(CartProduct(
-            id: productModel.id +
+        webCart!.removeProduct(productModel.id +
+            "~" +
+            (variants!
+                    .where((element) =>
+                        element.variantSku == selectedVariants.join('-'))
+                    .isNotEmpty
+                ? variants!
+                    .where((element) =>
+                        element.variantSku == selectedVariants.join('-'))
+                    .first
+                    .variantId
+                    .toString()
+                : ""));
+        setState(() {
+          productQnt = 0;
+        });
+      }
+    } else {
+      List<CartProduct> cartProducts = await cartDatabase!.allCartProducts;
+      debugPrint("---->$productQnt");
+      if (productQnt >= 1) {
+        //setState(() async {
+
+        var joinTitleString = "";
+        String mainPrice = "";
+        List<AddAddonsDemo> lstAddOns = [];
+        List<String> lstAddOnsTemp = [];
+        double extrasPrice = 0.0;
+
+        SharedPreferences sp = await SharedPreferences.getInstance();
+        String addOns = sp.getString("musics_key") != null
+            ? sp.getString('musics_key')!
+            : "";
+
+        bool isAddSame = false;
+        if (!isAddSame) {
+          if (productModel.disPrice != null &&
+              productModel.disPrice!.isNotEmpty &&
+              double.parse(productModel.disPrice!) != 0) {
+            mainPrice = productModel.disPrice!;
+          } else {
+            mainPrice = productModel.price;
+          }
+        }
+
+        if (addOns.isNotEmpty) {
+          lstAddOns = AddAddonsDemo.decode(addOns);
+          for (int a = 0; a < lstAddOns.length; a++) {
+            AddAddonsDemo newAddonsObject = lstAddOns[a];
+            if (newAddonsObject.categoryID == widget.productModel.id) {
+              if (newAddonsObject.isCheck == true) {
+                lstAddOnsTemp.add(newAddonsObject.name!);
+                extrasPrice += (double.parse(newAddonsObject.price!));
+              }
+            }
+          }
+
+          joinTitleString = lstAddOnsTemp.join(",");
+        }
+
+        final bool _productIsInList = cartProducts.any((product) =>
+            product.id ==
+            productModel.id +
                 "~" +
                 (variants!
                         .where((element) =>
@@ -2507,35 +2765,80 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         .first
                         .variantId
                         .toString()
-                    : ""),
-            name: productModel.name,
-            photo: productModel.photo,
-            price: mainPrice,
-            discountPrice: productModel.disPrice,
-            vendorID: productModel.vendorID,
-            quantity: productQnt,
-            extras_price: extrasPrice.toString(),
-            extras: joinTitleString,
-            category_id: productModel.categoryID,
-            variant_info: productModel.variantInfo));
+                    : ""));
+        if (_productIsInList) {
+          CartProduct element = cartProducts.firstWhere((product) =>
+              product.id ==
+              productModel.id +
+                  "~" +
+                  (variants!
+                          .where((element) =>
+                              element.variantSku == selectedVariants.join('-'))
+                          .isNotEmpty
+                      ? variants!
+                          .where((element) =>
+                              element.variantSku == selectedVariants.join('-'))
+                          .first
+                          .variantId
+                          .toString()
+                      : ""));
+          await cartDatabase!.updateProduct(CartProduct(
+              id: element.id,
+              name: element.name,
+              photo: element.photo,
+              price: element.price,
+              vendorID: element.vendorID,
+              quantity: isIncerementQuantity
+                  ? element.quantity - 1
+                  : element.quantity,
+              category_id: element.category_id,
+              extras_price: extrasPrice.toString(),
+              extras: joinTitleString,
+              discountPrice: element.discountPrice!));
+        } else {
+          await cartDatabase!.updateProduct(CartProduct(
+              id: productModel.id +
+                  "~" +
+                  (variants!
+                          .where((element) =>
+                              element.variantSku == selectedVariants.join('-'))
+                          .isNotEmpty
+                      ? variants!
+                          .where((element) =>
+                              element.variantSku == selectedVariants.join('-'))
+                          .first
+                          .variantId
+                          .toString()
+                      : ""),
+              name: productModel.name,
+              photo: productModel.photo,
+              price: mainPrice,
+              discountPrice: productModel.disPrice,
+              vendorID: productModel.vendorID,
+              quantity: productQnt,
+              extras_price: extrasPrice.toString(),
+              extras: joinTitleString,
+              category_id: productModel.categoryID,
+              variant_info: productModel.variantInfo));
+        }
+      } else {
+        cartDatabase!.removeProduct(productModel.id +
+            "~" +
+            (variants!
+                    .where((element) =>
+                        element.variantSku == selectedVariants.join('-'))
+                    .isNotEmpty
+                ? variants!
+                    .where((element) =>
+                        element.variantSku == selectedVariants.join('-'))
+                    .first
+                    .variantId
+                    .toString()
+                : ""));
+        setState(() {
+          productQnt = 0;
+        });
       }
-    } else {
-      cartDatabase.removeProduct(productModel.id +
-          "~" +
-          (variants!
-                  .where((element) =>
-                      element.variantSku == selectedVariants.join('-'))
-                  .isNotEmpty
-              ? variants!
-                  .where((element) =>
-                      element.variantSku == selectedVariants.join('-'))
-                  .first
-                  .variantId
-                  .toString()
-              : ""));
-      setState(() {
-        productQnt = 0;
-      });
     }
     updatePrice();
   }
@@ -2649,14 +2952,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       }
     }
     List<CartProduct> cartProducts = [];
-    Future.delayed(const Duration(milliseconds: 500), () {
-      cartProducts.clear();
-
-      cartDatabase.allCartProducts.then((value) {
+    List<WebCartProduct> webCartProducts = [];
+    if (kIsWeb) {
+      Future.delayed(const Duration(milliseconds: 50), () {
+        webCartProducts.clear();
+        var value = webCart!.items;
+        print("Preguntando el precio tengo $value");
         priceTemp = 0;
-        cartProducts.addAll(value);
-        for (int i = 0; i < cartProducts.length; i++) {
-          CartProduct e = cartProducts[i];
+        webCartProducts.addAll(value);
+        for (int i = 0; i < webCartProducts.length; i++) {
+          WebCartProduct e = webCartProducts[i];
           if (e.extras_price != null &&
               e.extras_price != "" &&
               double.parse(e.extras_price!) != 0) {
@@ -2666,7 +2971,26 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         }
         setState(() {});
       });
-    });
+    } else {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        cartProducts.clear();
+
+        cartDatabase!.allCartProducts.then((value) {
+          priceTemp = 0;
+          cartProducts.addAll(value);
+          for (int i = 0; i < cartProducts.length; i++) {
+            CartProduct e = cartProducts[i];
+            if (e.extras_price != null &&
+                e.extras_price != "" &&
+                double.parse(e.extras_price!) != 0) {
+              priceTemp += double.parse(e.extras_price!) * e.quantity;
+            }
+            priceTemp += double.parse(e.price) * e.quantity;
+          }
+          setState(() {});
+        });
+      });
+    }
   }
 
   Widget _buildChip(String label, int attributesOptionIndex, bool isSelected) {

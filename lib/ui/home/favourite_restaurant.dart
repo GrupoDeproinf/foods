@@ -15,7 +15,8 @@ class FavouriteRestaurantScreen extends StatefulWidget {
   const FavouriteRestaurantScreen({Key? key}) : super(key: key);
 
   @override
-  _FavouriteRestaurantScreenState createState() => _FavouriteRestaurantScreenState();
+  _FavouriteRestaurantScreenState createState() =>
+      _FavouriteRestaurantScreenState();
 }
 
 class _FavouriteRestaurantScreenState extends State<FavouriteRestaurantScreen> {
@@ -30,7 +31,6 @@ class _FavouriteRestaurantScreenState extends State<FavouriteRestaurantScreen> {
 
   @override
   void initState() {
-
     super.initState();
     fireStoreUtils.getplaceholderimage().then((value) {
       placeHolderImage = value!;
@@ -57,12 +57,15 @@ class _FavouriteRestaurantScreenState extends State<FavouriteRestaurantScreen> {
                     itemBuilder: (context, index) {
                       if (storeAllLst.isNotEmpty) {
                         for (int a = 0; a < storeAllLst.length; a++) {
-                          if (storeAllLst[a].id == lstFavourite[index].restaurantId) {
+                          if (storeAllLst[a].id ==
+                              lstFavourite[index].restaurantId) {
                             vendorModel = storeAllLst[a];
                           } else {}
                         }
                       }
-                      return vendorModel == null ? Container() : buildAllStoreData(vendorModel!, index);
+                      return vendorModel == null
+                          ? Container()
+                          : buildAllStoreData(vendorModel!, index);
                     }));
   }
 
@@ -101,7 +104,8 @@ class _FavouriteRestaurantScreenState extends State<FavouriteRestaurantScreen> {
                   imageBuilder: (context, imageProvider) => Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                      image: DecorationImage(
+                          image: imageProvider, fit: BoxFit.cover),
                     ),
                   ),
                   placeholder: (context, url) => Center(
@@ -140,9 +144,13 @@ class _FavouriteRestaurantScreenState extends State<FavouriteRestaurantScreen> {
                         GestureDetector(
                           onTap: () {
                             setState(() {
-                              FavouriteModel favouriteModel = FavouriteModel(restaurantId: vendorModel.id, userId: MyAppState.currentUser!.userID);
-                              lstFavourite.removeWhere((item) => item.restaurantId == vendorModel.id);
-                              fireStoreUtils.removeFavouriteRestaurant(favouriteModel);
+                              FavouriteModel favouriteModel = FavouriteModel(
+                                  restaurantId: vendorModel.id,
+                                  userId: MyAppState.currentUser!.userID);
+                              lstFavourite.removeWhere((item) =>
+                                  item.restaurantId == vendorModel.id);
+                              fireStoreUtils
+                                  .removeFavouriteRestaurant(favouriteModel);
                             });
                           },
                           child: Icon(
@@ -176,7 +184,12 @@ class _FavouriteRestaurantScreenState extends State<FavouriteRestaurantScreen> {
                           color: Color(COLOR_PRIMARY),
                         ),
                         const SizedBox(width: 3),
-                        Text(vendorModel.reviewsCount != 0 ? (vendorModel.reviewsSum / vendorModel.reviewsCount).toStringAsFixed(1) : 0.toString(),
+                        Text(
+                            vendorModel.reviewsCount != 0
+                                ? (vendorModel.reviewsSum /
+                                        vendorModel.reviewsCount)
+                                    .toStringAsFixed(1)
+                                : 0.toString(),
                             style: const TextStyle(
                               fontFamily: "Oswald",
                               letterSpacing: 0.5,
@@ -203,7 +216,9 @@ class _FavouriteRestaurantScreenState extends State<FavouriteRestaurantScreen> {
   }
 
   void getData() {
-    fireStoreUtils.getFavouriteRestaurant(MyAppState.currentUser!.userID).then((value) {
+    fireStoreUtils
+        .getFavouriteRestaurant(MyAppState.currentUser!.userID)
+        .then((value) {
       setState(() {
         lstFavourite.clear();
         lstFavourite.addAll(value);

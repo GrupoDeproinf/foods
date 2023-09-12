@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-PayStackVerifyModel payStackUrlModelFromJson(String str) => PayStackVerifyModel.fromJson(json.decode(str));
+PayStackVerifyModel payStackUrlModelFromJson(String str) =>
+    PayStackVerifyModel.fromJson(json.decode(str));
 
-String payStackUrlModelToJson(PayStackVerifyModel data) => json.encode(data.toJson());
+String payStackUrlModelToJson(PayStackVerifyModel data) =>
+    json.encode(data.toJson());
 
 class PayStackVerifyModel {
   PayStackVerifyModel({
@@ -19,7 +21,8 @@ class PayStackVerifyModel {
   String message;
   Data data;
 
-  factory PayStackVerifyModel.fromJson(Map<String, dynamic> json) => PayStackVerifyModel(
+  factory PayStackVerifyModel.fromJson(Map<String, dynamic> json) =>
+      PayStackVerifyModel(
         status: json["status"],
         message: json["message"],
         data: Data.fromJson(json["data"]),
@@ -308,7 +311,8 @@ class Log {
         success: json["success"],
         mobile: json["mobile"],
         input: List<dynamic>.from(json["input"].map((x) => x)),
-        history: List<History>.from(json["history"].map((x) => History.fromJson(x))),
+        history:
+            List<History>.from(json["history"].map((x) => History.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {

@@ -7,7 +7,8 @@ class PlayerWidget extends StatefulWidget {
   final String url;
   final Color color;
 
-  const PlayerWidget({Key? key, required this.url, required this.color}) : super(key: key);
+  const PlayerWidget({Key? key, required this.url, required this.color})
+      : super(key: key);
 
   @override
   _PlayerWidgetState createState() => _PlayerWidgetState();
@@ -15,7 +16,8 @@ class PlayerWidget extends StatefulWidget {
 
 class _PlayerWidgetState extends State<PlayerWidget> {
   FlutterSoundPlayer _myPlayer = FlutterSoundPlayer();
-  StreamController<PlaybackDisposition> _localController = StreamController<PlaybackDisposition>.broadcast();
+  StreamController<PlaybackDisposition> _localController =
+      StreamController<PlaybackDisposition>.broadcast();
   final _sliderPosition = _SliderPosition();
   late Stream<PlaybackDisposition> playerStream;
 
@@ -44,7 +46,9 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   Widget _buildPlayPauseButton() => IconButton(
         key: Key('play_button'),
         onPressed: () => buttonClick(),
-        icon: Icon(_myPlayer.isPlaying ? Icons.pause_circle_outline : Icons.play_circle_outline),
+        icon: Icon(_myPlayer.isPlaying
+            ? Icons.pause_circle_outline
+            : Icons.play_circle_outline),
         iconSize: 35,
         color: widget.color,
       );
@@ -83,8 +87,12 @@ class _PlayerWidgetState extends State<PlayerWidget> {
       initialData: PlaybackDisposition.zero(),
       builder: (context, snapshot) {
         var disposition = snapshot.data!;
-        var durationDate = DateTime.fromMillisecondsSinceEpoch(disposition.duration.inMilliseconds, isUtc: true);
-        var positionDate = DateTime.fromMillisecondsSinceEpoch(disposition.position.inMilliseconds, isUtc: true);
+        var durationDate = DateTime.fromMillisecondsSinceEpoch(
+            disposition.duration.inMilliseconds,
+            isUtc: true);
+        var positionDate = DateTime.fromMillisecondsSinceEpoch(
+            disposition.position.inMilliseconds,
+            isUtc: true);
         return Text(
           '${positionDate.minute.toString().padLeft(2, '0')}:${positionDate.second.toString().padLeft(2, '0')} / ${durationDate.minute.toString().padLeft(2, '0')}:${durationDate.second.toString().padLeft(2, '0')}',
           style: TextStyle(fontSize: 14.0, color: widget.color),
@@ -92,12 +100,14 @@ class _PlayerWidgetState extends State<PlayerWidget> {
       });
 
   /// Call [resume] to resume playing the audio.
-  Future<void> resume() async => await _myPlayer.resumePlayer().catchError((dynamic e) async {
+  Future<void> resume() async =>
+      await _myPlayer.resumePlayer().catchError((dynamic e) async {
         await _myPlayer.stopPlayer();
       });
 
   /// Call [pause] to pause playing the audio.
-  Future<void> pause() async => await _myPlayer.pausePlayer().catchError((dynamic e) async {
+  Future<void> pause() async =>
+      await _myPlayer.pausePlayer().catchError((dynamic e) async {
         await _myPlayer.stopPlayer();
       });
 
@@ -144,7 +154,8 @@ class CustomTrackShape extends RoundedRectSliderTrackShape {
   }) {
     final double trackHeight = sliderTheme.trackHeight ?? 0.0;
     final double trackLeft = offset.dx;
-    final double trackTop = offset.dy + (parentBox.size.height - trackHeight) / 2;
+    final double trackTop =
+        offset.dy + (parentBox.size.height - trackHeight) / 2;
     final double trackWidth = parentBox.size.width - 10;
     return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
   }

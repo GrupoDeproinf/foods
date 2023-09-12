@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:custom_food/model/ProductModel.dart';
 import 'package:custom_food/model/variant_info.dart';
 import 'package:custom_food/ui/productDetailsScreen/ProductDetailsScreen.dart';
-import 'package:moor_flutter/moor_flutter.dart';
+import 'package:drift_sqflite/drift_sqflite.dart';
+import 'package:drift/drift.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'localDatabase.g.dart';
@@ -28,16 +29,18 @@ class CartProducts extends Table {
 
   TextColumn get extras => text().nullable()();
 
-
   @override
   Set<Column> get primaryKey => {id};
 }
 
-@UseMoor(tables: [CartProducts])
+@DriftDatabase(tables: [CartProducts])
 class CartDatabase extends _$CartDatabase {
-  CartDatabase() : super(FlutterQueryExecutor.inDatabaseFolder(path: 'db.sqlite', logStatements: true));
+  CartDatabase()
+      : super(SqfliteQueryExecutor.inDatabaseFolder(
+            path: 'db.sqlite', logStatements: true));
 
-  addProduct(ProductModel model, CartDatabase cartDatabase, bool isIncerementQuantity) async {
+  addProduct(ProductModel model, CartDatabase cartDatabase,
+      bool isIncerementQuantity) async {
     var joinTitleString = "";
     String mainPrice = "";
     List<AddAddonsDemo> lstAddOns = [];
@@ -45,12 +48,15 @@ class CartDatabase extends _$CartDatabase {
     double extrasPrice = 0.0;
 
     SharedPreferences sp = await SharedPreferences.getInstance();
-    String addOns = sp.getString("musics_key") != null ? sp.getString('musics_key')! : "";
+    String addOns =
+        sp.getString("musics_key") != null ? sp.getString('musics_key')! : "";
 
     bool isAddSame = false;
 
     if (!isAddSame) {
-      if (model.disPrice != null && model.disPrice!.isNotEmpty && double.parse(model.disPrice!) != 0) {
+      if (model.disPrice != null &&
+          model.disPrice!.isNotEmpty &&
+          double.parse(model.disPrice!) != 0) {
         mainPrice = model.disPrice!;
       } else {
         mainPrice = model.price;
@@ -73,23 +79,40 @@ class CartDatabase extends _$CartDatabase {
     }
 
     allCartProducts.then((products) async {
-      final bool _productIsInList = products.any((product) => product.id == (model.id + "~" + (model.variantInfo != null ? model.variantInfo!.variantId.toString() : "")));
+      final bool _productIsInList = products.any((product) =>
+          product.id ==
+          (model.id +
+              "~" +
+              (model.variantInfo != null
+                  ? model.variantInfo!.variantId.toString()
+                  : "")));
       if (_productIsInList) {
-        CartProduct element = products.firstWhere((product) => product.id == (model.id + "~" + (model.variantInfo != null ? model.variantInfo!.variantId.toString() : "")));
+        CartProduct element = products.firstWhere((product) =>
+            product.id ==
+            (model.id +
+                "~" +
+                (model.variantInfo != null
+                    ? model.variantInfo!.variantId.toString()
+                    : "")));
         await cartDatabase.updateProduct(CartProduct(
             id: element.id,
             name: element.name,
             photo: element.photo,
             price: element.price,
             vendorID: element.vendorID,
-            quantity: isIncerementQuantity ? element.quantity + 1 : element.quantity,
+            quantity:
+                isIncerementQuantity ? element.quantity + 1 : element.quantity,
             category_id: element.category_id,
             extras_price: extrasPrice.toString(),
             extras: joinTitleString,
             discountPrice: element.discountPrice!));
       } else {
         CartProduct entity = CartProduct(
-            id: model.id + "~" + (model.variantInfo != null ? model.variantInfo!.variantId.toString() : ""),
+            id: model.id +
+                "~" +
+                (model.variantInfo != null
+                    ? model.variantInfo!.variantId.toString()
+                    : ""),
             name: model.name,
             photo: model.photo,
             price: mainPrice,
@@ -109,13 +132,18 @@ class CartDatabase extends _$CartDatabase {
     });
   }
 
-  reAddProduct(CartProduct cartProduct) => into(cartProducts).insert(cartProduct);
+  reAddProduct(CartProduct cartProduct) =>
+      into(cartProducts).insert(cartProduct);
 
-  removeProduct(String productID) => (delete(cartProducts)..where((product) => product.id.equals(productID))).go();
+  removeProduct(String productID) =>
+      (delete(cartProducts)..where((product) => product.id.equals(productID)))
+          .go();
 
   deleteAllProducts() => (delete(cartProducts)).go();
 
-  updateProduct(CartProduct entity) => (update(cartProducts)..where((product) => product.id.equals(entity.id))).write(entity);
+  updateProduct(CartProduct entity) =>
+      (update(cartProducts)..where((product) => product.id.equals(entity.id)))
+          .write(entity);
 
   @override
   int get schemaVersion => 1;

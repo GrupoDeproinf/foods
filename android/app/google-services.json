@@ -1,62 +1,33 @@
 {
   "project_info": {
-    "project_number": "1067265015919",
-    "project_id": "salon-canton",
-    "storage_bucket": "salon-canton.appspot.com"
+    "project_number": "847314641119",
+    "project_id": "saloncantontest",
+    "storage_bucket": "saloncantontest.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1067265015919:android:c508ec8850c29252450d9a",
+        "mobilesdk_app_id": "1:847314641119:android:38aa579028e172e074096a",
         "android_client_info": {
-          "package_name": "com.salon_canton.admin.android"
+          "package_name": "com.deproinf.foods.android"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1067265015919-928d2o9u1fc00c8rmgt3j3dudbcigmmv.apps.googleusercontent.com",
+          "client_id": "847314641119-quj2qu2dmjt9soecf3ednik6i6jqjarf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDzOIl96S1mWYUF9C5R9CdXpdA10LvL4ic"
+          "current_key": "AIzaSyACnJZKPsF3sQiT5IvJykcdqtGMKeiv5iA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1067265015919-928d2o9u1fc00c8rmgt3j3dudbcigmmv.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1067265015919:android:782fdd5bf29985ab450d9a",
-        "android_client_info": {
-          "package_name": "com.saloncanton.customer.android"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1067265015919-928d2o9u1fc00c8rmgt3j3dudbcigmmv.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDzOIl96S1mWYUF9C5R9CdXpdA10LvL4ic"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1067265015919-928d2o9u1fc00c8rmgt3j3dudbcigmmv.apps.googleusercontent.com",
+              "client_id": "847314641119-3rssbgjgqu269ju90a2f13qo08h9n58n.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -24,6 +24,7 @@ class StripeCreateIntent {
     debugPrint(response.body);
 
     final data = jsonDecode(response.body);
-    return StripeCreateIntentModel.fromJson(data); //PayPalClientSettleModel.fromJson(data);
+    return StripeCreateIntentModel.fromJson(
+        data); //PayPalClientSettleModel.fromJson(data);
   }
 }

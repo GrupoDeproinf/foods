@@ -54,7 +54,7 @@ class OfferModel {
       "code": this.offerCode,
       "id": this.offerId,
       "restaurant_id": this.restaurantId,
-      "categoryID":this.categoryID,
+      "categoryID": this.categoryID,
     };
   }
 }

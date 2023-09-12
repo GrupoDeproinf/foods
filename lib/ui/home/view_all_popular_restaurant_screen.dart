@@ -16,10 +16,12 @@ class ViewAllPopularRestaurantScreen extends StatefulWidget {
   const ViewAllPopularRestaurantScreen({Key? key}) : super(key: key);
 
   @override
-  _ViewAllPopularRestaurantScreenState createState() => _ViewAllPopularRestaurantScreenState();
+  _ViewAllPopularRestaurantScreenState createState() =>
+      _ViewAllPopularRestaurantScreenState();
 }
 
-class _ViewAllPopularRestaurantScreenState extends State<ViewAllPopularRestaurantScreen> {
+class _ViewAllPopularRestaurantScreenState
+    extends State<ViewAllPopularRestaurantScreen> {
   Stream<List<VendorModel>>? vendorsFuture;
   final fireStoreUtils = FireStoreUtils();
   List<VendorModel> storeAllLst = [];
@@ -37,18 +39,64 @@ class _ViewAllPopularRestaurantScreenState extends State<ViewAllPopularRestauran
       vendorsFuture!.listen((value) {
         storeAllLst.addAll(value);
         // storeAllLst.sort((a, b) =>(a.reviewsSum / a.reviewsCount).compareTo(b.reviewsSum / b.reviewsCount));
-        List<VendorModel> temp5 = storeAllLst.where((element) => num.parse((element.reviewsSum / element.reviewsCount).toString()) == 5).toList();
-        List<VendorModel> temp5_ =
-            storeAllLst.where((element) => num.parse((element.reviewsSum / element.reviewsCount).toString()) > 4 && num.parse((element.reviewsSum / element.reviewsCount).toString()) < 5).toList();
-        List<VendorModel> temp4 =
-            storeAllLst.where((element) => num.parse((element.reviewsSum / element.reviewsCount).toString()) > 3 && num.parse((element.reviewsSum / element.reviewsCount).toString()) < 4).toList();
-        List<VendorModel> temp3 =
-            storeAllLst.where((element) => num.parse((element.reviewsSum / element.reviewsCount).toString()) > 2 && num.parse((element.reviewsSum / element.reviewsCount).toString()) < 3).toList();
-        List<VendorModel> temp2 =
-            storeAllLst.where((element) => num.parse((element.reviewsSum / element.reviewsCount).toString()) > 1 && num.parse((element.reviewsSum / element.reviewsCount).toString()) < 2).toList();
-        List<VendorModel> temp1 = storeAllLst.where((element) => num.parse((element.reviewsSum / element.reviewsCount).toString()) == 1).toList();
-        List<VendorModel> temp0 = storeAllLst.where((element) => num.parse((element.reviewsSum / element.reviewsCount).toString()) == 0).toList();
-        List<VendorModel> temp0_ = storeAllLst.where((element) => element.reviewsSum == 0 && element.reviewsCount == 0).toList();
+        List<VendorModel> temp5 = storeAllLst
+            .where((element) =>
+                num.parse(
+                    (element.reviewsSum / element.reviewsCount).toString()) ==
+                5)
+            .toList();
+        List<VendorModel> temp5_ = storeAllLst
+            .where((element) =>
+                num.parse((element.reviewsSum / element.reviewsCount)
+                        .toString()) >
+                    4 &&
+                num.parse((element.reviewsSum / element.reviewsCount)
+                        .toString()) <
+                    5)
+            .toList();
+        List<VendorModel> temp4 = storeAllLst
+            .where((element) =>
+                num.parse((element.reviewsSum / element.reviewsCount)
+                        .toString()) >
+                    3 &&
+                num.parse((element.reviewsSum / element.reviewsCount)
+                        .toString()) <
+                    4)
+            .toList();
+        List<VendorModel> temp3 = storeAllLst
+            .where((element) =>
+                num.parse((element.reviewsSum / element.reviewsCount)
+                        .toString()) >
+                    2 &&
+                num.parse((element.reviewsSum / element.reviewsCount)
+                        .toString()) <
+                    3)
+            .toList();
+        List<VendorModel> temp2 = storeAllLst
+            .where((element) =>
+                num.parse((element.reviewsSum / element.reviewsCount)
+                        .toString()) >
+                    1 &&
+                num.parse((element.reviewsSum / element.reviewsCount)
+                        .toString()) <
+                    2)
+            .toList();
+        List<VendorModel> temp1 = storeAllLst
+            .where((element) =>
+                num.parse(
+                    (element.reviewsSum / element.reviewsCount).toString()) ==
+                1)
+            .toList();
+        List<VendorModel> temp0 = storeAllLst
+            .where((element) =>
+                num.parse(
+                    (element.reviewsSum / element.reviewsCount).toString()) ==
+                0)
+            .toList();
+        List<VendorModel> temp0_ = storeAllLst
+            .where((element) =>
+                element.reviewsSum == 0 && element.reviewsCount == 0)
+            .toList();
 
         storeAllLst.clear();
         storeAllLst.addAll(temp5);
@@ -117,7 +165,8 @@ class _ViewAllPopularRestaurantScreenState extends State<ViewAllPopularRestauran
                         scrollDirection: Axis.vertical,
                         physics: const BouncingScrollPhysics(),
                         itemCount: storeAllLst.length,
-                        itemBuilder: (context, index) => buildPopularsItem(storeAllLst[index]))));
+                        itemBuilder: (context, index) =>
+                            buildPopularsItem(storeAllLst[index]))));
   }
 
   Widget buildPopularsItem(VendorModel vendorModel) {
@@ -153,7 +202,8 @@ class _ViewAllPopularRestaurantScreenState extends State<ViewAllPopularRestauran
               imageBuilder: (context, imageProvider) => Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                  image:
+                      DecorationImage(image: imageProvider, fit: BoxFit.cover),
                 ),
               ),
               placeholder: (context, url) => Center(
@@ -201,7 +251,12 @@ class _ViewAllPopularRestaurantScreenState extends State<ViewAllPopularRestauran
                                   color: Color(COLOR_PRIMARY),
                                 ),
                                 const SizedBox(width: 3),
-                                Text(vendorModel.reviewsCount != 0 ? (vendorModel.reviewsSum / vendorModel.reviewsCount).toStringAsFixed(1) : 0.toString(),
+                                Text(
+                                    vendorModel.reviewsCount != 0
+                                        ? (vendorModel.reviewsSum /
+                                                vendorModel.reviewsCount)
+                                            .toStringAsFixed(1)
+                                        : 0.toString(),
                                     style: const TextStyle(
                                       fontFamily: "Oswald",
                                       fontWeight: FontWeight.bold,
@@ -256,8 +311,12 @@ class _ViewAllPopularRestaurantScreenState extends State<ViewAllPopularRestauran
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 10, right: 10),
-                              child: Text(getKm(vendorModel.latitude, vendorModel.longitude)! + " km",
+                              padding:
+                                  const EdgeInsets.only(left: 10, right: 10),
+                              child: Text(
+                                  getKm(vendorModel.latitude,
+                                          vendorModel.longitude)! +
+                                      " km",
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
@@ -287,7 +346,8 @@ class _ViewAllPopularRestaurantScreenState extends State<ViewAllPopularRestauran
     //      .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
     setState(() {
-      position = LatLng(MyAppState.selectedPosotion.latitude, MyAppState.selectedPosotion.longitude);
+      position = LatLng(MyAppState.selectedPosotion.latitude,
+          MyAppState.selectedPosotion.longitude);
       // cameraPosition = CameraPosition(
       //   target: LatLng(position.latitude, position.longitude),
       //   zoom: 14.4746,
@@ -296,7 +356,8 @@ class _ViewAllPopularRestaurantScreenState extends State<ViewAllPopularRestauran
   }
 
   String? getKm(double latitude, double longitude) {
-    double distanceInMeters = Geolocator.distanceBetween(latitude, longitude, position.latitude, position.longitude);
+    double distanceInMeters = Geolocator.distanceBetween(
+        latitude, longitude, position.latitude, position.longitude);
     double kilometer = distanceInMeters / 1000;
 
     return kilometer.toStringAsFixed(decimal).toString();

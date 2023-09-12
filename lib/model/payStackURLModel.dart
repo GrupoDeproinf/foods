@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-PayStackUrlModel payStackUrlModelFromJson(String str) => PayStackUrlModel.fromJson(json.decode(str));
+PayStackUrlModel payStackUrlModelFromJson(String str) =>
+    PayStackUrlModel.fromJson(json.decode(str));
 
-String payStackUrlModelToJson(PayStackUrlModel data) => json.encode(data.toJson());
+String payStackUrlModelToJson(PayStackUrlModel data) =>
+    json.encode(data.toJson());
 
 class PayStackUrlModel {
   PayStackUrlModel({
@@ -19,7 +21,8 @@ class PayStackUrlModel {
   String message;
   Data data;
 
-  factory PayStackUrlModel.fromJson(Map<String, dynamic> json) => PayStackUrlModel(
+  factory PayStackUrlModel.fromJson(Map<String, dynamic> json) =>
+      PayStackUrlModel(
         status: json["status"],
         message: json["message"],
         data: Data.fromJson(json["data"]),

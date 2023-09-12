@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:custom_food/AppGlobal.dart';
 import 'package:custom_food/constants.dart';
@@ -33,6 +34,9 @@ import 'package:custom_food/userPrefrence.dart';
 import 'package:custom_food/utils/DarkThemeProvider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
+
+import '../../services/web_cart/webCarProduct.dart';
+import '../../services/web_cart/webCart.dart';
 
 enum DrawerSelection {
   Home,
@@ -82,7 +86,8 @@ class ContainerScreen extends StatefulWidget {
 class ContainerScreenState extends State<ContainerScreen> {
   var key = GlobalKey<ScaffoldState>();
 
-  late CartDatabase cartDatabase;
+  late CartDatabase? cartDatabase;
+  late WebCart? webCart;
   late User user;
   late String _appBarTitle;
   final fireStoreUtils = FireStoreUtils();
@@ -138,21 +143,33 @@ class ContainerScreenState extends State<ContainerScreen> {
       }
     });
 
-    await FireStoreUtils().getRazorPayDemo();
-    await FireStoreUtils.getPaypalSettingData();
-    await FireStoreUtils.getStripeSettingData();
-    await FireStoreUtils.getPayStackSettingData();
-    await FireStoreUtils.getFlutterWaveSettingData();
-    await FireStoreUtils.getPaytmSettingData();
-    await FireStoreUtils.getWalletSettingData();
-    await FireStoreUtils.getPayFastSettingData();
-    await FireStoreUtils.getMercadoPagoSettingData();
+    // await FireStoreUtils().getRazorPayDemo();
+    // await FireStoreUtils.getPaypalSettingData();
+    // await FireStoreUtils.getStripeSettingData();
+    // await FireStoreUtils.getPayStackSettingData();
+    // await FireStoreUtils.getFlutterWaveSettingData();
+    // await FireStoreUtils.getPaytmSettingData();
+    // await FireStoreUtils.getWalletSettingData();
+    // await FireStoreUtils.getPayFastSettingData();
+    // await FireStoreUtils.getMercadoPagoSettingData();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    cartDatabase = Provider.of<CartDatabase>(context);
+    if (!kIsWeb)
+      cartDatabase = Provider.of<CartDatabase>(context);
+    else {
+      webCart = Provider.of<WebCart>(context);
+      webCart!.addListener(() {
+        var products = 0;
+        webCart!.items.forEach((e) => products += e.quantity);
+        setState(() {
+          cartCount = products;
+          print(cartCount);
+        });
+      });
+    }
   }
 
   DateTime preBackpress = DateTime.now();
@@ -233,7 +250,7 @@ class ContainerScreenState extends State<ContainerScreen> {
                                                   child: Text(
                                                     user.fullName(),
                                                     style: const TextStyle(
-                                                      fontFamily: "Oswald",
+                                                        fontFamily: "Oswald",
                                                         color: Colors.white),
                                                   ),
                                                 ),
@@ -244,7 +261,7 @@ class ContainerScreenState extends State<ContainerScreen> {
                                                     child: Text(
                                                       user.email,
                                                       style: const TextStyle(
-                                                        fontFamily: "Oswald",
+                                                          fontFamily: "Oswald",
                                                           color: Colors.white),
                                                     )),
                                               ],
@@ -265,7 +282,10 @@ class ContainerScreenState extends State<ContainerScreen> {
                                 child: ListTile(
                                   selected:
                                       _drawerSelection == DrawerSelection.Home,
-                                  title: Text('Home', style: TextStyle(fontFamily: "Oswald",)).tr(),
+                                  title: Text('Home',
+                                      style: TextStyle(
+                                        fontFamily: "Oswald",
+                                      )).tr(),
                                   onTap: () {
                                     Navigator.pop(context);
                                     setState(() {
@@ -318,7 +338,10 @@ class ContainerScreenState extends State<ContainerScreen> {
                                   selected:
                                       _drawerSelection == DrawerSelection.Cart,
                                   leading: Icon(CupertinoIcons.cart),
-                                  title: Text('Cart',style: TextStyle(fontFamily: "Oswald",)).tr(),
+                                  title: Text('Cart',
+                                      style: TextStyle(
+                                        fontFamily: "Oswald",
+                                      )).tr(),
                                   onTap: () {
                                     if (MyAppState.currentUser == null) {
                                       Navigator.pop(context);
@@ -353,7 +376,10 @@ class ContainerScreenState extends State<ContainerScreen> {
                                     width: 24,
                                     height: 24,
                                   ),
-                                  title: Text('Orders',style: TextStyle(fontFamily: "Oswald",)).tr(),
+                                  title: Text('Orders',
+                                      style: TextStyle(
+                                        fontFamily: "Oswald",
+                                      )).tr(),
                                   onTap: () {
                                     if (MyAppState.currentUser == null) {
                                       Navigator.pop(context);
@@ -378,7 +404,9 @@ class ContainerScreenState extends State<ContainerScreen> {
                                       DrawerSelection.Profile,
                                   leading: Icon(CupertinoIcons.person),
                                   title: Text('Profile',
-                                  style: TextStyle(fontFamily: "Oswald",)).tr(),
+                                      style: TextStyle(
+                                        fontFamily: "Oswald",
+                                      )).tr(),
                                   onTap: () {
                                     if (MyAppState.currentUser == null) {
                                       Navigator.pop(context);
@@ -397,7 +425,7 @@ class ContainerScreenState extends State<ContainerScreen> {
                                   },
                                 ),
                               ),
-                              
+
                               // !isDineInEnable
                               //     ? Container()
                               //     : ListTileTheme(
@@ -472,10 +500,13 @@ class ContainerScreenState extends State<ContainerScreen> {
                                     selected: _drawerSelection ==
                                         DrawerSelection.Logout,
                                     leading: Icon(Icons.logout),
-                                    title: Text(MyAppState.currentUser == null
+                                    title: Text(
+                                        MyAppState.currentUser == null
                                             ? 'Login'
-                                            : 'Log Out', style: TextStyle(fontFamily: "Oswald",))
-                                        .tr(),
+                                            : 'Log Out',
+                                        style: TextStyle(
+                                          fontFamily: "Oswald",
+                                        )).tr(),
                                     onTap: () async {
                                       if (MyAppState.currentUser == null) {
                                         pushAndRemoveUntil(
@@ -496,9 +527,15 @@ class ContainerScreenState extends State<ContainerScreen> {
                                           'latitude': 0.0,
                                           'longitude': 0.0
                                         });
-                                        Provider.of<CartDatabase>(context,
-                                                listen: false)
-                                            .deleteAllProducts();
+                                        if (!kIsWeb) {
+                                          Provider.of<CartDatabase>(context,
+                                                  listen: false)
+                                              .deleteAllProducts();
+                                        } else {
+                                          Provider.of<WebCart>(context,
+                                                  listen: false)
+                                              .deleteAll();
+                                        }
                                         pushAndRemoveUntil(
                                             context, AuthScreen(), false);
                                       }
@@ -509,7 +546,10 @@ class ContainerScreenState extends State<ContainerScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text("V : $appVersion", style: TextStyle(fontFamily: "Oswald",)),
+                          child: Text("V : $appVersion",
+                              style: TextStyle(
+                                fontFamily: "Oswald",
+                              )),
                         )
                       ],
                     )),
@@ -594,7 +634,6 @@ class ContainerScreenState extends State<ContainerScreen> {
                               )
                           ]
                         : [
-                            
                             if (!(_currentWidget is CartScreen) ||
                                 !(_currentWidget is ProfileScreen))
                               IconButton(
@@ -611,47 +650,86 @@ class ContainerScreenState extends State<ContainerScreen> {
                                         width: 20,
                                         color: Colors.white,
                                       ),
-                                      StreamBuilder<List<CartProduct>>(
-                                        stream: cartDatabase.watchProducts,
-                                        builder: (context, snapshot) {
-                                          cartCount = 0;
-                                          if (snapshot.hasData) {
-                                            snapshot.data!.forEach((element) {
-                                              cartCount += element.quantity;
-                                            });
-                                          }
-                                          return Visibility(
-                                            visible: cartCount >= 1,
-                                            child: Positioned(
-                                              right: -6,
-                                              top: -8,
-                                              child: Container(
-                                                padding: EdgeInsets.all(4),
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Color(COLOR_PRIMARY),
-                                                ),
-                                                constraints: BoxConstraints(
-                                                  minWidth: 12,
-                                                  minHeight: 12,
-                                                ),
-                                                child: Center(
-                                                  child: new Text(
-                                                    cartCount <= 99
-                                                        ? '$cartCount'
-                                                        : '+99',
-                                                    style: new TextStyle(
-                                                      color: Colors.white,
-                                                      // fontSize: 10,
+                                      kIsWeb
+                                          ? Visibility(
+                                              visible: cartCount >= 1,
+                                              child: Positioned(
+                                                right: -6,
+                                                top: -8,
+                                                child: Container(
+                                                  padding: EdgeInsets.all(4),
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Color(COLOR_PRIMARY),
+                                                  ),
+                                                  constraints: BoxConstraints(
+                                                    minWidth: 12,
+                                                    minHeight: 12,
+                                                  ),
+                                                  child: Center(
+                                                    child: new Text(
+                                                      cartCount <= 99
+                                                          ? '$cartCount'
+                                                          : '+99',
+                                                      style: new TextStyle(
+                                                        color: Colors.white,
+                                                        // fontSize: 10,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
                                                     ),
-                                                    textAlign: TextAlign.center,
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          );
-                                        },
-                                      )
+                                            )
+                                          : StreamBuilder<List<CartProduct>>(
+                                              stream:
+                                                  cartDatabase!.watchProducts,
+                                              builder: (context, snapshot) {
+                                                cartCount = 0;
+                                                if (snapshot.hasData) {
+                                                  snapshot.data!
+                                                      .forEach((element) {
+                                                    cartCount +=
+                                                        element.quantity;
+                                                  });
+                                                }
+                                                return Visibility(
+                                                  visible: cartCount >= 1,
+                                                  child: Positioned(
+                                                    right: -6,
+                                                    top: -8,
+                                                    child: Container(
+                                                      padding:
+                                                          EdgeInsets.all(4),
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: Color(
+                                                            COLOR_PRIMARY),
+                                                      ),
+                                                      constraints:
+                                                          BoxConstraints(
+                                                        minWidth: 12,
+                                                        minHeight: 12,
+                                                      ),
+                                                      child: Center(
+                                                        child: new Text(
+                                                          cartCount <= 99
+                                                              ? '$cartCount'
+                                                              : '+99',
+                                                          style: new TextStyle(
+                                                            color: Colors.white,
+                                                            // fontSize: 10,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            )
                                     ],
                                   ),
                                   onPressed: () {

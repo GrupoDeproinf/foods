@@ -26,12 +26,16 @@ class FIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget icon = IconTheme.merge(
-      data: IconThemeData(color: iconColor ?? Theme.of(context).colorScheme.primary, size: size),
+      data: IconThemeData(
+          color: iconColor ?? Theme.of(context).colorScheme.primary,
+          size: size),
       child: this.icon,
     );
 
     Widget button = Material(
-      type: backgroundColor == null ? MaterialType.transparency : MaterialType.circle,
+      type: backgroundColor == null
+          ? MaterialType.transparency
+          : MaterialType.circle,
       color: backgroundColor,
       child: buildPlatformWrapper(
         context: context,

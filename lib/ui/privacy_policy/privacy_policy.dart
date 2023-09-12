@@ -15,7 +15,11 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
 
   @override
   void initState() {
-    FirebaseFirestore.instance.collection(Setting).doc("privacyPolicy").get().then((value) {
+    FirebaseFirestore.instance
+        .collection(Setting)
+        .doc("privacyPolicy")
+        .get()
+        .then((value) {
       setState(() {
         termsAndCondition = value['privacy_policy'];
       });
@@ -45,8 +49,10 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                   '''
                   $termsAndCondition
                    ''',
-                  onErrorBuilder: (context, element, error) => Text('$element error: $error'),
-                  onLoadingBuilder: (context, element, loadingProgress) => const CircularProgressIndicator(),
+                  onErrorBuilder: (context, element, error) =>
+                      Text('$element error: $error'),
+                  onLoadingBuilder: (context, element, loadingProgress) =>
+                      const CircularProgressIndicator(),
                 )
               : const Center(child: CircularProgressIndicator()),
         ),

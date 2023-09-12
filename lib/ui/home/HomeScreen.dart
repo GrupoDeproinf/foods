@@ -45,6 +45,7 @@ import 'package:story_view/story_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../model/TopSellingModel.dart';
+import '../../services/web_cart/webCart.dart';
 
 class HomeScreen extends StatefulWidget {
   final User? user;
@@ -204,86 +205,71 @@ class _HomeScreenState extends State<HomeScreen> {
     var reversed = response!.results!.first;
 
     String name = "";
-                                            String? locality,
-                                                postalCode,
-                                                country,
-                                                isoCountry,
-                                                administrativeAreaLevel1,
-                                                administrativeAreaLevel2,
-                                                city,
-                                                subLocalityLevel1,
-                                                subLocalityLevel2;
-                                            bool isOnStreet = false;
-                                            if (reversed.addressComponents!.length !=
-                                                    null &&
-                                                reversed.addressComponents!.length > 0) {
-                                              for (var i = 0;
-                                                  i < reversed.addressComponents!.length;
-                                                  i++) {
-                                                var tmp = reversed.addressComponents![i];
-                                                var types = tmp.types;
-                                                var shortName = tmp.shortName ?? tmp.longName ?? "";
-                                                var longName = tmp.longName;
-                                                if (types == null) {
-                                                  continue;
-                                                }
-                                                if (i == 0) {
-                                                  // [street_number]
-                                                  name = shortName;
-                                                  isOnStreet = types
-                                                      .contains('street_number');
-                                                  // other index 0 types
-                                                  // [establishment, point_of_interest, subway_station, transit_station]
-                                                  // [premise]
-                                                  // [route]
-                                                } else if (i == 1 && isOnStreet) {
-                                                  if (types.contains('route')) {
-                                                    name += ", $shortName";
-                                                  }
-                                                } else {
-                                                  if (types.contains(
-                                                      "sublocality_level_1")) {
-                                                    subLocalityLevel1 = shortName;
-                                                  } else if (types.contains(
-                                                      "sublocality_level_2")) {
-                                                    subLocalityLevel2 = shortName;
-                                                  } else if (types
-                                                      .contains("locality")) {
-                                                    locality = longName;
-                                                  } else if (types.contains(
-                                                      "administrative_area_level_2")) {
-                                                    administrativeAreaLevel2 =
-                                                        shortName;
-                                                  } else if (types.contains(
-                                                      "administrative_area_level_1")) {
-                                                    administrativeAreaLevel1 =
-                                                        longName;
-                                                  } else if (types
-                                                      .contains("country")) {
-                                                    country = longName;
-                                                    isoCountry = shortName;
-                                                  } else if (types
-                                                      .contains('postal_code')) {
-                                                    postalCode = shortName;
-                                                  }
-                                                }
-                                              }
-                                            }
-                                            locality = locality ??
-                                                administrativeAreaLevel1;
-                                            city = locality;
-                                            var placeMark = Placemark(
-                                              name: name,
-                                              street: name,
-                                              locality: locality,
-                                              subLocality: subLocalityLevel1,
-                                              postalCode: postalCode, 
-                                              country: country, 
-                                              isoCountryCode: isoCountry,
-                                              administrativeArea: administrativeAreaLevel1,
-                                              subAdministrativeArea: administrativeAreaLevel2,
-                                              );
-                                              
+    String? locality,
+        postalCode,
+        country,
+        isoCountry,
+        administrativeAreaLevel1,
+        administrativeAreaLevel2,
+        city,
+        subLocalityLevel1,
+        subLocalityLevel2;
+    bool isOnStreet = false;
+    if (reversed.addressComponents!.length != null &&
+        reversed.addressComponents!.length > 0) {
+      for (var i = 0; i < reversed.addressComponents!.length; i++) {
+        var tmp = reversed.addressComponents![i];
+        var types = tmp.types;
+        var shortName = tmp.shortName ?? tmp.longName ?? "";
+        var longName = tmp.longName;
+        if (types == null) {
+          continue;
+        }
+        if (i == 0) {
+          // [street_number]
+          name = shortName;
+          isOnStreet = types.contains('street_number');
+          // other index 0 types
+          // [establishment, point_of_interest, subway_station, transit_station]
+          // [premise]
+          // [route]
+        } else if (i == 1 && isOnStreet) {
+          if (types.contains('route')) {
+            name += ", $shortName";
+          }
+        } else {
+          if (types.contains("sublocality_level_1")) {
+            subLocalityLevel1 = shortName;
+          } else if (types.contains("sublocality_level_2")) {
+            subLocalityLevel2 = shortName;
+          } else if (types.contains("locality")) {
+            locality = longName;
+          } else if (types.contains("administrative_area_level_2")) {
+            administrativeAreaLevel2 = shortName;
+          } else if (types.contains("administrative_area_level_1")) {
+            administrativeAreaLevel1 = longName;
+          } else if (types.contains("country")) {
+            country = longName;
+            isoCountry = shortName;
+          } else if (types.contains('postal_code')) {
+            postalCode = shortName;
+          }
+        }
+      }
+    }
+    locality = locality ?? administrativeAreaLevel1;
+    city = locality;
+    var placeMark = Placemark(
+      name: name,
+      street: name,
+      locality: locality,
+      subLocality: subLocalityLevel1,
+      postalCode: postalCode,
+      country: country,
+      isoCountryCode: isoCountry,
+      administrativeArea: administrativeAreaLevel1,
+      subAdministrativeArea: administrativeAreaLevel2,
+    );
 
     if (mounted) {
       setState(() {
@@ -293,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ", " +
             placeMark.locality.toString();
       });
-      getData(null);
+      getData(isoCountry);
     }
     if (MyAppState.currentUser != null) {
       if (MyAppState.currentUser!.location.longitude == 0.01 &&
@@ -504,938 +490,929 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
           backgroundColor: const Color(0xffE7E7E7),
           body: isLocationAvail
-                  ? Center(
-                      child: showEmptyState("notHaveLocation".tr(), context,
-                          description: "locationSearchingRestaurants".tr(),
-                          action: () async {
-                        if (islocationGet) {
-                        } else {
-                          pp.LocationResult result = await Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      pp.PlacePicker(GOOGLE_API_KEY)));
+              ? Center(
+                  child: showEmptyState("notHaveLocation".tr(), context,
+                      description: "locationSearchingRestaurants".tr(),
+                      action: () async {
+                    if (islocationGet) {
+                    } else {
+                      pp.LocationResult result = await Navigator.of(context)
+                          .push(MaterialPageRoute(
+                              builder: (context) =>
+                                  pp.PlacePicker(GOOGLE_API_KEY)));
 
-                          setState(() {
-                            MyAppState.selectedPosotion = Position.fromMap({
-                              'latitude': result.latLng!.latitude,
-                              'longitude': result.latLng!.longitude
-                            });
+                      setState(() {
+                        MyAppState.selectedPosotion = Position.fromMap({
+                          'latitude': result.latLng!.latitude,
+                          'longitude': result.latLng!.longitude
+                        });
 
-                            currentLocation = result.formattedAddress;
-                            getData(null);
-                          });
-                        }
-                      }, buttonTitle: 'Select'.tr()),
-                    )
-                  : SingleChildScrollView(
-                      child: Container(
-                        color: const Color(0xffE7E7E7),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(bottom: 10),
-                              color: Color(COLOR_APPBAR),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 18),
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.location_on_outlined,
-                                              color: Colors.white,
-                                              size: 18,
-                                            ),
-                                            const SizedBox(
-                                              width: 5,
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                      currentLocation
-                                                          .toString(),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontFamily: "Oswald",
-                                                          color: Colors.white,
-                                                          fontSize: 16))
-                                                  .tr(),
-                                            ),
-                                            ElevatedButton(
-                                                onPressed: () {
-                                                  Navigator.of(context)
-                                                      .push(PageRouteBuilder(
-                                                    pageBuilder: (context,
-                                                            animation,
-                                                            secondaryAnimation) =>
-                                                        const CurrentAddressChangeScreen(),
-                                                    transitionsBuilder:
-                                                        (context,
-                                                            animation,
-                                                            secondaryAnimation,
-                                                            child) {
-                                                      return child;
-                                                    },
-                                                  ))
-                                                      .then((value) {
-                                                    if (value != null &&
-                                                        mounted) {
-                                                      setState(() {
-                                                        currentLocation = value;
-                                                        getData(null);
-                                                      });
-                                                    }
-                                                  });
+                        currentLocation = result.formattedAddress;
+                        getData(null);
+                      });
+                    }
+                  }, buttonTitle: 'Select'.tr()),
+                )
+              : SingleChildScrollView(
+                  child: Container(
+                    color: const Color(0xffE7E7E7),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          color: Color(COLOR_APPBAR),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 18),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.location_on_outlined,
+                                          color: Colors.white,
+                                          size: 18,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                                  currentLocation.toString(),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontFamily: "Oswald",
+                                                      color: Colors.white,
+                                                      fontSize: 16))
+                                              .tr(),
+                                        ),
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .push(PageRouteBuilder(
+                                                pageBuilder: (context,
+                                                        animation,
+                                                        secondaryAnimation) =>
+                                                    const CurrentAddressChangeScreen(),
+                                                transitionsBuilder: (context,
+                                                    animation,
+                                                    secondaryAnimation,
+                                                    child) {
+                                                  return child;
                                                 },
-                                                child: Text(
-                                                    "Change".tr().toUpperCase(),
-                                                    style: TextStyle(
-                                                        fontFamily: "Oswald",
-                                                        fontSize: 13)),
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.white,
-                                                  foregroundColor:
-                                                      Color(COLOR_PRIMARY),
-                                                  padding: EdgeInsets.zero,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20)),
-                                                  elevation: 4.0,
-                                                )),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                          ],
-                                        )),
-                                  ]),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(vertical: 5),
-                              color: Color(COLOR_CHOICE),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                        padding: const EdgeInsets.only(
-                                            left: 20, right: 10, bottom: 5),
-                                        child: Row(
-                                          children: [
-                                            DropdownButton(
-                                              // Not necessary for Option 1
-                                              value: vendors.isEmpty
-                                                  ? null
-                                                  : selectedRest,
-                                              isDense: true,
-                                              style: TextStyle(
-                                                  fontSize: 17,
-                                                  color: Color(COLOR_APPBAR)
-                                                      .withOpacity(0.9),
-                                                  fontFamily: "Oswald",
-                                                  fontWeight: FontWeight.w600),
-                                              dropdownColor: Colors.white,
-                                              underline: Container(
-                                                  height: 1,
-                                                  color: Color(COLOR_APPBAR)
-                                                      .withOpacity(0.2)),
-                                              onChanged: (newValue) async {
-                                                int cartProd = 0;
-                                                await Provider.of<CartDatabase>(
-                                                        context,
-                                                        listen: false)
-                                                    .allCartProducts
-                                                    .then((value) {
-                                                  cartProd = value.length;
-                                                });
-
-                                                if (cartProd > 0) {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext
-                                                            context) =>
-                                                        ShowDialogToDismiss(
-                                                      title:
-                                                          "wantChangeRestaurantOption"
-                                                              .tr(),
-                                                      content:
-                                                          "Your cart will be empty"
-                                                              .tr(),
-                                                      buttonText: 'CLOSE'.tr(),
-                                                      secondaryButtonText:
-                                                          'OK'.tr(),
-                                                      action: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        Provider.of<CartDatabase>(
-                                                                context,
-                                                                listen: false)
-                                                            .deleteAllProducts();
-                                                        setState(() {
-                                                          selectedRest = newValue
-                                                              as VendorModel?;
-                                                        });
-                                                        MyAppState.currentUser!
-                                                            .defaultRestaurant = {
-                                                          "id": (newValue
-                                                                  as VendorModel?)
-                                                              ?.id,
-                                                          "title":
-                                                              newValue?.title
-                                                        };
-                                                      },
-                                                    ),
-                                                  );
-                                                } else {
+                                              ))
+                                                  .then((value) {
+                                                if (value != null && mounted) {
                                                   setState(() {
-                                                    selectedRest = newValue
-                                                        as VendorModel?;
+                                                    currentLocation = value;
+                                                    getData(null);
                                                   });
-                                                  MyAppState.currentUser!
-                                                      .defaultRestaurant = {
-                                                    "id": (newValue
-                                                            as VendorModel?)
-                                                        ?.id,
-                                                    "title": newValue?.title
-                                                  };
                                                 }
-                                                FireStoreUtils
-                                                    .updateCurrentUser(
-                                                        MyAppState
-                                                            .currentUser!);
-                                              },
-                                              icon: const Icon(
-                                                Icons.keyboard_arrow_down,
-                                                color: Color(COLOR_PRIMARY),
-                                              ),
-                                              items: vendors.isEmpty
-                                                  ? []
-                                                  : vendors
-                                                      .where((e) =>
-                                                          e.country ==
-                                                          selectedCountry)
-                                                      .map<
-                                                              DropdownMenuItem<
-                                                                  VendorModel>>(
-                                                          (restaurant) {
-                                                        return DropdownMenuItem<
-                                                            VendorModel>(
-                                                          child: Text(
-                                                              restaurant.title,
-                                                              style: TextStyle(
-                                                                  color: Color(
-                                                                          COLOR_APPBAR)
-                                                                      .withOpacity(
-                                                                          0.9))),
-                                                          value: restaurant,
-                                                        );
-                                                      })
-                                                      .toSet()
-                                                      .toList(),
-                                            ),
-                                            Spacer(),
-                                            DropdownButton(
-                                              // Not necessary for Option 1
-                                              value: AppGlobal.countries.isEmpty
-                                                  ? null
-                                                  : selectedCountry,
-                                              isDense: true,
-                                              style: TextStyle(
-                                                  fontSize: 17,
-                                                  color: Color(COLOR_APPBAR)
-                                                      .withOpacity(0.9),
-                                                  fontFamily: "Oswald",
-                                                  fontWeight: FontWeight.w600),
-                                              dropdownColor: Colors.white,
-                                              underline: Container(
-                                                  height: 1,
-                                                  color: Color(COLOR_APPBAR)
-                                                      .withOpacity(0.2)),
-                                              onChanged: (newValue) async {
-                                                int cartProd = 0;
-                                                await Provider.of<CartDatabase>(
-                                                        context,
-                                                        listen: false)
-                                                    .allCartProducts
-                                                    .then((value) {
-                                                  cartProd = value.length;
-                                                });
+                                              });
+                                            },
+                                            child: Text(
+                                                "Change".tr().toUpperCase(),
+                                                style: TextStyle(
+                                                    fontFamily: "Oswald",
+                                                    fontSize: 13)),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.white,
+                                              foregroundColor:
+                                                  Color(COLOR_PRIMARY),
+                                              padding: EdgeInsets.zero,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20)),
+                                              elevation: 4.0,
+                                            )),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                      ],
+                                    )),
+                              ]),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          color: Color(COLOR_CHOICE),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 10, bottom: 5),
+                                    child: Row(
+                                      children: [
+                                        DropdownButton(
+                                          // Not necessary for Option 1
+                                          value: vendors.isEmpty
+                                              ? null
+                                              : selectedRest,
+                                          isDense: true,
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              color: Color(COLOR_APPBAR)
+                                                  .withOpacity(0.9),
+                                              fontFamily: "Oswald",
+                                              fontWeight: FontWeight.w600),
+                                          dropdownColor: Colors.white,
+                                          underline: Container(
+                                              height: 1,
+                                              color: Color(COLOR_APPBAR)
+                                                  .withOpacity(0.2)),
+                                          onChanged: (newValue) async {
+                                            int cartProd = 0;
+                                            if(!kIsWeb){
+                                            await Provider.of<CartDatabase>(
+                                                    context,
+                                                    listen: false)
+                                                .allCartProducts
+                                                .then((value) {
+                                              cartProd = value.length;
+                                            });
+                                            }else{
+                                              Provider.of<WebCart>(
+                                                    context,
+                                                    listen: false)
+                                                .items.forEach((value) {cartProd = cartProd + value.quantity;});
+                                            }
 
-                                                if (cartProd > 0) {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext
-                                                            context) =>
+                                            if (cartProd > 0) {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
                                                         ShowDialogToDismiss(
-                                                      title:
-                                                          "wantChangeCountryOption"
-                                                              .tr(),
-                                                      content:
-                                                          "Your cart will be empty"
-                                                              .tr(),
-                                                      buttonText: 'CLOSE'.tr(),
-                                                      secondaryButtonText:
-                                                          'OK'.tr(),
-                                                      action: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        Provider.of<CartDatabase>(
-                                                                context,
-                                                                listen: false)
-                                                            .deleteAllProducts();
-                                                        setState(() {
-                                                          setState(() {
-                                                            if (newValue !=
-                                                                selectedCountry) {
-                                                              selectedCountry =
-                                                                  newValue
-                                                                      as String?;
+                                                  title:
+                                                      "wantChangeRestaurantOption"
+                                                          .tr(),
+                                                  content:
+                                                      "Your cart will be empty"
+                                                          .tr(),
+                                                  buttonText: 'CLOSE'.tr(),
+                                                  secondaryButtonText:
+                                                      'OK'.tr(),
+                                                  action: () {
+                                                    Navigator.of(context).pop();
+                                                    if(!kIsWeb){
+                                        Provider.of<CartDatabase>(context,
+                                                listen: false)
+                                            .deleteAllProducts();}
+                                        else{
+                                          Provider.of<WebCart>(context, listen: false).deleteAll();
+                                        }
+                                                    setState(() {
+                                                      selectedRest = newValue
+                                                          as VendorModel?;
+                                                    });
+                                                    MyAppState.currentUser!
+                                                        .defaultRestaurant = {
+                                                      "id": (newValue
+                                                              as VendorModel?)
+                                                          ?.id,
+                                                      "title": newValue?.title
+                                                    };
+                                                  },
+                                                ),
+                                              );
+                                            } else {
+                                              setState(() {
+                                                selectedRest =
+                                                    newValue as VendorModel?;
+                                              });
+                                              MyAppState.currentUser!
+                                                  .defaultRestaurant = {
+                                                "id": (newValue as VendorModel?)
+                                                    ?.id,
+                                                "title": newValue?.title
+                                              };
+                                            }
+                                            FireStoreUtils.updateCurrentUser(
+                                                MyAppState.currentUser!);
+                                          },
+                                          icon: const Icon(
+                                            Icons.keyboard_arrow_down,
+                                            color: Color(COLOR_PRIMARY),
+                                          ),
+                                          items: vendors.isEmpty
+                                              ? []
+                                              : vendors
+                                                  .where((e) =>
+                                                      e.country ==
+                                                      selectedCountry)
+                                                  .map<
+                                                          DropdownMenuItem<
+                                                              VendorModel>>(
+                                                      (restaurant) {
+                                                    return DropdownMenuItem<
+                                                        VendorModel>(
+                                                      child: Text(
+                                                          restaurant.title,
+                                                          style: TextStyle(
+                                                              color: Color(
+                                                                      COLOR_APPBAR)
+                                                                  .withOpacity(
+                                                                      0.9))),
+                                                      value: restaurant,
+                                                    );
+                                                  })
+                                                  .toSet()
+                                                  .toList(),
+                                        ),
+                                        Spacer(),
+                                        DropdownButton(
+                                          // Not necessary for Option 1
+                                          value: AppGlobal.countries.isEmpty
+                                              ? null
+                                              : selectedCountry,
+                                          isDense: true,
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              color: Color(COLOR_APPBAR)
+                                                  .withOpacity(0.9),
+                                              fontFamily: "Oswald",
+                                              fontWeight: FontWeight.w600),
+                                          dropdownColor: Colors.white,
+                                          underline: Container(
+                                              height: 1,
+                                              color: Color(COLOR_APPBAR)
+                                                  .withOpacity(0.2)),
+                                          onChanged: (newValue) async {
+                                            int cartProd = 0;
+                                            if(!kIsWeb){
+                                            await Provider.of<CartDatabase>(
+                                                    context,
+                                                    listen: false)
+                                                .allCartProducts
+                                                .then((value) {
+                                              cartProd = value.length;
+                                            });
+                                            }else{
+                                              Provider.of<WebCart>(
+                                                    context,
+                                                    listen: false)
+                                                .items.forEach((value) {cartProd = cartProd + value.quantity;});
+                                            }
 
-                                                              selectedRest = vendors
-                                                                  .firstWhere((element) =>
+                                            if (cartProd > 0) {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        ShowDialogToDismiss(
+                                                  title:
+                                                      "wantChangeCountryOption"
+                                                          .tr(),
+                                                  content:
+                                                      "Your cart will be empty"
+                                                          .tr(),
+                                                  buttonText: 'CLOSE'.tr(),
+                                                  secondaryButtonText:
+                                                      'OK'.tr(),
+                                                  action: () {
+                                                    Navigator.of(context).pop();
+                                                    if(!kIsWeb){
+                                        Provider.of<CartDatabase>(context,
+                                                listen: false)
+                                            .deleteAllProducts();}
+                                        else{
+                                          Provider.of<WebCart>(context, listen: false).deleteAll();
+                                        }
+                                                    setState(() {
+                                                      setState(() {
+                                                        if (newValue !=
+                                                            selectedCountry) {
+                                                          selectedCountry =
+                                                              newValue
+                                                                  as String?;
+
+                                                          selectedRest = vendors
+                                                              .firstWhere(
+                                                                  (element) =>
                                                                       element
                                                                           .country ==
                                                                       newValue);
 
-                                                              MyAppState
-                                                                  .currentUser!
-                                                                  .defaultRestaurant = {
-                                                                "id": (selectedRest
-                                                                        as VendorModel?)
-                                                                    ?.id,
-                                                                "title":
-                                                                    selectedRest
-                                                                        ?.title
-                                                              };
-                                                            }
-                                                          });
                                                           MyAppState
                                                               .currentUser!
                                                               .defaultRestaurant = {
-                                                            "id": (newValue
+                                                            "id": (selectedRest
                                                                     as VendorModel?)
                                                                 ?.id,
                                                             "title":
-                                                                newValue?.title
+                                                                selectedRest
+                                                                    ?.title
                                                           };
-                                                        });
-                                                      },
-                                                    ),
-                                                  );
-                                                } else {
-                                                  setState(() {
-                                                    if (newValue !=
-                                                        selectedCountry) {
-                                                      selectedCountry =
-                                                          newValue as String?;
-
-                                                      selectedRest =
-                                                          vendors.firstWhere(
-                                                              (element) =>
-                                                                  element
-                                                                      .country ==
-                                                                  newValue);
-
+                                                        }
+                                                      });
                                                       MyAppState.currentUser!
                                                           .defaultRestaurant = {
-                                                        "id": (selectedRest
+                                                        "id": (newValue
                                                                 as VendorModel?)
                                                             ?.id,
-                                                        "title":
-                                                            selectedRest?.title
+                                                        "title": newValue?.title
                                                       };
-                                                    }
-                                                  });
+                                                    });
+                                                  },
+                                                ),
+                                              );
+                                            } else {
+                                              setState(() {
+                                                if (newValue !=
+                                                    selectedCountry) {
+                                                  selectedCountry =
+                                                      newValue as String?;
+
+                                                  selectedRest = vendors
+                                                      .firstWhere((element) =>
+                                                          element.country ==
+                                                          newValue);
+
                                                   MyAppState.currentUser!
                                                       .defaultRestaurant = {
-                                                    "id": (newValue
+                                                    "id": (selectedRest
                                                             as VendorModel?)
                                                         ?.id,
-                                                    "title": newValue?.title
+                                                    "title": selectedRest?.title
                                                   };
                                                 }
-                                                FireStoreUtils
-                                                    .updateCurrentUser(
-                                                        MyAppState
-                                                            .currentUser!);
-                                              },
-                                              icon: const Icon(
-                                                Icons.keyboard_arrow_down,
-                                                color: Color(COLOR_PRIMARY),
-                                              ),
-                                              items: AppGlobal.countries.isEmpty
-                                                  ? []
-                                                  : AppGlobal.countries.map<
-                                                      DropdownMenuItem<
-                                                          String>>((country) {
-                                                      return DropdownMenuItem<
-                                                          String>(
-                                                        child: Text(
-                                                                country["name"],
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                            COLOR_APPBAR)
-                                                                        .withOpacity(
-                                                                            0.9)))
-                                                            .tr(),
-                                                        value: country["iso"],
-                                                      );
-                                                    }).toList(),
-                                            ),
-                                            const SizedBox(width: 10),
-                                          ],
-                                        )),
-                                    Visibility(
-                                        visible: storyEnable == true,
-                                        child: storyWidget()),
-                                  ]),
-                            ),
-                            const SizedBox(height: 0),
-                            Visibility(
-                              visible: bannerTopHome.isNotEmpty,
-                              child: Container(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: isHomeBannerLoading
-                                      ? const Center(
-                                          child: CircularProgressIndicator())
-                                      : ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                              maxHeight: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.17),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 0),
-                                            child: buildBestDealPage(
-                                                bannerTopHome.first),
-                                          ))),
-                            ),
-                            buildTitleRow(
-                              titleValue: "Categories".tr(),
-                              onClick: () {
-                                push(
-                                  context,
-                                  NewVendorProductsScreen(
-                                      vendorModel: selectedRest!),
-                                );
-                              },
-                            ),
-                            Container(
-                              child: FutureBuilder<List<VendorCategoryModel>>(
-                                  future: getCategories(),
-                                  initialData: const [],
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return Center(
-                                        child:
-                                            CircularProgressIndicator.adaptive(
-                                          valueColor: AlwaysStoppedAnimation(
-                                              Color(COLOR_PRIMARY)),
+                                              });
+                                              MyAppState.currentUser!
+                                                  .defaultRestaurant = {
+                                                "id": (newValue as VendorModel?)
+                                                    ?.id,
+                                                "title": newValue?.title
+                                              };
+                                            }
+                                            FireStoreUtils.updateCurrentUser(
+                                                MyAppState.currentUser!);
+                                          },
+                                          icon: const Icon(
+                                            Icons.keyboard_arrow_down,
+                                            color: Color(COLOR_PRIMARY),
+                                          ),
+                                          items: AppGlobal.countries.isEmpty
+                                              ? []
+                                              : AppGlobal.countries.map<
+                                                      DropdownMenuItem<String>>(
+                                                  (country) {
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    child: Text(country["name"],
+                                                            style: TextStyle(
+                                                                color: Color(
+                                                                        COLOR_APPBAR)
+                                                                    .withOpacity(
+                                                                        0.9)))
+                                                        .tr(),
+                                                    value: country["iso"],
+                                                  );
+                                                }).toList(),
                                         ),
-                                      );
-                                    }
-
-                                    if ((snapshot.hasData ||
-                                            (snapshot.data?.isNotEmpty ??
-                                                false)) &&
-                                        mounted) {
-                                      return Container(
-                                          padding:
-                                              const EdgeInsets.only(left: 10),
-                                          constraints:
-                                              BoxConstraints(maxHeight: 180),
-                                          child: ListView.builder(
-                                            shrinkWrap: true,
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount:
-                                                snapshot.data!.length >= 15
-                                                    ? 15
-                                                    : snapshot.data!.length,
-                                            itemBuilder: (context, index) {
-                                              return buildCategoryItem(
-                                                  snapshot.data![index]);
-                                            },
-                                          ));
-                                    } else {
-                                      return showEmptyState(
-                                          'No Categories'.tr(), context);
-                                    }
-                                  }),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                buildTitleRow(
-                                  titleValue: "Promotions".tr(),
-                                  onClick: () {},
-                                  isViewAll: true,
-                                ),
-                              ],
-                            ),
-                            Container(
-                              child: FutureBuilder<List<OfferModel>>(
-                                  future: fireStoreUtils.getCoupons(selectedRest == null ? "" : selectedRest!.id),
-                                  initialData: const [],
-                                  builder: (context, snapshot) {
-                                    print(snapshot.data!.length);
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return Center(
-                                        child:
-                                            CircularProgressIndicator.adaptive(
-                                          valueColor: AlwaysStoppedAnimation(
-                                              Color(COLOR_PRIMARY)),
-                                        ),
-                                      );
-                                    }
-                                    if ((snapshot.hasData &&
-                                            (snapshot.data?.isNotEmpty ??
-                                                false)) &&
-                                        mounted) {
-                                      return Container(
-                                          padding:
-                                              const EdgeInsets.only(left: 10),
-                                          height: MediaQuery.of(context)
+                                        const SizedBox(width: 10),
+                                      ],
+                                    )),
+                                Visibility(
+                                    visible: storyEnable == true,
+                                    child: storyWidget()),
+                              ]),
+                        ),
+                        const SizedBox(height: 0),
+                        Visibility(
+                          visible: bannerTopHome.isNotEmpty,
+                          child: Container(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: isHomeBannerLoading
+                                  ? const Center(
+                                      child: CircularProgressIndicator())
+                                  : ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                          maxHeight: MediaQuery.of(context)
                                                   .size
-                                                  .width *
-                                              0.5,
-                                          child: ListView.builder(
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount:
-                                                snapshot.data!.length >= 15
-                                                    ? 15
-                                                    : snapshot.data!.length,
-                                            itemBuilder: (context, index) {
-                                              return buildPromoItem(
-                                                  snapshot.data![index]);
-                                            },
-                                          ));
-                                    } else {
-                                      return showEmptyState(
-                                          'No Deals'.tr(), context);
-                                    }
-                                  }),
+                                                  .height *
+                                              0.17),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 0),
+                                        child: buildBestDealPage(
+                                            bannerTopHome.first),
+                                      ))),
+                        ),
+                        buildTitleRow(
+                          titleValue: "Categories".tr(),
+                          onClick: () {
+                            push(
+                              context,
+                              NewVendorProductsScreen(
+                                  vendorModel: selectedRest!),
+                            );
+                          },
+                        ),
+                        Container(
+                          child: FutureBuilder<List<VendorCategoryModel>>(
+                              future: getCategories(),
+                              initialData: const [],
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator.adaptive(
+                                      valueColor: AlwaysStoppedAnimation(
+                                          Color(COLOR_PRIMARY)),
+                                    ),
+                                  );
+                                }
+
+                                if ((snapshot.hasData ||
+                                        (snapshot.data?.isNotEmpty ?? false)) &&
+                                    mounted) {
+                                  return Container(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      constraints:
+                                          BoxConstraints(maxHeight: 180),
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: snapshot.data!.length >= 15
+                                            ? 15
+                                            : snapshot.data!.length,
+                                        itemBuilder: (context, index) {
+                                          return buildCategoryItem(
+                                              snapshot.data![index]);
+                                        },
+                                      ));
+                                } else {
+                                  return showEmptyState(
+                                      'No Categories'.tr(), context);
+                                }
+                              }),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            buildTitleRow(
+                              titleValue: "Promotions".tr(),
+                              onClick: () {},
+                              isViewAll: true,
                             ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                buildTitleRow(
-                                  titleValue: "Top Selling".tr(),
-                                  onClick: () {},
-                                  isViewAll: true,
-                                ),
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(bottom: 20),
-                              child: FutureBuilder<List<TopSellingModel>>(
-                                  future: fireStoreUtils.getTopSelling(),
-                                  initialData: const [],
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return Center(
-                                        child:
-                                            CircularProgressIndicator.adaptive(
-                                          valueColor: AlwaysStoppedAnimation(
-                                              Color(COLOR_PRIMARY)),
-                                        ),
-                                      );
-                                    }
-
-                                    if ((snapshot.hasData ||
-                                            (snapshot.data?.isNotEmpty ??
-                                                false)) &&
-                                        mounted) {
-                                      return Container(
-                                          padding:
-                                              const EdgeInsets.only(left: 10),
-                                          constraints: BoxConstraints(maxHeight: 110),
-                                          child: ListView.builder(
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount:
-                                                snapshot.data!.length >= 15
-                                                    ? 15
-                                                    : snapshot.data!.length,
-                                            itemBuilder: (context, index) {
-                                              return buildTopSellingItem(
-                                                  snapshot.data![index]);
-                                            },
-                                          ));
-                                    } else {
-                                      return showEmptyState(
-                                          'No popular Item found'.tr(),
-                                          context);
-                                    }
-                                  }),
-                            ),
-                            // Column(
-                            //   mainAxisAlignment: MainAxisAlignment.start,
-                            //   children: [
-                            //     buildTitleRow(
-                            //       titleValue: "New Arrivals".tr(),
-                            //       onClick: () {
-                            //         push(
-                            //           context,
-                            //           const ViewAllNewArrivalRestaurantScreen(),
-                            //         );
-                            //       },
-                            //     ),
-                            //     StreamBuilder<List<VendorModel>>(
-                            //         stream: fireStoreUtils.getVendorsForNewArrival().asBroadcastStream(),
-                            //         initialData: const [],
-                            //         builder: (context, snapshot) {
-                            //           if (snapshot.connectionState == ConnectionState.waiting) {
-                            //             return Center(
-                            //               child: CircularProgressIndicator.adaptive(
-                            //                 valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
-                            //               ),
-                            //             );
-                            //           }
-
-                            //           if ((snapshot.hasData || (snapshot.data?.isNotEmpty ?? false)) && mounted) {
-                            //             newArrivalLst = snapshot.data!;
-
-                            //             return newArrivalLst.isEmpty
-                            //                 ? showEmptyState('No Vendors'.tr(), context)
-                            //                 : Container(
-                            //                     width: MediaQuery.of(context).size.width,
-                            //                     height: 260,
-                            //                     margin: const EdgeInsets.fromLTRB(10, 0, 0, 10),
-                            //                     child: ListView.builder(
-                            //                         shrinkWrap: true,
-                            //                         scrollDirection: Axis.horizontal,
-                            //                         physics: const BouncingScrollPhysics(),
-                            //                         itemCount: newArrivalLst.length >= 15 ? 15 : newArrivalLst.length,
-                            //                         itemBuilder: (context, index) => buildNewArrivalItem(newArrivalLst[index])));
-                            //           } else {
-                            //             return showEmptyState('No Vendors'.tr(), context);
-                            //           }
-                            //         }),
-                            //   ],
-                            // ),
-
-                            // Column(
-                            //   children: [
-                            //     buildTitleRow(
-                            //       titleValue: "Popular Restaurant".tr(),
-                            //       onClick: () {
-                            //         push(
-                            //           context,
-                            //           const ViewAllPopularRestaurantScreen(),
-                            //         );
-                            //       },
-                            //     ),
-                            //     popularRestaurantLst.isEmpty
-                            //         ? showEmptyState('No Popular restaurant'.tr(), context)
-                            //         : Container(
-                            //             width: MediaQuery.of(context).size.width,
-                            //             height: 260,
-                            //             margin: const EdgeInsets.fromLTRB(10, 0, 0, 10),
-                            //             child: ListView.builder(
-                            //                 shrinkWrap: true,
-                            //                 scrollDirection: Axis.horizontal,
-                            //                 physics: const BouncingScrollPhysics(),
-                            //                 itemCount: popularRestaurantLst.length >= 5 ? 5 : popularRestaurantLst.length,
-                            //                 itemBuilder: (context, index) => buildPopularsItem(popularRestaurantLst[index]))),
-                            //   ],
-                            // ),
-                            // ListView.builder(
-                            //   itemCount: categoryWiseProductList.length,
-                            //   shrinkWrap: true,
-                            //   physics: const BouncingScrollPhysics(),
-                            //   padding: EdgeInsets.zero,
-                            //   itemBuilder: (context, index) {
-                            //     return StreamBuilder<List<VendorModel>>(
-                            //       stream: FireStoreUtils().getCategoryRestaurants(categoryWiseProductList[index].id.toString()),
-                            //       builder: (context, snapshot) {
-                            //         if (snapshot.connectionState == ConnectionState.waiting) {
-                            //           return Center(
-                            //             child: CircularProgressIndicator.adaptive(
-                            //               valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
-                            //             ),
-                            //           );
-                            //         }
-                            //         if ((snapshot.hasData || (snapshot.data?.isNotEmpty ?? false)) && mounted) {
-                            //           return snapshot.data!.isEmpty
-                            //               ? Container()
-                            //               : Column(
-                            //                   children: [
-                            //                     buildTitleRow(
-                            //                       titleValue: categoryWiseProductList[index].title.toString(),
-                            //                       onClick: () {
-                            //                         push(
-                            //                           context,
-                            //                           ViewAllCategoryProductScreen(
-                            //                             vendorCategoryModel: categoryWiseProductList[index],
-                            //                           ),
-                            //                         );
-                            //                       },
-                            //                       isViewAll: false,
-                            //                     ),
-                            //                     SizedBox(
-                            //                         width: MediaQuery.of(context).size.width,
-                            //                         height: MediaQuery.of(context).size.height * 0.28,
-                            //                         child: Padding(
-                            //                           padding: const EdgeInsets.symmetric(horizontal: 10),
-                            //                           child: ListView.builder(
-                            //                             shrinkWrap: true,
-                            //                             scrollDirection: Axis.horizontal,
-                            //                             physics: const BouncingScrollPhysics(),
-                            //                             padding: EdgeInsets.zero,
-                            //                             itemCount: snapshot.data!.length,
-                            //                             itemBuilder: (context, index) {
-                            //                               VendorModel vendorModel = snapshot.data![index];
-                            //                               double distanceInMeters = Geolocator.distanceBetween(
-                            //                                   vendorModel.latitude, vendorModel.longitude, MyAppState.selectedPosotion.latitude, MyAppState.selectedPosotion.longitude);
-                            //                               double kilometer = distanceInMeters / 1000;
-                            //                               double minutes = 1.2;
-                            //                               double value = minutes * kilometer;
-                            //                               final int hour = value ~/ 60;
-                            //                               final double minute = value % 60;
-                            //                               return Container(
-                            //                                 margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                            //                                 child: GestureDetector(
-                            //                                   onTap: () async {
-                            //                                     push(
-                            //                                       context,
-                            //                                       NewVendorProductsScreen(vendorModel: vendorModel),
-                            //                                     );
-                            //                                   },
-                            //                                   child: SizedBox(
-                            //                                     width: MediaQuery.of(context).size.width * 0.65,
-                            //                                     child: Container(
-                            //                                       decoration: BoxDecoration(
-                            //                                         borderRadius: BorderRadius.circular(20),
-                            //                                         border: Border.all(color: isDarkMode(context) ? const Color(DarkContainerBorderColor) : Colors.grey.shade100, width: 1),
-                            //                                         color: isDarkMode(context) ? const Color(DarkContainerColor) : Colors.white,
-                            //                                         boxShadow: [
-                            //                                           isDarkMode(context)
-                            //                                               ? const BoxShadow()
-                            //                                               : BoxShadow(
-                            //                                                   color: Colors.grey.withOpacity(0.5),
-                            //                                                   blurRadius: 5,
-                            //                                                 ),
-                            //                                         ],
-                            //                                       ),
-                            //                                       child: Column(
-                            //                                         crossAxisAlignment: CrossAxisAlignment.start,
-                            //                                         children: [
-                            //                                           Expanded(
-                            //                                               child: Stack(
-                            //                                             children: [
-                            //                                               CachedNetworkImage(
-                            //                                                 imageUrl: getImageVAlidUrl(vendorModel.photo),
-                            //                                                 imageBuilder: (context, imageProvider) => Container(
-                            //                                                   decoration: BoxDecoration(
-                            //                                                     borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                            //                                                     image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-                            //                                                   ),
-                            //                                                 ),
-                            //                                                 placeholder: (context, url) => Center(
-                            //                                                     child: CircularProgressIndicator.adaptive(
-                            //                                                   valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
-                            //                                                 )),
-                            //                                                 errorWidget: (context, url, error) => ClipRRect(
-                            //                                                   borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                            //                                                   child: Image.network(
-                            //                                                     AppGlobal.placeHolderImage!,
-                            //                                                     width: MediaQuery.of(context).size.width * 0.75,
-                            //                                                     fit: BoxFit.contain,
-                            //                                                   ),
-                            //                                                 ),
-                            //                                                 fit: BoxFit.cover,
-                            //                                               ),
-                            //                                               Positioned(
-                            //                                                 bottom: 10,
-                            //                                                 right: 10,
-                            //                                                 child: Container(
-                            //                                                   decoration: BoxDecoration(
-                            //                                                     color: Colors.green,
-                            //                                                     borderRadius: BorderRadius.circular(5),
-                            //                                                   ),
-                            //                                                   child: Padding(
-                            //                                                     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                            //                                                     child: Row(
-                            //                                                       mainAxisSize: MainAxisSize.min,
-                            //                                                       children: [
-                            //                                                         Text(
-                            //                                                             vendorModel.reviewsCount != 0
-                            //                                                                 ? (vendorModel.reviewsSum / vendorModel.reviewsCount).toStringAsFixed(1)
-                            //                                                                 : 0.toString(),
-                            //                                                             style: const TextStyle(
-                            //                                                               fontFamily: "Oswald",
-                            //                                                               letterSpacing: 0.5,
-                            //                                                               fontSize: 12,
-                            //                                                               color: Colors.white,
-                            //                                                             )),
-                            //                                                         const SizedBox(width: 3),
-                            //                                                         const Icon(
-                            //                                                           Icons.star,
-                            //                                                           size: 16,
-                            //                                                           color: Colors.white,
-                            //                                                         ),
-                            //                                                       ],
-                            //                                                     ),
-                            //                                                   ),
-                            //                                                 ),
-                            //                                               ),
-                            //                                             ],
-                            //                                           )),
-                            //                                           const SizedBox(height: 5),
-                            //                                           Padding(
-                            //                                             padding: const EdgeInsets.symmetric(horizontal: 5),
-                            //                                             child: Column(
-                            //                                               crossAxisAlignment: CrossAxisAlignment.start,
-                            //                                               children: [
-                            //                                                 Text(vendorModel.title,
-                            //                                                         maxLines: 1, style: TextStyle(fontFamily: "Oswald", fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.2))
-                            //                                                     .tr(),
-                            //                                                 const SizedBox(
-                            //                                                   height: 5,
-                            //                                                 ),
-                            //                                                 Row(
-                            //                                                   children: [
-                            //                                                     Icon(
-                            //                                                       Icons.location_pin,
-                            //                                                       color: Color(COLOR_PRIMARY),
-                            //                                                       size: 20,
-                            //                                                     ),
-                            //                                                     SizedBox(width: 5),
-                            //                                                     Expanded(
-                            //                                                       child: Text(vendorModel.location,
-                            //                                                               maxLines: 1,
-                            //                                                               style:
-                            //                                                                   TextStyle(fontFamily: "Oswald", color: isDarkMode(context) ? Colors.white : Colors.black.withOpacity(0.60)))
-                            //                                                           .tr(),
-                            //                                                     ),
-                            //                                                   ],
-                            //                                                 ),
-                            //                                                 const SizedBox(
-                            //                                                   height: 5,
-                            //                                                 ),
-                            //                                                 Row(
-                            //                                                   children: [
-                            //                                                     Icon(
-                            //                                                       Icons.timer_sharp,
-                            //                                                       color: Color(COLOR_PRIMARY),
-                            //                                                       size: 20,
-                            //                                                     ),
-                            //                                                     SizedBox(
-                            //                                                       width: 5,
-                            //                                                     ),
-                            //                                                     Text(
-                            //                                                       '${hour.toString().padLeft(2, "0")}h ${minute.toStringAsFixed(0).padLeft(2, "0")}m',
-                            //                                                       style: TextStyle(
-                            //                                                           fontFamily: "Oswald",
-                            //                                                           letterSpacing: 0.5,
-                            //                                                           color: isDarkMode(context) ? Colors.white : Colors.black.withOpacity(0.60)),
-                            //                                                     ),
-                            //                                                     SizedBox(
-                            //                                                       width: 10,
-                            //                                                     ),
-                            //                                                     Icon(
-                            //                                                       Icons.my_location_sharp,
-                            //                                                       color: Color(COLOR_PRIMARY),
-                            //                                                       size: 20,
-                            //                                                     ),
-                            //                                                     SizedBox(
-                            //                                                       width: 10,
-                            //                                                     ),
-                            //                                                     Text(
-                            //                                                       "${kilometer.toDouble().toStringAsFixed(decimal)} km",
-                            //                                                       style: TextStyle(
-                            //                                                           fontFamily: "Oswald",
-                            //                                                           letterSpacing: 0.5,
-                            //                                                           color: isDarkMode(context) ? Colors.white : Colors.black.withOpacity(0.60)),
-                            //                                                     ).tr(),
-                            //                                                   ],
-                            //                                                 ),
-                            //                                                 SizedBox(
-                            //                                                   height: 5,
-                            //                                                 ),
-                            //                                               ],
-                            //                                             ),
-                            //                                           ),
-                            //                                         ],
-                            //                                       ),
-                            //                                     ),
-                            //                                   ),
-                            //                                 ),
-                            //                               );
-                            //                             },
-                            //                           ),
-                            //                         )),
-                            //                   ],
-                            //                 );
-                            //         } else {
-                            //           return showEmptyState('No Categories'.tr(), context);
-                            //         }
-                            //       },
-                            //     );
-                            //   },
-                            // ),
-                            // buildTitleRow(
-                            //   titleValue: "All Restaurant".tr(),
-                            //   onClick: () {},
-                            //   isViewAll: true,
-                            // ),
-                            // vendors.isEmpty
-                            //     ? showEmptyState('No Vendors'.tr(), context)
-                            //     : Container(
-                            //         width: MediaQuery.of(context).size.width,
-                            //         margin: const EdgeInsets.fromLTRB(10, 0, 0, 10),
-                            //         child: ListView.builder(
-                            //           shrinkWrap: true,
-                            //           scrollDirection: Axis.vertical,
-                            //           physics: const BouncingScrollPhysics(),
-                            //           itemCount:
-                            //               vendors.length > 15 ? 15 : vendors.length,
-                            //           itemBuilder: (context, index) {
-                            //             VendorModel vendorModel = vendors[index];
-                            //             return buildAllRestaurantsData(vendorModel);
-                            //           },
-                            //         ),
-                            //       ),
-                            // Center(
-                            //   child: Padding(
-                            //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            //     child: SizedBox(
-                            //       width: MediaQuery.of(context).size.width,
-                            //       height: MediaQuery.of(context).size.height * 0.06,
-                            //       child: ElevatedButton(
-                            //         style: ElevatedButton.styleFrom(
-                            //           backgroundColor: Color(COLOR_PRIMARY),
-                            //           shape: RoundedRectangleBorder(
-                            //             borderRadius: BorderRadius.circular(10.0),
-                            //             side: BorderSide(
-                            //               color: Color(COLOR_PRIMARY),
-                            //             ),
-                            //           ),
-                            //         ),
-                            //         child: Text(
-                            //           'See All restaurant around you'.tr(),
-                            //           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: Colors.white),
-                            //         ).tr(),
-                            //         onPressed: () {
-                            //           push(
-                            //             context,
-                            //             const ViewAllRestaurant(),
-                            //           );
-                            //         },
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
-                      ),
-                    )),
+                        Container(
+                          child: FutureBuilder<List<OfferModel>>(
+                              future: fireStoreUtils.getCoupons(
+                                  selectedRest == null ? "" : selectedRest!.id),
+                              initialData: const [],
+                              builder: (context, snapshot) {
+                                print(snapshot.data!.length);
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator.adaptive(
+                                      valueColor: AlwaysStoppedAnimation(
+                                          Color(COLOR_PRIMARY)),
+                                    ),
+                                  );
+                                }
+                                if ((snapshot.hasData &&
+                                        (snapshot.data?.isNotEmpty ?? false)) &&
+                                    mounted) {
+                                  return Container(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.5,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: snapshot.data!.length >= 15
+                                            ? 15
+                                            : snapshot.data!.length,
+                                        itemBuilder: (context, index) {
+                                          return buildPromoItem(
+                                              snapshot.data![index]);
+                                        },
+                                      ));
+                                } else {
+                                  return showEmptyState(
+                                      'No Deals'.tr(), context);
+                                }
+                              }),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            buildTitleRow(
+                              titleValue: "Top Selling".tr(),
+                              onClick: () {},
+                              isViewAll: true,
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 20),
+                          child: FutureBuilder<List<TopSellingModel>>(
+                              future: fireStoreUtils.getTopSelling(),
+                              initialData: const [],
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator.adaptive(
+                                      valueColor: AlwaysStoppedAnimation(
+                                          Color(COLOR_PRIMARY)),
+                                    ),
+                                  );
+                                }
+
+                                if ((snapshot.hasData ||
+                                        (snapshot.data?.isNotEmpty ?? false)) &&
+                                    mounted) {
+                                  return Container(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      constraints:
+                                          BoxConstraints(maxHeight: 110),
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: snapshot.data!.length >= 15
+                                            ? 15
+                                            : snapshot.data!.length,
+                                        itemBuilder: (context, index) {
+                                          return buildTopSellingItem(
+                                              snapshot.data![index]);
+                                        },
+                                      ));
+                                } else {
+                                  return showEmptyState(
+                                      'No popular Item found'.tr(), context);
+                                }
+                              }),
+                        ),
+                        // Column(
+                        //   mainAxisAlignment: MainAxisAlignment.start,
+                        //   children: [
+                        //     buildTitleRow(
+                        //       titleValue: "New Arrivals".tr(),
+                        //       onClick: () {
+                        //         push(
+                        //           context,
+                        //           const ViewAllNewArrivalRestaurantScreen(),
+                        //         );
+                        //       },
+                        //     ),
+                        //     StreamBuilder<List<VendorModel>>(
+                        //         stream: fireStoreUtils.getVendorsForNewArrival().asBroadcastStream(),
+                        //         initialData: const [],
+                        //         builder: (context, snapshot) {
+                        //           if (snapshot.connectionState == ConnectionState.waiting) {
+                        //             return Center(
+                        //               child: CircularProgressIndicator.adaptive(
+                        //                 valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                        //               ),
+                        //             );
+                        //           }
+
+                        //           if ((snapshot.hasData || (snapshot.data?.isNotEmpty ?? false)) && mounted) {
+                        //             newArrivalLst = snapshot.data!;
+
+                        //             return newArrivalLst.isEmpty
+                        //                 ? showEmptyState('No Vendors'.tr(), context)
+                        //                 : Container(
+                        //                     width: MediaQuery.of(context).size.width,
+                        //                     height: 260,
+                        //                     margin: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                        //                     child: ListView.builder(
+                        //                         shrinkWrap: true,
+                        //                         scrollDirection: Axis.horizontal,
+                        //                         physics: const BouncingScrollPhysics(),
+                        //                         itemCount: newArrivalLst.length >= 15 ? 15 : newArrivalLst.length,
+                        //                         itemBuilder: (context, index) => buildNewArrivalItem(newArrivalLst[index])));
+                        //           } else {
+                        //             return showEmptyState('No Vendors'.tr(), context);
+                        //           }
+                        //         }),
+                        //   ],
+                        // ),
+
+                        // Column(
+                        //   children: [
+                        //     buildTitleRow(
+                        //       titleValue: "Popular Restaurant".tr(),
+                        //       onClick: () {
+                        //         push(
+                        //           context,
+                        //           const ViewAllPopularRestaurantScreen(),
+                        //         );
+                        //       },
+                        //     ),
+                        //     popularRestaurantLst.isEmpty
+                        //         ? showEmptyState('No Popular restaurant'.tr(), context)
+                        //         : Container(
+                        //             width: MediaQuery.of(context).size.width,
+                        //             height: 260,
+                        //             margin: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                        //             child: ListView.builder(
+                        //                 shrinkWrap: true,
+                        //                 scrollDirection: Axis.horizontal,
+                        //                 physics: const BouncingScrollPhysics(),
+                        //                 itemCount: popularRestaurantLst.length >= 5 ? 5 : popularRestaurantLst.length,
+                        //                 itemBuilder: (context, index) => buildPopularsItem(popularRestaurantLst[index]))),
+                        //   ],
+                        // ),
+                        // ListView.builder(
+                        //   itemCount: categoryWiseProductList.length,
+                        //   shrinkWrap: true,
+                        //   physics: const BouncingScrollPhysics(),
+                        //   padding: EdgeInsets.zero,
+                        //   itemBuilder: (context, index) {
+                        //     return StreamBuilder<List<VendorModel>>(
+                        //       stream: FireStoreUtils().getCategoryRestaurants(categoryWiseProductList[index].id.toString()),
+                        //       builder: (context, snapshot) {
+                        //         if (snapshot.connectionState == ConnectionState.waiting) {
+                        //           return Center(
+                        //             child: CircularProgressIndicator.adaptive(
+                        //               valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                        //             ),
+                        //           );
+                        //         }
+                        //         if ((snapshot.hasData || (snapshot.data?.isNotEmpty ?? false)) && mounted) {
+                        //           return snapshot.data!.isEmpty
+                        //               ? Container()
+                        //               : Column(
+                        //                   children: [
+                        //                     buildTitleRow(
+                        //                       titleValue: categoryWiseProductList[index].title.toString(),
+                        //                       onClick: () {
+                        //                         push(
+                        //                           context,
+                        //                           ViewAllCategoryProductScreen(
+                        //                             vendorCategoryModel: categoryWiseProductList[index],
+                        //                           ),
+                        //                         );
+                        //                       },
+                        //                       isViewAll: false,
+                        //                     ),
+                        //                     SizedBox(
+                        //                         width: MediaQuery.of(context).size.width,
+                        //                         height: MediaQuery.of(context).size.height * 0.28,
+                        //                         child: Padding(
+                        //                           padding: const EdgeInsets.symmetric(horizontal: 10),
+                        //                           child: ListView.builder(
+                        //                             shrinkWrap: true,
+                        //                             scrollDirection: Axis.horizontal,
+                        //                             physics: const BouncingScrollPhysics(),
+                        //                             padding: EdgeInsets.zero,
+                        //                             itemCount: snapshot.data!.length,
+                        //                             itemBuilder: (context, index) {
+                        //                               VendorModel vendorModel = snapshot.data![index];
+                        //                               double distanceInMeters = Geolocator.distanceBetween(
+                        //                                   vendorModel.latitude, vendorModel.longitude, MyAppState.selectedPosotion.latitude, MyAppState.selectedPosotion.longitude);
+                        //                               double kilometer = distanceInMeters / 1000;
+                        //                               double minutes = 1.2;
+                        //                               double value = minutes * kilometer;
+                        //                               final int hour = value ~/ 60;
+                        //                               final double minute = value % 60;
+                        //                               return Container(
+                        //                                 margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        //                                 child: GestureDetector(
+                        //                                   onTap: () async {
+                        //                                     push(
+                        //                                       context,
+                        //                                       NewVendorProductsScreen(vendorModel: vendorModel),
+                        //                                     );
+                        //                                   },
+                        //                                   child: SizedBox(
+                        //                                     width: MediaQuery.of(context).size.width * 0.65,
+                        //                                     child: Container(
+                        //                                       decoration: BoxDecoration(
+                        //                                         borderRadius: BorderRadius.circular(20),
+                        //                                         border: Border.all(color: isDarkMode(context) ? const Color(DarkContainerBorderColor) : Colors.grey.shade100, width: 1),
+                        //                                         color: isDarkMode(context) ? const Color(DarkContainerColor) : Colors.white,
+                        //                                         boxShadow: [
+                        //                                           isDarkMode(context)
+                        //                                               ? const BoxShadow()
+                        //                                               : BoxShadow(
+                        //                                                   color: Colors.grey.withOpacity(0.5),
+                        //                                                   blurRadius: 5,
+                        //                                                 ),
+                        //                                         ],
+                        //                                       ),
+                        //                                       child: Column(
+                        //                                         crossAxisAlignment: CrossAxisAlignment.start,
+                        //                                         children: [
+                        //                                           Expanded(
+                        //                                               child: Stack(
+                        //                                             children: [
+                        //                                               CachedNetworkImage(
+                        //                                                 imageUrl: getImageVAlidUrl(vendorModel.photo),
+                        //                                                 imageBuilder: (context, imageProvider) => Container(
+                        //                                                   decoration: BoxDecoration(
+                        //                                                     borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                        //                                                     image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                        //                                                   ),
+                        //                                                 ),
+                        //                                                 placeholder: (context, url) => Center(
+                        //                                                     child: CircularProgressIndicator.adaptive(
+                        //                                                   valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                        //                                                 )),
+                        //                                                 errorWidget: (context, url, error) => ClipRRect(
+                        //                                                   borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                        //                                                   child: Image.network(
+                        //                                                     AppGlobal.placeHolderImage!,
+                        //                                                     width: MediaQuery.of(context).size.width * 0.75,
+                        //                                                     fit: BoxFit.contain,
+                        //                                                   ),
+                        //                                                 ),
+                        //                                                 fit: BoxFit.cover,
+                        //                                               ),
+                        //                                               Positioned(
+                        //                                                 bottom: 10,
+                        //                                                 right: 10,
+                        //                                                 child: Container(
+                        //                                                   decoration: BoxDecoration(
+                        //                                                     color: Colors.green,
+                        //                                                     borderRadius: BorderRadius.circular(5),
+                        //                                                   ),
+                        //                                                   child: Padding(
+                        //                                                     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        //                                                     child: Row(
+                        //                                                       mainAxisSize: MainAxisSize.min,
+                        //                                                       children: [
+                        //                                                         Text(
+                        //                                                             vendorModel.reviewsCount != 0
+                        //                                                                 ? (vendorModel.reviewsSum / vendorModel.reviewsCount).toStringAsFixed(1)
+                        //                                                                 : 0.toString(),
+                        //                                                             style: const TextStyle(
+                        //                                                               fontFamily: "Oswald",
+                        //                                                               letterSpacing: 0.5,
+                        //                                                               fontSize: 12,
+                        //                                                               color: Colors.white,
+                        //                                                             )),
+                        //                                                         const SizedBox(width: 3),
+                        //                                                         const Icon(
+                        //                                                           Icons.star,
+                        //                                                           size: 16,
+                        //                                                           color: Colors.white,
+                        //                                                         ),
+                        //                                                       ],
+                        //                                                     ),
+                        //                                                   ),
+                        //                                                 ),
+                        //                                               ),
+                        //                                             ],
+                        //                                           )),
+                        //                                           const SizedBox(height: 5),
+                        //                                           Padding(
+                        //                                             padding: const EdgeInsets.symmetric(horizontal: 5),
+                        //                                             child: Column(
+                        //                                               crossAxisAlignment: CrossAxisAlignment.start,
+                        //                                               children: [
+                        //                                                 Text(vendorModel.title,
+                        //                                                         maxLines: 1, style: TextStyle(fontFamily: "Oswald", fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.2))
+                        //                                                     .tr(),
+                        //                                                 const SizedBox(
+                        //                                                   height: 5,
+                        //                                                 ),
+                        //                                                 Row(
+                        //                                                   children: [
+                        //                                                     Icon(
+                        //                                                       Icons.location_pin,
+                        //                                                       color: Color(COLOR_PRIMARY),
+                        //                                                       size: 20,
+                        //                                                     ),
+                        //                                                     SizedBox(width: 5),
+                        //                                                     Expanded(
+                        //                                                       child: Text(vendorModel.location,
+                        //                                                               maxLines: 1,
+                        //                                                               style:
+                        //                                                                   TextStyle(fontFamily: "Oswald", color: isDarkMode(context) ? Colors.white : Colors.black.withOpacity(0.60)))
+                        //                                                           .tr(),
+                        //                                                     ),
+                        //                                                   ],
+                        //                                                 ),
+                        //                                                 const SizedBox(
+                        //                                                   height: 5,
+                        //                                                 ),
+                        //                                                 Row(
+                        //                                                   children: [
+                        //                                                     Icon(
+                        //                                                       Icons.timer_sharp,
+                        //                                                       color: Color(COLOR_PRIMARY),
+                        //                                                       size: 20,
+                        //                                                     ),
+                        //                                                     SizedBox(
+                        //                                                       width: 5,
+                        //                                                     ),
+                        //                                                     Text(
+                        //                                                       '${hour.toString().padLeft(2, "0")}h ${minute.toStringAsFixed(0).padLeft(2, "0")}m',
+                        //                                                       style: TextStyle(
+                        //                                                           fontFamily: "Oswald",
+                        //                                                           letterSpacing: 0.5,
+                        //                                                           color: isDarkMode(context) ? Colors.white : Colors.black.withOpacity(0.60)),
+                        //                                                     ),
+                        //                                                     SizedBox(
+                        //                                                       width: 10,
+                        //                                                     ),
+                        //                                                     Icon(
+                        //                                                       Icons.my_location_sharp,
+                        //                                                       color: Color(COLOR_PRIMARY),
+                        //                                                       size: 20,
+                        //                                                     ),
+                        //                                                     SizedBox(
+                        //                                                       width: 10,
+                        //                                                     ),
+                        //                                                     Text(
+                        //                                                       "${kilometer.toDouble().toStringAsFixed(decimal)} km",
+                        //                                                       style: TextStyle(
+                        //                                                           fontFamily: "Oswald",
+                        //                                                           letterSpacing: 0.5,
+                        //                                                           color: isDarkMode(context) ? Colors.white : Colors.black.withOpacity(0.60)),
+                        //                                                     ).tr(),
+                        //                                                   ],
+                        //                                                 ),
+                        //                                                 SizedBox(
+                        //                                                   height: 5,
+                        //                                                 ),
+                        //                                               ],
+                        //                                             ),
+                        //                                           ),
+                        //                                         ],
+                        //                                       ),
+                        //                                     ),
+                        //                                   ),
+                        //                                 ),
+                        //                               );
+                        //                             },
+                        //                           ),
+                        //                         )),
+                        //                   ],
+                        //                 );
+                        //         } else {
+                        //           return showEmptyState('No Categories'.tr(), context);
+                        //         }
+                        //       },
+                        //     );
+                        //   },
+                        // ),
+                        // buildTitleRow(
+                        //   titleValue: "All Restaurant".tr(),
+                        //   onClick: () {},
+                        //   isViewAll: true,
+                        // ),
+                        // vendors.isEmpty
+                        //     ? showEmptyState('No Vendors'.tr(), context)
+                        //     : Container(
+                        //         width: MediaQuery.of(context).size.width,
+                        //         margin: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                        //         child: ListView.builder(
+                        //           shrinkWrap: true,
+                        //           scrollDirection: Axis.vertical,
+                        //           physics: const BouncingScrollPhysics(),
+                        //           itemCount:
+                        //               vendors.length > 15 ? 15 : vendors.length,
+                        //           itemBuilder: (context, index) {
+                        //             VendorModel vendorModel = vendors[index];
+                        //             return buildAllRestaurantsData(vendorModel);
+                        //           },
+                        //         ),
+                        //       ),
+                        // Center(
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        //     child: SizedBox(
+                        //       width: MediaQuery.of(context).size.width,
+                        //       height: MediaQuery.of(context).size.height * 0.06,
+                        //       child: ElevatedButton(
+                        //         style: ElevatedButton.styleFrom(
+                        //           backgroundColor: Color(COLOR_PRIMARY),
+                        //           shape: RoundedRectangleBorder(
+                        //             borderRadius: BorderRadius.circular(10.0),
+                        //             side: BorderSide(
+                        //               color: Color(COLOR_PRIMARY),
+                        //             ),
+                        //           ),
+                        //         ),
+                        //         child: Text(
+                        //           'See All restaurant around you'.tr(),
+                        //           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: Colors.white),
+                        //         ).tr(),
+                        //         onPressed: () {
+                        //           push(
+                        //             context,
+                        //             const ViewAllRestaurant(),
+                        //           );
+                        //         },
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ),
+                )),
     );
   }
 
@@ -2232,14 +2209,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.all(0),
       child: GestureDetector(
-        onTap: ()async{
+        onTap: () async {
           var product = await fireStoreUtils.getProductByID(model.productID!);
           await Navigator.of(context)
-                          .push(MaterialPageRoute(
-                              builder: (context) => ProductDetailsScreen(
-                                  productModel: product,
-                                  vendorModel: selectedRest!)))
-                          .whenComplete(() => {setState(() {})});
+              .push(MaterialPageRoute(
+                  builder: (context) => ProductDetailsScreen(
+                      productModel: product, vendorModel: selectedRest!)))
+              .whenComplete(() => {setState(() {})});
         },
         child: Card(
           shape:
@@ -2258,8 +2234,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   imageBuilder: (context, imageProvider) => Container(
                     height: 70,
                     width: 70,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20)),
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(20)),
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
@@ -2323,8 +2299,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Text(symbol + model.price!,
                           style: TextStyle(
-                              color:
-                                  const Color(COLOR_APPBAR).withOpacity(0.9),
+                              color: const Color(COLOR_APPBAR).withOpacity(0.9),
                               fontFamily: "Oswald",
                               fontSize: 19,
                               fontWeight: FontWeight.w600)),
@@ -3266,7 +3241,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         vendors = value.toSet().toList();
         vendors.forEach((e) => print(e.title));
-        print(count);
+        print("EL PAÍS ES $count");
         if (count != null && MyAppState.currentUser!.defaultRestaurant == null)
           selectedCountry = count;
         else

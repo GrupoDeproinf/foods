@@ -22,7 +22,8 @@ class _HistoryTableBookingState extends State<HistoryTableBooking> {
   @override
   void initState() {
     super.initState();
-    bookedFuture = fireStoreUtils.getBookingOrders(MyAppState.currentUser!.userID, false);
+    bookedFuture =
+        fireStoreUtils.getBookingOrders(MyAppState.currentUser!.userID, false);
   }
 
   @override
@@ -42,7 +43,8 @@ class _HistoryTableBookingState extends State<HistoryTableBooking> {
               );
             if (!snapshot.hasData || (snapshot.data?.isEmpty ?? true)) {
               return Center(
-                child: showEmptyState('No Previous Booking'.tr(), context, description: "bookTable".tr()),
+                child: showEmptyState('No Previous Booking'.tr(), context,
+                    description: "bookTable".tr()),
               );
             } else {
               // ordersList = snapshot.data!;
@@ -52,7 +54,8 @@ class _HistoryTableBookingState extends State<HistoryTableBooking> {
                   BookTableModel bookTableModel = snapshot.data![index];
 
                   String bookStatus = '';
-                  if (bookTableModel.status == ORDER_STATUS_CONFIRMATION_PENDING) {
+                  if (bookTableModel.status ==
+                      ORDER_STATUS_CONFIRMATION_PENDING) {
                     bookStatus = 'Expired';
                   } else if (bookTableModel.status == ORDER_STATUS_CONFIRMED) {
                     bookStatus = 'Confirmed';
@@ -68,9 +71,12 @@ class _HistoryTableBookingState extends State<HistoryTableBooking> {
                           ));
                     },
                     child: Container(
-                      margin: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 5),
+                      margin: EdgeInsets.only(
+                          left: 10, right: 10, bottom: 10, top: 5),
                       decoration: BoxDecoration(
-                        color: isDarkMode(context) ? Color(DARK_CARD_BG_COLOR) : Color(0xffFFFFFF),
+                        color: isDarkMode(context)
+                            ? Color(DARK_CARD_BG_COLOR)
+                            : Color(0xffFFFFFF),
                         borderRadius: BorderRadius.all(
                           Radius.circular(15.0),
                         ),
@@ -79,7 +85,9 @@ class _HistoryTableBookingState extends State<HistoryTableBooking> {
                             offset: Offset(0, 0),
                             blurRadius: 1,
                             spreadRadius: 2,
-                            color: isDarkMode(context) ? Colors.white12 : Colors.black12,
+                            color: isDarkMode(context)
+                                ? Colors.white12
+                                : Colors.black12,
                           ),
                         ],
                       ),
@@ -95,23 +103,31 @@ class _HistoryTableBookingState extends State<HistoryTableBooking> {
                                   child: CachedNetworkImage(
                                     height: 70,
                                     width: 70,
-                                    imageUrl: getImageVAlidUrl(bookTableModel.vendor.photo),
-                                    imageBuilder: (context, imageProvider) => Container(
+                                    imageUrl: getImageVAlidUrl(
+                                        bookTableModel.vendor.photo),
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(15),
-                                        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                                        image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover),
                                       ),
                                     ),
                                     placeholder: (context, url) => Center(
-                                        child: CircularProgressIndicator.adaptive(
-                                      valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                                        child:
+                                            CircularProgressIndicator.adaptive(
+                                      valueColor: AlwaysStoppedAnimation(
+                                          Color(COLOR_PRIMARY)),
                                     )),
-                                    errorWidget: (context, url, error) => ClipRRect(
-                                        borderRadius: BorderRadius.circular(15),
-                                        child: Image.network(
-                                          placeholderImage,
-                                          fit: BoxFit.cover,
-                                        )),
+                                    errorWidget: (context, url, error) =>
+                                        ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            child: Image.network(
+                                              placeholderImage,
+                                              fit: BoxFit.cover,
+                                            )),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -120,14 +136,17 @@ class _HistoryTableBookingState extends State<HistoryTableBooking> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 10),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         bookTableModel.vendor.title,
                                         style: TextStyle(
                                           fontFamily: "Poppinssm",
                                           fontSize: 18,
-                                          color: isDarkMode(context) ? Colors.white : Color(0xff000000),
+                                          color: isDarkMode(context)
+                                              ? Colors.white
+                                              : Color(0xff000000),
                                         ),
                                       ),
                                       Padding(
@@ -136,7 +155,9 @@ class _HistoryTableBookingState extends State<HistoryTableBooking> {
                                           bookTableModel.vendor.location,
                                           style: TextStyle(
                                             fontFamily: "Poppinssm",
-                                            color: isDarkMode(context) ? Color(DARK_GREY_TEXT_COLOR) : Color(GREY_TEXT_COLOR),
+                                            color: isDarkMode(context)
+                                                ? Color(DARK_GREY_TEXT_COLOR)
+                                                : Color(GREY_TEXT_COLOR),
                                           ),
                                         ),
                                       ),
@@ -149,42 +170,75 @@ class _HistoryTableBookingState extends State<HistoryTableBooking> {
                           ListTile(
                             title: Text(
                               'Name'.tr(),
-                              style: TextStyle(color: isDarkMode(context) ? Colors.white70 : Colors.black),
+                              style: TextStyle(
+                                  color: isDarkMode(context)
+                                      ? Colors.white70
+                                      : Colors.black),
                             ),
-                            leading: Icon(Icons.person_outline, color: isDarkMode(context) ? Colors.white70 : Colors.black),
+                            leading: Icon(Icons.person_outline,
+                                color: isDarkMode(context)
+                                    ? Colors.white70
+                                    : Colors.black),
                             minLeadingWidth: 10,
                             subtitle: Text(
                               '${bookTableModel.guestFirstName} ${bookTableModel.guestLastName}',
-                              style: TextStyle(color: isDarkMode(context) ? Colors.white60 : Colors.grey),
+                              style: TextStyle(
+                                  color: isDarkMode(context)
+                                      ? Colors.white60
+                                      : Colors.grey),
                             ),
                           ),
                           ListTile(
                             title: Text(
                               'Date',
-                              style: TextStyle(color: isDarkMode(context) ? Colors.white70 : Colors.black),
+                              style: TextStyle(
+                                  color: isDarkMode(context)
+                                      ? Colors.white70
+                                      : Colors.black),
                             ),
-                            leading: Icon(Icons.date_range, color: isDarkMode(context) ? Colors.white70 : Colors.black),
+                            leading: Icon(Icons.date_range,
+                                color: isDarkMode(context)
+                                    ? Colors.white70
+                                    : Colors.black),
                             minLeadingWidth: 10,
                             subtitle: Text(
-                              DateFormat("MMM dd, yyyy 'at' hh:mm a").format(bookTableModel.date.toDate()),
-                              style: TextStyle(color: isDarkMode(context) ? Colors.white60 : Colors.grey),
+                              DateFormat("MMM dd, yyyy 'at' hh:mm a")
+                                  .format(bookTableModel.date.toDate()),
+                              style: TextStyle(
+                                  color: isDarkMode(context)
+                                      ? Colors.white60
+                                      : Colors.grey),
                             ),
                           ),
                           ListTile(
                             title: Text(
                               'Guest'.tr(),
-                              style: TextStyle(color: isDarkMode(context) ? Colors.white70 : Colors.black),
+                              style: TextStyle(
+                                  color: isDarkMode(context)
+                                      ? Colors.white70
+                                      : Colors.black),
                             ),
-                            leading: Icon(Icons.group, color: isDarkMode(context) ? Colors.white70 : Colors.black87),
+                            leading: Icon(Icons.group,
+                                color: isDarkMode(context)
+                                    ? Colors.white70
+                                    : Colors.black87),
                             minLeadingWidth: 10,
-                            subtitle: Text('${bookTableModel.totalGuest}', style: TextStyle(color: isDarkMode(context) ? Colors.white60 : Colors.grey)),
+                            subtitle: Text('${bookTableModel.totalGuest}',
+                                style: TextStyle(
+                                    color: isDarkMode(context)
+                                        ? Colors.white60
+                                        : Colors.grey)),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 20),
                             child: Center(
                                 child: Text(
                               '$bookStatus',
-                              style: TextStyle(letterSpacing: 0.5, color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  letterSpacing: 0.5,
+                                  color: Colors.green,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
                             )),
                           )
                         ],

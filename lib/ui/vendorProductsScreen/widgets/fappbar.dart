@@ -224,7 +224,9 @@ class FAppBar extends SliverAppBar {
                           ),
                           const SizedBox(width: 5),
                           Container(
-                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 60),
+                              constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width - 60),
                               child: Text(
                                 vendorModel.location,
                                 maxLines: 2,
@@ -282,7 +284,8 @@ class FAppBar extends SliverAppBar {
                             ).tr()
                           ]),
                           Column(children: [
-                            FaIcon(FontAwesomeIcons.shippingFast, color: Color(COLOR_PRIMARY)),
+                            FaIcon(FontAwesomeIcons.shippingFast,
+                                color: Color(COLOR_PRIMARY)),
                             const SizedBox(
                               height: 10,
                             ),
@@ -348,36 +351,37 @@ class FAppBar extends SliverAppBar {
                           //   ]),
                           // ),
                           InkWell(
-                        onTap: () {
-                          showModalBottomSheet(
-                            isScrollControlled: true,
-                            isDismissible: true,
-                            context: context,
-                            backgroundColor: Colors.transparent,
-                            enableDrag: true,
-                            builder: (context) => showTiming(context),
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            Image(
-                              image: const AssetImage("assets/images/time.png"),
-                              color: Color(COLOR_PRIMARY),
-                              height: 25,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                                child: Text(
-                                  "View Timing".tr(),
-                                  style: const TextStyle(
-                                      fontFamily: "Oswald",
-                                      letterSpacing: 0.5,
-                                      color: Color(0xff565764)),
-                                ).tr()),
-                          ],
-                        ))
+                              onTap: () {
+                                showModalBottomSheet(
+                                  isScrollControlled: true,
+                                  isDismissible: true,
+                                  context: context,
+                                  backgroundColor: Colors.transparent,
+                                  enableDrag: true,
+                                  builder: (context) => showTiming(context),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Image(
+                                    image: const AssetImage(
+                                        "assets/images/time.png"),
+                                    color: Color(COLOR_PRIMARY),
+                                    height: 25,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                      child: Text(
+                                    "View Timing".tr(),
+                                    style: const TextStyle(
+                                        fontFamily: "Oswald",
+                                        letterSpacing: 0.5,
+                                        color: Color(0xff565764)),
+                                  ).tr()),
+                                ],
+                              ))
                         ],
                       ))),
               offerList.isEmpty

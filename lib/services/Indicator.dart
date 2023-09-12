@@ -26,9 +26,11 @@ class Indicator extends StatelessWidget {
   final double spacing = 4.0;
 
   /// Point Widget
-  Widget _buildIndicator(int index, int pageCount, double dotSize, double spacing) {
+  Widget _buildIndicator(
+      int index, int pageCount, double dotSize, double spacing) {
     // Is the current page selected?
-    bool isCurrentPageSelected = index == (controller!.page != null ? controller!.page!.round() % pageCount : 0);
+    bool isCurrentPageSelected = index ==
+        (controller!.page != null ? controller!.page!.round() % pageCount : 0);
 
     return SizedBox(
       height: size,

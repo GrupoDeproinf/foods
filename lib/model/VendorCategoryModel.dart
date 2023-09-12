@@ -6,7 +6,13 @@ class VendorCategoryModel {
   String? title;
   num? order;
 
-  VendorCategoryModel({this.reviewAttributes, this.photo, this.description, this.id, this.title, this.order});
+  VendorCategoryModel(
+      {this.reviewAttributes,
+      this.photo,
+      this.description,
+      this.id,
+      this.title,
+      this.order});
 
   VendorCategoryModel.fromJson(Map<String, dynamic> json) {
     reviewAttributes = json['review_attributes'] ?? [];

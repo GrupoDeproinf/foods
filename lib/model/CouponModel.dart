@@ -17,7 +17,15 @@ class CouponModel {
 
   String discountType;
 
-  CouponModel({this.discountType = '', this.id = '', this.code = '', this.desc = '', this.discount = '', this.isEnable = false, exipreAt}) : this.exipreAt = exipreAt ?? Timestamp.now();
+  CouponModel(
+      {this.discountType = '',
+      this.id = '',
+      this.code = '',
+      this.desc = '',
+      this.discount = '',
+      this.isEnable = false,
+      exipreAt})
+      : this.exipreAt = exipreAt ?? Timestamp.now();
 
   factory CouponModel.fromJson(Map<String, dynamic> parsedJson) {
     return CouponModel(
@@ -32,6 +40,14 @@ class CouponModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {'code': this.code, 'description': this.desc, 'discount': this.discount, 'Id': this.id, 'discountType': this.discountType, 'isEnabled': this.isEnable, 'expiresAt': this.exipreAt};
+    return {
+      'code': this.code,
+      'description': this.desc,
+      'discount': this.discount,
+      'Id': this.id,
+      'discountType': this.discountType,
+      'isEnabled': this.isEnable,
+      'expiresAt': this.exipreAt
+    };
   }
 }

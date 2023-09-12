@@ -33,14 +33,18 @@ class _InboxScreenState extends State<InboxScreen> {
             onTap: () async {
               await showProgress(context, "Please wait".tr(), false);
 
-              User? customer = await FireStoreUtils.getCurrentUser(inboxModel.customerId.toString());
-              User? restaurantUser = await FireStoreUtils.getCurrentUser(inboxModel.restaurantId.toString());
-              VendorModel? vendorModel = await FireStoreUtils.getVendor(restaurantUser!.vendorID.toString());
+              User? customer = await FireStoreUtils.getCurrentUser(
+                  inboxModel.customerId.toString());
+              User? restaurantUser = await FireStoreUtils.getCurrentUser(
+                  inboxModel.restaurantId.toString());
+              VendorModel? vendorModel = await FireStoreUtils.getVendor(
+                  restaurantUser!.vendorID.toString());
               hideProgress();
               push(
                   context,
                   ChatScreens(
-                    customerName: '${customer!.firstName + " " + customer.lastName}',
+                    customerName:
+                        '${customer!.firstName + " " + customer.lastName}',
                     restaurantName: vendorModel!.title,
                     orderId: inboxModel.orderId,
                     restaurantId: restaurantUser.userID,
@@ -76,7 +80,11 @@ class _InboxScreenState extends State<InboxScreen> {
               title: Row(
                 children: [
                   Expanded(child: Text(inboxModel.restaurantName.toString())),
-                  Text(DateFormat('MMM d, yyyy').format(DateTime.fromMillisecondsSinceEpoch(inboxModel.createdAt!.millisecondsSinceEpoch)), style: TextStyle(color: Colors.grey, fontSize: 14)),
+                  Text(
+                      DateFormat('MMM d, yyyy').format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                              inboxModel.createdAt!.millisecondsSinceEpoch)),
+                      style: TextStyle(color: Colors.grey, fontSize: 14)),
                 ],
               ),
               subtitle: Text("Order Id : #" + inboxModel.orderId.toString()),
@@ -86,7 +94,10 @@ class _InboxScreenState extends State<InboxScreen> {
         shrinkWrap: true,
         onEmpty: Center(child: Text("No Conversion found")),
         // orderBy is compulsory to enable pagination
-        query: FirebaseFirestore.instance.collection('chat_restaurant').where("customerId", isEqualTo: MyAppState.currentUser!.userID).orderBy('createdAt', descending: true),
+        query: FirebaseFirestore.instance
+            .collection('chat_restaurant')
+            .where("customerId", isEqualTo: MyAppState.currentUser!.userID)
+            .orderBy('createdAt', descending: true),
         //Change types customerId
         itemBuilderType: PaginateBuilderType.listView,
         initialLoader: CircularProgressIndicator(),

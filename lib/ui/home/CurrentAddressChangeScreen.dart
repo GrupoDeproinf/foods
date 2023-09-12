@@ -344,175 +344,176 @@ class _CurrentAddressChangeScreenState
                         padding: const EdgeInsets.all(12.0),
                         child: Card(
                             child: IgnorePointer(
-                              ignoring: charging,
-                              child: ListTile(
-                                  leading: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      // ImageIcon(
-                                      //   AssetImage('assets/images/current_location1.png'),
-                                      //   size: 23,
-                                      //   color: Color(COLOR_PRIMARY),
-                                      // ),
-                                      charging ? CircularProgressIndicator(color: Color(COLOR_PRIMARY),) :
-                                      Icon(
-                                        Icons.location_searching_rounded,
-                                        color: Color(COLOR_PRIMARY),
-                                      ),
-                                    ],
-                                  ),
-                                  title: Text(
-                                    "Current Location".tr(),
-                                    style: TextStyle(color: Color(COLOR_PRIMARY)),
-                                  ),
-                                  subtitle: Text(
-                                    "Using GPS".tr(),
-                                    style: TextStyle(color: Color(COLOR_PRIMARY)),
-                                  ),
-                                  onTap: () async {
-                                    setState(() => charging = true);
-                                    Position position =
-                                        await Geolocator.getCurrentPosition(
-                                                desiredAccuracy:
-                                                    LocationAccuracy.high)
-                                            .whenComplete(() {});
-                                    setState(() => charging = false);
-                                    var result = await Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => MapLocationPicker(
-                                          currentLatLng: LatLng(position.latitude,
-                                              position.longitude),
-                                          apiKey: GOOGLE_API_KEY,
-                                          canPopOnNextButtonTaped: true,
-                                          language: "es",
-                                          bottomCardMargin: EdgeInsets.zero,
-                                          bottomCardShape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.vertical(
-                                                  top: Radius.circular(15))),
-                                          onNext: (p) {
-                                            String name = "";
-                                            String? locality,
-                                                postalCode,
-                                                country,
-                                                administrativeAreaLevel1,
-                                                administrativeAreaLevel2,
-                                                city,
-                                                subLocalityLevel1,
-                                                subLocalityLevel2;
-                                            bool isOnStreet = false;
-                                            if (p!.addressComponents.length !=
-                                                    null &&
-                                                p.addressComponents.length > 0) {
-                                              for (var i = 0;
-                                                  i < p.addressComponents.length;
-                                                  i++) {
-                                                var tmp = p.addressComponents[i];
-                                                var types = tmp.types;
-                                                var shortName = tmp.shortName;
-                                                var longName = tmp.longName;
-                                                if (types == null) {
-                                                  continue;
-                                                }
-                                                if (i == 0) {
-                                                  // [street_number]
-                                                  name = shortName;
-                                                  isOnStreet = types
-                                                      .contains('street_number');
-                                                  // other index 0 types
-                                                  // [establishment, point_of_interest, subway_station, transit_station]
-                                                  // [premise]
-                                                  // [route]
-                                                } else if (i == 1 && isOnStreet) {
-                                                  if (types.contains('route')) {
-                                                    name += ", $shortName";
-                                                  }
-                                                } else {
-                                                  if (types.contains(
-                                                      "sublocality_level_1")) {
-                                                    subLocalityLevel1 = shortName;
-                                                  } else if (types.contains(
-                                                      "sublocality_level_2")) {
-                                                    subLocalityLevel2 = shortName;
-                                                  } else if (types
-                                                      .contains("locality")) {
-                                                    locality = longName;
-                                                  } else if (types.contains(
-                                                      "administrative_area_level_2")) {
-                                                    administrativeAreaLevel2 =
-                                                        shortName;
-                                                  } else if (types.contains(
-                                                      "administrative_area_level_1")) {
-                                                    administrativeAreaLevel1 =
-                                                        longName;
-                                                  } else if (types
-                                                      .contains("country")) {
-                                                    country = longName;
-                                                  } else if (types
-                                                      .contains('postal_code')) {
-                                                    postalCode = shortName;
-                                                  }
-                                                }
+                          ignoring: charging,
+                          child: ListTile(
+                              leading: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // ImageIcon(
+                                  //   AssetImage('assets/images/current_location1.png'),
+                                  //   size: 23,
+                                  //   color: Color(COLOR_PRIMARY),
+                                  // ),
+                                  charging
+                                      ? CircularProgressIndicator(
+                                          color: Color(COLOR_PRIMARY),
+                                        )
+                                      : Icon(
+                                          Icons.location_searching_rounded,
+                                          color: Color(COLOR_PRIMARY),
+                                        ),
+                                ],
+                              ),
+                              title: Text(
+                                "Current Location".tr(),
+                                style: TextStyle(color: Color(COLOR_PRIMARY)),
+                              ),
+                              subtitle: Text(
+                                "Using GPS".tr(),
+                                style: TextStyle(color: Color(COLOR_PRIMARY)),
+                              ),
+                              onTap: () async {
+                                setState(() => charging = true);
+                                Position position =
+                                    await Geolocator.getCurrentPosition(
+                                            desiredAccuracy:
+                                                LocationAccuracy.high)
+                                        .whenComplete(() {});
+                                setState(() => charging = false);
+                                var result = await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => MapLocationPicker(
+                                      currentLatLng: LatLng(position.latitude,
+                                          position.longitude),
+                                      apiKey: GOOGLE_API_KEY,
+                                      canPopOnNextButtonTaped: true,
+                                      language: "es",
+                                      bottomCardMargin: EdgeInsets.zero,
+                                      bottomCardShape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(15))),
+                                      onNext: (p) {
+                                        String name = "";
+                                        String? locality,
+                                            postalCode,
+                                            country,
+                                            administrativeAreaLevel1,
+                                            administrativeAreaLevel2,
+                                            city,
+                                            subLocalityLevel1,
+                                            subLocalityLevel2;
+                                        bool isOnStreet = false;
+                                        if (p!.addressComponents.length !=
+                                                null &&
+                                            p.addressComponents.length > 0) {
+                                          for (var i = 0;
+                                              i < p.addressComponents.length;
+                                              i++) {
+                                            var tmp = p.addressComponents[i];
+                                            var types = tmp.types;
+                                            var shortName = tmp.shortName;
+                                            var longName = tmp.longName;
+                                            if (types == null) {
+                                              continue;
+                                            }
+                                            if (i == 0) {
+                                              // [street_number]
+                                              name = shortName;
+                                              isOnStreet = types
+                                                  .contains('street_number');
+                                              // other index 0 types
+                                              // [establishment, point_of_interest, subway_station, transit_station]
+                                              // [premise]
+                                              // [route]
+                                            } else if (i == 1 && isOnStreet) {
+                                              if (types.contains('route')) {
+                                                name += ", $shortName";
+                                              }
+                                            } else {
+                                              if (types.contains(
+                                                  "sublocality_level_1")) {
+                                                subLocalityLevel1 = shortName;
+                                              } else if (types.contains(
+                                                  "sublocality_level_2")) {
+                                                subLocalityLevel2 = shortName;
+                                              } else if (types
+                                                  .contains("locality")) {
+                                                locality = longName;
+                                              } else if (types.contains(
+                                                  "administrative_area_level_2")) {
+                                                administrativeAreaLevel2 =
+                                                    shortName;
+                                              } else if (types.contains(
+                                                  "administrative_area_level_1")) {
+                                                administrativeAreaLevel1 =
+                                                    longName;
+                                              } else if (types
+                                                  .contains("country")) {
+                                                country = longName;
+                                              } else if (types
+                                                  .contains('postal_code')) {
+                                                postalCode = shortName;
                                               }
                                             }
-                                            locality = locality ??
-                                                administrativeAreaLevel1;
-                                            city = locality;
-                                            var result = LocationResult()
-                                              ..name = name
-                                              ..locality = locality
-                                              ..latLng = LatLng(
-                                                  p.geometry.location.lat,
-                                                  p.geometry.location.lng)
-                                              ..formattedAddress =
-                                                  p.formattedAddress
-                                              ..placeId = p.placeId
-                                              ..postalCode = postalCode
-                                              ..country = AddressComponent(
-                                                  name: country,
-                                                  shortName: country)
-                                              ..administrativeAreaLevel1 =
-                                                  AddressComponent(
-                                                      name:
-                                                          administrativeAreaLevel1,
-                                                      shortName:
-                                                          administrativeAreaLevel1)
-                                              ..administrativeAreaLevel2 =
-                                                  AddressComponent(
-                                                      name:
-                                                          administrativeAreaLevel2,
-                                                      shortName:
-                                                          administrativeAreaLevel2)
-                                              ..city = AddressComponent(
-                                                  name: city, shortName: city)
-                                              ..subLocalityLevel1 =
-                                                  AddressComponent(
-                                                      name: subLocalityLevel1,
-                                                      shortName:
-                                                          subLocalityLevel1)
-                                              ..subLocalityLevel2 =
-                                                  AddressComponent(
-                                                      name: subLocalityLevel2,
-                                                      shortName:
-                                                          subLocalityLevel2);
-                            
-                                            street1.text = result.name.toString();
-                                            landmark1.text = "";
-                                            city1.text =
-                                                result.city!.shortName.toString();
-                                            cutries1.text =
-                                                result.country!.shortName.toString();
-                                            zipcode1.text =
-                                                result.postalCode.toString();
-                                            lat = result.latLng!.latitude;
-                                            long = result.latLng!.longitude;
-                                          },
-                                        ),
-                                      ),
-                                    );
-                            
-                                    setState(() {});
-                                  }),
-                            )),
+                                          }
+                                        }
+                                        locality = locality ??
+                                            administrativeAreaLevel1;
+                                        city = locality;
+                                        var result = LocationResult()
+                                          ..name = name
+                                          ..locality = locality
+                                          ..latLng = LatLng(
+                                              p.geometry.location.lat,
+                                              p.geometry.location.lng)
+                                          ..formattedAddress =
+                                              p.formattedAddress
+                                          ..placeId = p.placeId
+                                          ..postalCode = postalCode
+                                          ..country = AddressComponent(
+                                              name: country, shortName: country)
+                                          ..administrativeAreaLevel1 =
+                                              AddressComponent(
+                                                  name:
+                                                      administrativeAreaLevel1,
+                                                  shortName:
+                                                      administrativeAreaLevel1)
+                                          ..administrativeAreaLevel2 =
+                                              AddressComponent(
+                                                  name:
+                                                      administrativeAreaLevel2,
+                                                  shortName:
+                                                      administrativeAreaLevel2)
+                                          ..city = AddressComponent(
+                                              name: city, shortName: city)
+                                          ..subLocalityLevel1 =
+                                              AddressComponent(
+                                                  name: subLocalityLevel1,
+                                                  shortName: subLocalityLevel1)
+                                          ..subLocalityLevel2 =
+                                              AddressComponent(
+                                                  name: subLocalityLevel2,
+                                                  shortName: subLocalityLevel2);
+
+                                        street1.text = result.name.toString();
+                                        landmark1.text = "";
+                                        city1.text =
+                                            result.city!.shortName.toString();
+                                        cutries1.text = result
+                                            .country!.shortName
+                                            .toString();
+                                        zipcode1.text =
+                                            result.postalCode.toString();
+                                        lat = result.latLng!.latitude;
+                                        long = result.latLng!.longitude;
+                                      },
+                                    ),
+                                  ),
+                                );
+
+                                setState(() {});
+                              }),
+                        )),
                       ),
                       SizedBox(
                         height: 40,

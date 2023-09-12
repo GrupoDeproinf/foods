@@ -151,7 +151,8 @@ class FireStoreUtils {
         print('FireStoreUtils.getCuisines Parse error $e');
       }
     });
-    if(cuisines.isNotEmpty) cuisines.sort((a, b)=> a.order!.compareTo(b.order!));
+    if (cuisines.isNotEmpty)
+      cuisines.sort((a, b) => a.order!.compareTo(b.order!));
     return cuisines;
   }
 
@@ -271,22 +272,22 @@ class FireStoreUtils {
     return reviewAttributesList;
   }
 
-  Future<List<RatingModel>> getReviewList(String productId) async {
-    List<RatingModel> reviewList = [];
-    QuerySnapshot<Map<String, dynamic>> currencyQuery = await firestore
-        .collection(Order_Rating)
-        .where('productId', isEqualTo: productId)
-        .get();
-    await Future.forEach(currencyQuery.docs,
-        (QueryDocumentSnapshot<Map<String, dynamic>> document) {
-      try {
-        reviewList.add(RatingModel.fromJson(document.data()));
-      } catch (e) {
-        debugPrint('FireStoreUtils.getCurrencys Parse error $e');
-      }
-    });
-    return reviewList;
-  }
+  // Future<List<RatingModel>> getReviewList(String productId) async {
+  //   List<RatingModel> reviewList = [];
+  //   QuerySnapshot<Map<String, dynamic>> currencyQuery = await firestore
+  //       .collection(Order_Rating)
+  //       .where('productId', isEqualTo: productId)
+  //       .get();
+  //   await Future.forEach(currencyQuery.docs,
+  //       (QueryDocumentSnapshot<Map<String, dynamic>> document) {
+  //     try {
+  //       reviewList.add(RatingModel.fromJson(document.data()));
+  //     } catch (e) {
+  //       debugPrint('FireStoreUtils.getCurrencys Parse error $e');
+  //     }
+  //   });
+  //   return reviewList;
+  // }
 
   static Future<List<ProductModel>> getStoreProduct(String storeId) async {
     List<ProductModel> productList = [];
@@ -393,9 +394,9 @@ class FireStoreUtils {
     }
   }
 
-  Future<TaxModel?> getTaxSetting() async {
+  Future<TaxModel?> getTaxSetting(String country) async {
     DocumentSnapshot<Map<String, dynamic>> taxQuery =
-        await firestore.collection(Setting).doc('taxSetting').get();
+        await firestore.collection(Setting).doc('taxSetting' + country).get();
     if (taxQuery.data() != null) {
       return TaxModel.fromJson(taxQuery.data()!);
     }
@@ -876,16 +877,18 @@ class FireStoreUtils {
         debugPrint('FireStoreUtils.getCuisines Parse error $e');
       }
     });
-    if(cuisines.isNotEmpty) cuisines.sort((a, b)=> a.order!.compareTo(b.order!));
+    if (cuisines.isNotEmpty)
+      cuisines.sort((a, b) => a.order!.compareTo(b.order!));
 
     return cuisines;
   }
 
-  dynamic getRate() async {
+  Future<dynamic> getRate() async {
+
     try {
       var response = await bcv.BCVWebSite.getRates(currencyCode: "USD");
-      print(response);
-      return response;
+
+      return Future.value(response);
       // var response =
       //     await http.get(Uri.https("www.tasatoday.pro", 'api/rates'), headers: {
       //   'Content-type': 'application/json',
@@ -901,20 +904,21 @@ class FireStoreUtils {
 
   Future<List<Map<String, dynamic>>> getPayments(vendorID) async {
     List<Map<String, dynamic>> payments = [];
+    print(vendorID);
     QuerySnapshot<Map<String, dynamic>> paymentsQuery = await firestore
         .collection('bank_details')
-        .where('status', isEqualTo: true)
-        .where('vendorID', arrayContains: vendorID)
         .get();
     await Future.forEach(paymentsQuery.docs,
         (QueryDocumentSnapshot<Map<String, dynamic>> document) {
       try {
+        var decoded = document.data();
+        if(decoded["status"] && (decoded["vendorID"] as List).contains(vendorID))
         payments.add(document.data());
       } catch (e) {
         debugPrint('FireStoreUtils.getPayments Parse error $e');
       }
     });
-    return payments;
+    return Future.value(payments);
   }
 
   StreamController<List<VendorModel>>? vendorStreamController;

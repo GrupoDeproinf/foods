@@ -5,7 +5,9 @@ class FavouriteModel {
   FavouriteModel({this.restaurantId, this.userId});
 
   factory FavouriteModel.fromJson(Map<String, dynamic> parsedJson) {
-    return new FavouriteModel(restaurantId: parsedJson["restaurant_id"] ?? "", userId: parsedJson["user_id"] ?? "");
+    return new FavouriteModel(
+        restaurantId: parsedJson["restaurant_id"] ?? "",
+        userId: parsedJson["user_id"] ?? "");
   }
 
   Map<String, dynamic> toJson() {

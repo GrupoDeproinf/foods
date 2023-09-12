@@ -19,7 +19,6 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
   String? _qrInfo = 'Scan a QR/Bar code'.tr();
   bool _camState = false, isMainCall = false;
 
-
   _scanCode() {
     setState(() {
       _camState = true;
@@ -45,7 +44,11 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
               elevation: 0,
               title: Text(
                 "QR Code Scanner".tr(),
-                style: TextStyle(fontFamily: "Oswald", letterSpacing: 0.5, fontWeight: FontWeight.normal, color: isDarkMode(context) ? Colors.white : Colors.black),
+                style: TextStyle(
+                    fontFamily: "Oswald",
+                    letterSpacing: 0.5,
+                    fontWeight: FontWeight.normal,
+                    color: isDarkMode(context) ? Colors.white : Colors.black),
               ),
               centerTitle: false,
               automaticallyImplyLeading: false,
@@ -77,7 +80,8 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                               print("code ius $code");
                               if (code != null && code.isNotEmpty) {
                                 Map codeVal = jsonDecode(code);
-                                print("codeVal: $codeVal  ${allstoreList.isNotEmpty}");
+                                print(
+                                    "codeVal: $codeVal  ${allstoreList.isNotEmpty}");
                                 if (allstoreList.isNotEmpty) {
                                   for (VendorModel storeModel in allstoreList) {
                                     print("store name ${storeModel.id}");
@@ -86,7 +90,10 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                                       _camState = false;
                                       setState(() {
                                         Navigator.of(context).pop();
-                                        push(context, NewVendorProductsScreen(vendorModel: storeModel));
+                                        push(
+                                            context,
+                                            NewVendorProductsScreen(
+                                                vendorModel: storeModel));
                                       });
                                     }
                                   }
@@ -94,13 +101,15 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                                   isMainCall = true;
                                   _camState = false;
                                   setState(() {});
-                                  showAlertDialog(context, "error".tr(), "Store not available".tr(), true);
+                                  showAlertDialog(context, "error".tr(),
+                                      "Store not available".tr(), true);
                                 }
                               } else {
                                 isMainCall = true;
                                 _camState = false;
                                 setState(() {});
-                                showAlertDialog(context, "error".tr(), "Store not available".tr(), true);
+                                showAlertDialog(context, "error".tr(),
+                                    "Store not available".tr(), true);
                               }
                             },
                           ),

@@ -16,6 +16,7 @@ import 'package:custom_food/model/CurrencyModel.dart';
 import 'package:custom_food/services/FirebaseHelper.dart';
 import 'package:custom_food/services/helper.dart';
 import 'package:custom_food/services/localDatabase.dart';
+import 'package:custom_food/services/web_cart/webCart.dart';
 import 'package:custom_food/ui/auth/AuthScreen.dart';
 import 'package:custom_food/ui/container/ContainerScreen.dart';
 import 'package:custom_food/ui/onBoarding/OnBoardingScreen.dart';
@@ -36,13 +37,13 @@ Future<void> main() async {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
             apiKey: "AIzaSyBiUIRQGEGMcMDdLX25U2QZ_sM-JhoMW_w",
-  authDomain: "salon-canton.firebaseapp.com",
-  databaseURL: "https://salon-canton-default-rtdb.firebaseio.com",
-  projectId: "salon-canton",
-  storageBucket: "salon-canton.appspot.com",
-  messagingSenderId: "1067265015919",
-  appId: "1:1067265015919:web:3e5c6724a15c8583450d9a",
-  measurementId: "G-H0J8M0MHHB"));
+            authDomain: "salon-canton.firebaseapp.com",
+            databaseURL: "https://salon-canton-default-rtdb.firebaseio.com",
+            projectId: "salon-canton",
+            storageBucket: "salon-canton.appspot.com",
+            messagingSenderId: "1067265015919",
+            appId: "1:1067265015919:web:3e5c6724a15c8583450d9a",
+            measurementId: "G-H0J8M0MHHB"));
   } else
     await Firebase.initializeApp();
   await EasyLocalization.ensureInitialized();
@@ -71,7 +72,8 @@ Future<void> main() async {
       providers: [
         Provider<CartDatabase>(
           create: (_) => CartDatabase(),
-        )
+        ),
+        ChangeNotifierProvider<WebCart>(create: (_) => WebCart(),)
       ],
       child: EasyLocalization(
           supportedLocales: [

@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-PaytmPaySuccessModel paytmPaySuccessModelFromJson(String str) => PaytmPaySuccessModel.fromJson(json.decode(str));
+PaytmPaySuccessModel paytmPaySuccessModelFromJson(String str) =>
+    PaytmPaySuccessModel.fromJson(json.decode(str));
 
-String paytmPaySuccessModelToJson(PaytmPaySuccessModel data) => json.encode(data.toJson());
+String paytmPaySuccessModelToJson(PaytmPaySuccessModel data) =>
+    json.encode(data.toJson());
 
 class PaytmPaySuccessModel {
   PaytmPaySuccessModel({
@@ -41,7 +43,8 @@ class PaytmPaySuccessModel {
   DateTime txndate;
   String checksumhash;
 
-  factory PaytmPaySuccessModel.fromJson(Map<String, dynamic> json) => PaytmPaySuccessModel(
+  factory PaytmPaySuccessModel.fromJson(Map<String, dynamic> json) =>
+      PaytmPaySuccessModel(
         currency: json["CURRENCY"],
         gatewayname: json["GATEWAYNAME"],
         respmsg: json["RESPMSG"],

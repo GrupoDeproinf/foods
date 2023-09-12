@@ -31,7 +31,8 @@ class FTapEffect extends StatefulWidget {
   State<FTapEffect> createState() => _FTapEffectState();
 }
 
-class _FTapEffectState extends State<FTapEffect> with SingleTickerProviderStateMixin {
+class _FTapEffectState extends State<FTapEffect>
+    with SingleTickerProviderStateMixin {
   final double scaleActive = 0.98;
   final double opacityActive = 0.2;
   late AnimationController controller;
@@ -42,7 +43,8 @@ class _FTapEffectState extends State<FTapEffect> with SingleTickerProviderStateM
   void initState() {
     controller = AnimationController(vsync: this, duration: widget.duration);
     animation = Tween<double>(begin: 1, end: scaleActive).animate(controller);
-    animation2 = Tween<double>(begin: 1, end: opacityActive).animate(controller);
+    animation2 =
+        Tween<double>(begin: 1, end: opacityActive).animate(controller);
     super.initState();
   }
 

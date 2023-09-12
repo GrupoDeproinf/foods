@@ -64,7 +64,8 @@ class _FavouriteItemScreenState extends State<FavouriteItemScreen> {
   Widget buildAllStoreData(ProductModel productModel, int index) {
     return GestureDetector(
       onTap: () async {
-        VendorModel? vendorModel = await FireStoreUtils.getVendor(productModel.vendorID);
+        VendorModel? vendorModel =
+            await FireStoreUtils.getVendor(productModel.vendorID);
         if (vendorModel != null) {
           push(
             context,
@@ -104,7 +105,8 @@ class _FavouriteItemScreenState extends State<FavouriteItemScreen> {
                   imageBuilder: (context, imageProvider) => Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                      image: DecorationImage(
+                          image: imageProvider, fit: BoxFit.cover),
                     ),
                   ),
                   placeholder: (context, url) => Center(
@@ -145,9 +147,15 @@ class _FavouriteItemScreenState extends State<FavouriteItemScreen> {
                         GestureDetector(
                           onTap: () {
                             setState(() {
-                              FavouriteItemModel favouriteModel = FavouriteItemModel(productId: productModel.id, storeId: productModel.vendorID, userId: MyAppState.currentUser!.userID);
-                              lstFavourite.removeWhere((item) => item.productId == productModel.id);
-                              FireStoreUtils().removeFavouriteItem(favouriteModel);
+                              FavouriteItemModel favouriteModel =
+                                  FavouriteItemModel(
+                                      productId: productModel.id,
+                                      storeId: productModel.vendorID,
+                                      userId: MyAppState.currentUser!.userID);
+                              lstFavourite.removeWhere(
+                                  (item) => item.productId == productModel.id);
+                              FireStoreUtils()
+                                  .removeFavouriteItem(favouriteModel);
                             });
                           },
                           child: Icon(
@@ -166,11 +174,17 @@ class _FavouriteItemScreenState extends State<FavouriteItemScreen> {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 2),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(productModel.reviewsCount != 0 ? (productModel.reviewsSum / productModel.reviewsCount).toStringAsFixed(1) : 0.toString(),
+                            Text(
+                                productModel.reviewsCount != 0
+                                    ? (productModel.reviewsSum /
+                                            productModel.reviewsCount)
+                                        .toStringAsFixed(1)
+                                    : 0.toString(),
                                 style: const TextStyle(
                                   fontFamily: "Oswald",
                                   letterSpacing: 0.5,
@@ -192,8 +206,14 @@ class _FavouriteItemScreenState extends State<FavouriteItemScreen> {
                     ),
                     productModel.disPrice == "" || productModel.disPrice == "0"
                         ? Text(
-                            symbol + double.parse(productModel.price).toStringAsFixed(decimal),
-                            style: TextStyle(fontSize: 16, fontFamily: "Oswald", letterSpacing: 0.5, color: Color(COLOR_PRIMARY)),
+                            symbol +
+                                double.parse(productModel.price)
+                                    .toStringAsFixed(decimal),
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: "Oswald",
+                                letterSpacing: 0.5,
+                                color: Color(COLOR_PRIMARY)),
                           )
                         : Row(
                             children: [
@@ -211,7 +231,11 @@ class _FavouriteItemScreenState extends State<FavouriteItemScreen> {
                               ),
                               Text(
                                 '$symbol${double.parse(productModel.price).toStringAsFixed(decimal)}',
-                                style: const TextStyle(fontFamily: "Oswald", fontWeight: FontWeight.bold, color: Colors.grey, decoration: TextDecoration.lineThrough),
+                                style: const TextStyle(
+                                    fontFamily: "Oswald",
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                    decoration: TextDecoration.lineThrough),
                               ),
                             ],
                           ),
@@ -226,7 +250,9 @@ class _FavouriteItemScreenState extends State<FavouriteItemScreen> {
   }
 
   Future<void> getData() async {
-    await fireStoreUtils.getFavouritesProductList(MyAppState.currentUser!.userID).then((value) {
+    await fireStoreUtils
+        .getFavouritesProductList(MyAppState.currentUser!.userID)
+        .then((value) {
       setState(() {
         lstFavourite.clear();
         lstFavourite.addAll(value);
@@ -236,9 +262,11 @@ class _FavouriteItemScreenState extends State<FavouriteItemScreen> {
     await fireStoreUtils.getAllProducts().then((value) {
       setState(() {
         lstFavourite.forEach((element) {
-          final bool _productIsInList = value.any((product) => product.id == element.productId);
+          final bool _productIsInList =
+              value.any((product) => product.id == element.productId);
           if (_productIsInList) {
-            ProductModel productModel = value.firstWhere((product) => product.id == element.productId);
+            ProductModel productModel =
+                value.firstWhere((product) => product.id == element.productId);
             favProductList.add(productModel);
           }
         });

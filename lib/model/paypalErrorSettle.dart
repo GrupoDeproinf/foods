@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-PayPalErrorSettleModel payPalErrorSettelModelFromJson(String str) => PayPalErrorSettleModel.fromJson(json.decode(str));
+PayPalErrorSettleModel payPalErrorSettelModelFromJson(String str) =>
+    PayPalErrorSettleModel.fromJson(json.decode(str));
 
-String payPalErrorSettelModelToJson(PayPalErrorSettleModel data) => json.encode(data.toJson());
+String payPalErrorSettelModelToJson(PayPalErrorSettleModel data) =>
+    json.encode(data.toJson());
 
 class PayPalErrorSettleModel {
   PayPalErrorSettleModel({
@@ -17,7 +19,8 @@ class PayPalErrorSettleModel {
   bool success;
   Data data;
 
-  factory PayPalErrorSettleModel.fromJson(Map<String, dynamic> json) => PayPalErrorSettleModel(
+  factory PayPalErrorSettleModel.fromJson(Map<String, dynamic> json) =>
+      PayPalErrorSettleModel(
         success: json["success"],
         data: Data.fromJson(json["data"]),
       );

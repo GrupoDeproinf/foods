@@ -76,7 +76,11 @@ class ProductModel {
       brandID: parsedJson['brandID'] ?? '',
       description: parsedJson['description'] ?? '',
       id: parsedJson['id'] ?? '',
-      photo: parsedJson["photo"] != null && parsedJson["photo"] != "" ? parsedJson['photo'] : parsedJson["photos"] != null && parsedJson["photos"].isNotEmpty ? parsedJson["photos"][0] : '',
+      photo: parsedJson["photo"] != null && parsedJson["photo"] != ""
+          ? parsedJson['photo']
+          : parsedJson["photos"] != null && parsedJson["photos"].isNotEmpty
+              ? parsedJson["photos"][0]
+              : '',
       photos: parsedJson['photos'] ?? [],
       price: parsedJson['price'] ?? '',
       quantity: parsedJson['quantity'] ?? 0,
@@ -97,8 +101,10 @@ class ProductModel {
       addOnsTitle: parsedJson['addOnsTitle'] ?? [],
       reviewsCount: parsedJson['reviewsCount'] ?? 0,
       reviewsSum: parsedJson['reviewsSum'] ?? 0,
-      variantInfo: (parsedJson.containsKey('variant_info') && parsedJson['variant_info'] != null)
-          ? parsedJson['variant_info'].runtimeType.toString() == '_InternalLinkedHashMap<String, dynamic>'
+      variantInfo: (parsedJson.containsKey('variant_info') &&
+              parsedJson['variant_info'] != null)
+          ? parsedJson['variant_info'].runtimeType.toString() ==
+                  '_InternalLinkedHashMap<String, dynamic>'
               ? VariantInfo.fromJson(parsedJson['variant_info'])
               : null
           : null,
@@ -108,7 +114,10 @@ class ProductModel {
       //lstSizeCustom: lstSizeCustom,//parse dJson['lstSizeCustom'] != null?parsedJson['lstSizeCustom']:<AddSizeDemo>[] ,
       //lstAddOnsCustom: lstAddOnsCustom,//parsedJson['lstAddOnsCustom']!=null?parsedJson['lstAddOnsCustom']:<AddAddonsDemo>[],
       veg: parsedJson['veg'] ?? false,
-      itemAttributes: (parsedJson.containsKey('item_attribute') && parsedJson['item_attribute'] != null) ? ItemAttributes.fromJson(parsedJson['item_attribute']) : null,
+      itemAttributes: (parsedJson.containsKey('item_attribute') &&
+              parsedJson['item_attribute'] != null)
+          ? ItemAttributes.fromJson(parsedJson['item_attribute'])
+          : null,
     );
   }
 
@@ -140,7 +149,8 @@ class ProductModel {
       "addOnsPrice": addOnsPrice,
       "addon_name": addonName,
       "addon_price": addonPrice,
-      'item_attribute': itemAttributes == null ? null : itemAttributes!.toJson(),
+      'item_attribute':
+          itemAttributes == null ? null : itemAttributes!.toJson(),
       'product_specification': specification,
       'reviewAttributes': reviewAttributes,
       'reviewsCount': reviewsCount,

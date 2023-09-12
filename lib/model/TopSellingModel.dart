@@ -7,7 +7,14 @@ class TopSellingModel {
   String? price;
   String? productID;
 
-  TopSellingModel({this.id, this.name, this.description, this.image, this.restaurantID, this.price, this.productID});
+  TopSellingModel(
+      {this.id,
+      this.name,
+      this.description,
+      this.image,
+      this.restaurantID,
+      this.price,
+      this.productID});
 
   TopSellingModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];

@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-PayPalClientSettleModel payPalClientSettleModelFromJson(String str) => PayPalClientSettleModel.fromJson(json.decode(str));
+PayPalClientSettleModel payPalClientSettleModelFromJson(String str) =>
+    PayPalClientSettleModel.fromJson(json.decode(str));
 
-String payPalClientSettleModelToJson(PayPalClientSettleModel data) => json.encode(data.toJson());
+String payPalClientSettleModelToJson(PayPalClientSettleModel data) =>
+    json.encode(data.toJson());
 
 class PayPalClientSettleModel {
   PayPalClientSettleModel({
@@ -17,7 +19,8 @@ class PayPalClientSettleModel {
   bool success;
   Data data;
 
-  factory PayPalClientSettleModel.fromJson(Map<String, dynamic> json) => PayPalClientSettleModel(
+  factory PayPalClientSettleModel.fromJson(Map<String, dynamic> json) =>
+      PayPalClientSettleModel(
         success: json["success"],
         data: Data.fromJson(json["data"]),
       );
@@ -263,7 +266,8 @@ class Transaction {
         refundId: json["refundId"],
         refundIds: List<dynamic>.from(json["refundIds"].map((x) => x)),
         refundedTransactionId: json["refundedTransactionId"],
-        partialSettlementTransactionIds: List<dynamic>.from(json["partialSettlementTransactionIds"].map((x) => x)),
+        partialSettlementTransactionIds: List<dynamic>.from(
+            json["partialSettlementTransactionIds"].map((x) => x)),
         authorizedTransactionId: json["authorizedTransactionId"],
         settlementBatchId: json["settlementBatchId"],
         shipping: Ing.fromJson(json["shipping"]),
@@ -286,7 +290,8 @@ class Transaction {
         processedWithNetworkToken: json["processedWithNetworkToken"],
         creditCard: CreditCard.fromJson(json["creditCard"]),
         paypal: Paypal.fromJson(json["paypal"]),
-        statusHistory: List<BillingDetails>.from(json["statusHistory"].map((x) => BillingDetails.fromJson(x))),
+        statusHistory: List<BillingDetails>.from(
+            json["statusHistory"].map((x) => BillingDetails.fromJson(x))),
         planId: json["planId"],
         subscriptionId: json["subscriptionId"],
         subscription: Subscription.fromJson(json["subscription"]),
@@ -297,12 +302,16 @@ class Transaction {
         channel: json["channel"],
         serviceFeeAmount: json["serviceFeeAmount"],
         escrowStatus: json["escrowStatus"],
-        disbursementDetails: BillingDetails.fromJson(json["disbursementDetails"]),
+        disbursementDetails:
+            BillingDetails.fromJson(json["disbursementDetails"]),
         disputes: List<dynamic>.from(json["disputes"].map((x) => x)),
-        authorizationAdjustments: List<dynamic>.from(json["authorizationAdjustments"].map((x) => x)),
+        authorizationAdjustments:
+            List<dynamic>.from(json["authorizationAdjustments"].map((x) => x)),
         paymentInstrumentType: json["paymentInstrumentType"],
-        processorSettlementResponseCode: json["processorSettlementResponseCode"],
-        processorSettlementResponseText: json["processorSettlementResponseText"],
+        processorSettlementResponseCode:
+            json["processorSettlementResponseCode"],
+        processorSettlementResponseText:
+            json["processorSettlementResponseText"],
         networkResponseCode: json["networkResponseCode"],
         networkResponseText: json["networkResponseText"],
         threeDSecureInfo: json["threeDSecureInfo"],
@@ -315,17 +324,21 @@ class Transaction {
         retryIds: List<dynamic>.from(json["retryIds"].map((x) => x)),
         retried: json["retried"] ?? false,
         retriedTransactionId: json["retriedTransactionId"],
-        refundGlobalIds: List<dynamic>.from(json["refundGlobalIds"].map((x) => x)),
-        partialSettlementTransactionGlobalIds: List<dynamic>.from(json["partialSettlementTransactionGlobalIds"].map((x) => x)),
+        refundGlobalIds:
+            List<dynamic>.from(json["refundGlobalIds"].map((x) => x)),
+        partialSettlementTransactionGlobalIds: List<dynamic>.from(
+            json["partialSettlementTransactionGlobalIds"].map((x) => x)),
         refundedTransactionGlobalId: json["refundedTransactionGlobalId"],
         authorizedTransactionGlobalId: json["authorizedTransactionGlobalId"],
         globalId: json["globalId"],
-        retryGlobalIds: List<dynamic>.from(json["retryGlobalIds"].map((x) => x)),
+        retryGlobalIds:
+            List<dynamic>.from(json["retryGlobalIds"].map((x) => x)),
         retriedTransactionGlobalId: json["retriedTransactionGlobalId"],
         retrievalReferenceNumber: json["retrievalReferenceNumber"],
         installmentCount: json["installmentCount"],
         installments: List<dynamic>.from(json["installments"].map((x) => x)),
-        refundedInstallments: List<dynamic>.from(json["refundedInstallments"].map((x) => x)),
+        refundedInstallments:
+            List<dynamic>.from(json["refundedInstallments"].map((x) => x)),
         responseEmvData: json["responseEmvData"],
         acquirerReferenceNumber: json["acquirerReferenceNumber"],
         merchantIdentificationNumber: json["merchantIdentificationNumber"],
@@ -341,7 +354,8 @@ class Transaction {
         customerDetails: BillingDetails.fromJson(json["customerDetails"]),
         billingDetails: BillingDetails.fromJson(json["billingDetails"]),
         shippingDetails: BillingDetails.fromJson(json["shippingDetails"]),
-        subscriptionDetails: BillingDetails.fromJson(json["subscriptionDetails"]),
+        subscriptionDetails:
+            BillingDetails.fromJson(json["subscriptionDetails"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -362,7 +376,8 @@ class Transaction {
         "refundId": refundId,
         "refundIds": List<dynamic>.from(refundIds.map((x) => x)),
         "refundedTransactionId": refundedTransactionId,
-        "partialSettlementTransactionIds": List<dynamic>.from(partialSettlementTransactionIds.map((x) => x)),
+        "partialSettlementTransactionIds":
+            List<dynamic>.from(partialSettlementTransactionIds.map((x) => x)),
         "authorizedTransactionId": authorizedTransactionId,
         "settlementBatchId": settlementBatchId,
         "shipping": shipping.toJson(),
@@ -385,7 +400,8 @@ class Transaction {
         "processedWithNetworkToken": processedWithNetworkToken,
         "creditCard": creditCard.toJson(),
         "paypal": paypal.toJson(),
-        "statusHistory": List<dynamic>.from(statusHistory.map((x) => x.toJson())),
+        "statusHistory":
+            List<dynamic>.from(statusHistory.map((x) => x.toJson())),
         "planId": planId,
         "subscriptionId": subscriptionId,
         "subscription": subscription.toJson(),
@@ -398,7 +414,8 @@ class Transaction {
         "escrowStatus": escrowStatus,
         "disbursementDetails": disbursementDetails.toJson(),
         "disputes": List<dynamic>.from(disputes.map((x) => x)),
-        "authorizationAdjustments": List<dynamic>.from(authorizationAdjustments.map((x) => x)),
+        "authorizationAdjustments":
+            List<dynamic>.from(authorizationAdjustments.map((x) => x)),
         "paymentInstrumentType": paymentInstrumentType,
         "processorSettlementResponseCode": processorSettlementResponseCode,
         "processorSettlementResponseText": processorSettlementResponseText,
@@ -415,7 +432,8 @@ class Transaction {
         "retried": retried,
         "retriedTransactionId": retriedTransactionId,
         "refundGlobalIds": List<dynamic>.from(refundGlobalIds.map((x) => x)),
-        "partialSettlementTransactionGlobalIds": List<dynamic>.from(partialSettlementTransactionGlobalIds.map((x) => x)),
+        "partialSettlementTransactionGlobalIds": List<dynamic>.from(
+            partialSettlementTransactionGlobalIds.map((x) => x)),
         "refundedTransactionGlobalId": refundedTransactionGlobalId,
         "authorizedTransactionGlobalId": authorizedTransactionGlobalId,
         "globalId": globalId,
@@ -424,7 +442,8 @@ class Transaction {
         "retrievalReferenceNumber": retrievalReferenceNumber,
         "installmentCount": installmentCount,
         "installments": List<dynamic>.from(installments.map((x) => x)),
-        "refundedInstallments": List<dynamic>.from(refundedInstallments.map((x) => x)),
+        "refundedInstallments":
+            List<dynamic>.from(refundedInstallments.map((x) => x)),
         "responseEmvData": responseEmvData,
         "acquirerReferenceNumber": acquirerReferenceNumber,
         "merchantIdentificationNumber": merchantIdentificationNumber,
@@ -535,7 +554,8 @@ class Ing {
 class BillingDetails {
   BillingDetails();
 
-  factory BillingDetails.fromJson(Map<String, dynamic> json) => BillingDetails();
+  factory BillingDetails.fromJson(Map<String, dynamic> json) =>
+      BillingDetails();
 
   Map<String, dynamic> toJson() => {};
 }
@@ -703,7 +723,8 @@ class MerchantAddress {
   dynamic postalCode;
   dynamic phone;
 
-  factory MerchantAddress.fromJson(Map<String, dynamic> json) => MerchantAddress(
+  factory MerchantAddress.fromJson(Map<String, dynamic> json) =>
+      MerchantAddress(
         streetAddress: json["streetAddress"],
         locality: json["locality"],
         region: json["region"],
@@ -890,21 +911,27 @@ class Paypal {
         transactionFeeAmount: json["transactionFeeAmount"],
         transactionFeeCurrencyIsoCode: json["transactionFeeCurrencyIsoCode"],
         refundFromTransactionFeeAmount: json["refundFromTransactionFeeAmount"],
-        refundFromTransactionFeeCurrencyIsoCode: json["refundFromTransactionFeeCurrencyIsoCode"],
+        refundFromTransactionFeeCurrencyIsoCode:
+            json["refundFromTransactionFeeCurrencyIsoCode"],
         selectedFinancingTerm: json["selectedFinancingTerm"],
         selectedFinancingCurrencyCode: json["selectedFinancingCurrencyCode"],
-        selectedFinancingDiscountPercentage: json["selectedFinancingDiscountPercentage"],
+        selectedFinancingDiscountPercentage:
+            json["selectedFinancingDiscountPercentage"],
         description: json["description"],
         shippingOptionId: json["shippingOptionId"],
         globalId: json["globalId"],
         cobrandedCardLabel: json["cobrandedCardLabel"],
-        implicitlyVaultedPaymentMethodToken: json["implicitlyVaultedPaymentMethodToken"],
-        implicitlyVaultedPaymentMethodGlobalId: json["implicitlyVaultedPaymentMethodGlobalId"],
+        implicitlyVaultedPaymentMethodToken:
+            json["implicitlyVaultedPaymentMethodToken"],
+        implicitlyVaultedPaymentMethodGlobalId:
+            json["implicitlyVaultedPaymentMethodGlobalId"],
         billingAgreementId: json["billingAgreementId"],
         paypalRetailTransactionId: json["paypalRetailTransactionId"],
         paypalRetailTransactionStatus: json["paypalRetailTransactionStatus"],
-        paypalRetailTransactionRefundUrl: json["paypalRetailTransactionRefundUrl"],
-        paypalRetailTransactionLookupUrl: json["paypalRetailTransactionLookupUrl"],
+        paypalRetailTransactionRefundUrl:
+            json["paypalRetailTransactionRefundUrl"],
+        paypalRetailTransactionLookupUrl:
+            json["paypalRetailTransactionLookupUrl"],
         appUsedForScanning: json["appUsedForScanning"],
       );
 
@@ -929,16 +956,20 @@ class Paypal {
         "transactionFeeAmount": transactionFeeAmount,
         "transactionFeeCurrencyIsoCode": transactionFeeCurrencyIsoCode,
         "refundFromTransactionFeeAmount": refundFromTransactionFeeAmount,
-        "refundFromTransactionFeeCurrencyIsoCode": refundFromTransactionFeeCurrencyIsoCode,
+        "refundFromTransactionFeeCurrencyIsoCode":
+            refundFromTransactionFeeCurrencyIsoCode,
         "selectedFinancingTerm": selectedFinancingTerm,
         "selectedFinancingCurrencyCode": selectedFinancingCurrencyCode,
-        "selectedFinancingDiscountPercentage": selectedFinancingDiscountPercentage,
+        "selectedFinancingDiscountPercentage":
+            selectedFinancingDiscountPercentage,
         "description": description,
         "shippingOptionId": shippingOptionId,
         "globalId": globalId,
         "cobrandedCardLabel": cobrandedCardLabel,
-        "implicitlyVaultedPaymentMethodToken": implicitlyVaultedPaymentMethodToken,
-        "implicitlyVaultedPaymentMethodGlobalId": implicitlyVaultedPaymentMethodGlobalId,
+        "implicitlyVaultedPaymentMethodToken":
+            implicitlyVaultedPaymentMethodToken,
+        "implicitlyVaultedPaymentMethodGlobalId":
+            implicitlyVaultedPaymentMethodGlobalId,
         "billingAgreementId": billingAgreementId,
         "paypalRetailTransactionId": paypalRetailTransactionId,
         "paypalRetailTransactionStatus": paypalRetailTransactionStatus,

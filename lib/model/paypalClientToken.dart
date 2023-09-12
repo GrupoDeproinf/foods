@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-PayPalClientTokenModel payPalClientTokenModelFromJson(String str) => PayPalClientTokenModel.fromJson(json.decode(str));
+PayPalClientTokenModel payPalClientTokenModelFromJson(String str) =>
+    PayPalClientTokenModel.fromJson(json.decode(str));
 
-String payPalClientTokenModelToJson(PayPalClientTokenModel data) => json.encode(data.toJson());
+String payPalClientTokenModelToJson(PayPalClientTokenModel data) =>
+    json.encode(data.toJson());
 
 class PayPalClientTokenModel {
   PayPalClientTokenModel({
@@ -17,7 +19,8 @@ class PayPalClientTokenModel {
   bool success;
   String data;
 
-  factory PayPalClientTokenModel.fromJson(Map<String, dynamic> json) => PayPalClientTokenModel(
+  factory PayPalClientTokenModel.fromJson(Map<String, dynamic> json) =>
+      PayPalClientTokenModel(
         success: json["success"],
         data: json["data"],
       );

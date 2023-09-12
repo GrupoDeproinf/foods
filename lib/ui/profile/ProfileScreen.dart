@@ -47,7 +47,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: <Widget>[
-                Center(child: displayCircleImage(user.profilePictureURL, 130, false)),
+                Center(
+                    child:
+                        displayCircleImage(user.profilePictureURL, 130, false)),
                 Positioned.directional(
                   textDirection: Directionality.of(context),
                   start: 80,
@@ -56,7 +58,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       backgroundColor: Color(COLOR_ACCENT),
                       child: Icon(
                         Icons.camera_alt,
-                        color: isDarkMode(context) ? Colors.black : Colors.white,
+                        color:
+                            isDarkMode(context) ? Colors.black : Colors.white,
                       ),
                       mini: true,
                       onPressed: _onCameraClick),
@@ -68,7 +71,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.only(top: 16.0, right: 32, left: 32),
             child: Text(
               user.fullName(),
-              style: TextStyle(color: isDarkMode(context) ? Colors.white : Colors.black, fontSize: 20),
+              style: TextStyle(
+                  color: isDarkMode(context) ? Colors.white : Colors.black,
+                  fontSize: 20),
               textAlign: TextAlign.center,
             ),
           ),
@@ -175,11 +180,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   padding: EdgeInsets.only(top: 12, bottom: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0), side: BorderSide(color: isDarkMode(context) ? Colors.grey.shade700 : Colors.grey.shade200)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      side: BorderSide(
+                          color: isDarkMode(context)
+                              ? Colors.grey.shade700
+                              : Colors.grey.shade200)),
                 ),
                 child: Text(
                   'Log Out',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDarkMode(context) ? Colors.white : Colors.black),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode(context) ? Colors.white : Colors.black),
                 ).tr(),
                 onPressed: () async {
                   //user.active = false;
@@ -221,7 +234,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Text("chooseFromGallery").tr(),
           onPressed: () async {
             Navigator.pop(context);
-            XFile? image = await _imagePicker.pickImage(source: ImageSource.gallery);
+            XFile? image =
+                await _imagePicker.pickImage(source: ImageSource.gallery);
             if (image != null) {
               await _imagePicked(File(image.path));
             }
@@ -232,7 +246,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Text("takeAPicture").tr(),
           onPressed: () async {
             Navigator.pop(context);
-            XFile? image = await _imagePicker.pickImage(source: ImageSource.camera);
+            XFile? image =
+                await _imagePicker.pickImage(source: ImageSource.camera);
             if (image != null) {
               await _imagePicked(File(image.path));
             }
@@ -262,7 +277,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       showAlertDialog(context, "error".tr(), "imageTooLarge".tr(), true);
       return;
     }
-    user.profilePictureURL = await FireStoreUtils.uploadUserImageToFireStorage(compressedImage, user.userID);
+    user.profilePictureURL = await FireStoreUtils.uploadUserImageToFireStorage(
+        compressedImage, user.userID);
     await FireStoreUtils.updateCurrentUser(user);
     MyAppState.currentUser = user;
     hideProgress();

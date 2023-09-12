@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-GetPaymentTxtTokenModel getPaymentTxtTokenModelFromJson(String str) => GetPaymentTxtTokenModel.fromJson(json.decode(str));
+GetPaymentTxtTokenModel getPaymentTxtTokenModelFromJson(String str) =>
+    GetPaymentTxtTokenModel.fromJson(json.decode(str));
 
-String getPaymentTxtTokenModelToJson(GetPaymentTxtTokenModel data) => json.encode(data.toJson());
+String getPaymentTxtTokenModelToJson(GetPaymentTxtTokenModel data) =>
+    json.encode(data.toJson());
 
 class GetPaymentTxtTokenModel {
   GetPaymentTxtTokenModel({
@@ -17,7 +19,8 @@ class GetPaymentTxtTokenModel {
   Head head;
   Body body;
 
-  factory GetPaymentTxtTokenModel.fromJson(Map<String, dynamic> json) => GetPaymentTxtTokenModel(
+  factory GetPaymentTxtTokenModel.fromJson(Map<String, dynamic> json) =>
+      GetPaymentTxtTokenModel(
         head: Head.fromJson(json["head"]),
         body: Body.fromJson(json["body"]),
       );

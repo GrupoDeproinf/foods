@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:custom_food/AppGlobal.dart';
@@ -27,6 +28,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/OrderModel.dart';
 import '../../model/TaxModel.dart';
+import '../../services/web_cart/webCarProduct.dart';
+import '../../services/web_cart/webCart.dart';
 import '../payment/PaymentScreen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -40,6 +43,7 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   late Future<List<CartProduct>> cartFuture;
+  List<WebCartProduct>? webCartProducts;
   late List<CartProduct> cartProducts = [];
 
   double total = 0.0;
@@ -51,7 +55,8 @@ class _CartScreenState extends State<CartScreen> {
 
   TaxModel? taxModel;
   TextEditingController noteController = TextEditingController(text: '');
-  late CartDatabase cartDatabase;
+  late CartDatabase? cartDatabase;
+  late WebCart? webCart;
   double grandtotal = 0.0;
   late var snapshot;
   var per = 0.0;
@@ -125,28 +130,44 @@ class _CartScreenState extends State<CartScreen> {
           if (!deliveryChargeModel.vendorCanModify) {
             print("AMOUNT ES ${deliveryChargeModel.amount}");
             if (km > deliveryChargeModel.minimumDeliveryChargesWithinKm) {
-              deliveryCharges = (km * deliveryChargeModel.deliveryChargesPerKm).toDouble().toStringAsFixed(decimal);
+              deliveryCharges = (km * deliveryChargeModel.deliveryChargesPerKm)
+                  .toDouble()
+                  .toStringAsFixed(decimal);
               setState(() {});
             } else {
-              deliveryCharges = deliveryChargeModel.minimumDeliveryCharges.toDouble().toStringAsFixed(decimal);
+              deliveryCharges = deliveryChargeModel.minimumDeliveryCharges
+                  .toDouble()
+                  .toStringAsFixed(decimal);
               setState(() {});
             }
           } else {
             print("AMOUNT ES ${deliveryChargeModel.amount}");
             if (vendorModel != null && vendorModel!.deliveryCharge != null) {
-              if (km > vendorModel!.deliveryCharge!.minimumDeliveryChargesWithinKm) {
-                deliveryCharges = (km * vendorModel!.deliveryCharge!.deliveryChargesPerKm).toDouble().toStringAsFixed(decimal);
+              if (km >
+                  vendorModel!.deliveryCharge!.minimumDeliveryChargesWithinKm) {
+                deliveryCharges =
+                    (km * vendorModel!.deliveryCharge!.deliveryChargesPerKm)
+                        .toDouble()
+                        .toStringAsFixed(decimal);
                 setState(() {});
               } else {
-                deliveryCharges = vendorModel!.deliveryCharge!.minimumDeliveryCharges.toDouble().toStringAsFixed(decimal);
+                deliveryCharges = vendorModel!
+                    .deliveryCharge!.minimumDeliveryCharges
+                    .toDouble()
+                    .toStringAsFixed(decimal);
                 setState(() {});
               }
             } else {
               if (km > deliveryChargeModel.minimumDeliveryChargesWithinKm) {
-                deliveryCharges = (km * deliveryChargeModel.deliveryChargesPerKm).toDouble().toStringAsFixed(decimal);
+                deliveryCharges =
+                    (km * deliveryChargeModel.deliveryChargesPerKm)
+                        .toDouble()
+                        .toStringAsFixed(decimal);
                 setState(() {});
               } else {
-                deliveryCharges = deliveryChargeModel.minimumDeliveryCharges.toDouble().toStringAsFixed(decimal);
+                deliveryCharges = deliveryChargeModel.minimumDeliveryCharges
+                    .toDouble()
+                    .toStringAsFixed(decimal);
                 setState(() {});
               }
             }
@@ -157,12 +178,24 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
-
-    cartDatabase = Provider.of<CartDatabase>(context, listen: true);
-    cartFuture = cartDatabase.allCartProducts;
-    _fireStoreUtils.getTaxSetting().then((value) {
+    if (!kIsWeb) {
+      cartDatabase = Provider.of<CartDatabase>(context, listen: true);
+      cartFuture = cartDatabase!.allCartProducts;
+    } else {
+      webCart = Provider.of<WebCart>(context, listen: true);
+      webCartProducts = webCart!.items;
+    }
+    if (vendorModel == null) {
+      await _fireStoreUtils
+          .getVendorByVendorID(MyAppState.currentUser!.defaultRestaurant!["id"])
+          .then((value) {
+        vendorModel = value;
+      });
+    }
+    var country = vendorModel!.country == "VE" ? "" : vendorModel!.country;
+    _fireStoreUtils.getTaxSetting(country).then((value) {
       if (value != null && value.active!) {
         taxModel = value;
         setState(() {});
@@ -186,195 +219,375 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    cartDatabase = Provider.of<CartDatabase>(context, listen: true);
+    if (kIsWeb)
+      webCart = Provider.of<WebCart>(context, listen: true);
+    else
+      cartDatabase = Provider.of<CartDatabase>(context, listen: true);
     return Scaffold(
       backgroundColor: isDarkMode(context)
           ? const Color(DARK_COLOR)
           : const Color(0xffFFFFFF),
-      body: StreamBuilder<List<CartProduct>>(
-        stream: cartDatabase.watchProducts,
-        initialData: const [],
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator.adaptive(
-                valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
-              ),
-            );
-          }
-
-          if (!snapshot.hasData || (snapshot.data?.isEmpty ?? true)) {
-            return SizedBox(
-              width: MediaQuery.of(context).size.width * 1,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                "assets/images/carrito_vacio.png",
-                height:
-                  90,
-              width: 90,
-                
-              ),
-                    showEmptyState('Empty Cart'.tr(), context),
-                  ],
-                ),
-              ),
-            );
-          } else {
-            cartProducts = snapshot.data!;
-            if (!isDeliverFound) {
-              getDeliveyData();
-            }
-            return Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
+      body: kIsWeb
+          ? Builder(builder: (context) {
+              if (webCartProducts == null) {
+                return Center(
+                  child: CircularProgressIndicator.adaptive(
+                    valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                  ),
+                );
+              } else if (webCartProducts!.isEmpty) {
+                return SizedBox(
+                  width: MediaQuery.of(context).size.width * 1,
+                  child: Center(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const ClampingScrollPhysics(),
-                          itemCount: cartProducts.length,
-                          itemBuilder: (context, index) {
-                            vendorID = cartProducts[index].vendorID;
-                            return Container(
-                              margin: const EdgeInsets.only(
-                                  left: 13, top: 10, right: 13, bottom: 10),
-                              decoration: BoxDecoration(
-                                color: isDarkMode(context)
-                                    ? Colors.grey.shade700
-                                    : Colors.white,
-                                borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    topRight: Radius.circular(10),
-                                    bottomLeft: Radius.circular(10),
-                                    bottomRight: Radius.circular(10)),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.2),
-                                    spreadRadius: 2,
-                                    blurRadius: 2,
-                                    offset: const Offset(
-                                        0, 2), // changes position of shadow
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  buildCartRow(cartProducts[index], lstExtras),
-                                ],
-                              ),
-                            );
-                          },
+                        Image.asset(
+                          "assets/images/carrito_vacio.png",
+                          height: 90,
+                          width: 90,
                         ),
-                        buildTotalRow(snapshot.data!, lstExtras, vendorID),
+                        showEmptyState('Empty Cart'.tr(), context),
                       ],
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    if (couponId.isEmpty) {
-                      txt.text = "";
-                    }
-
-                    Map<String, dynamic> specialDiscountMap = {
-                      'special_discount': specialDiscountAmount,
-                      'special_discount_label': specialDiscount,
-                      'specialType': specialType
-                    };
-
-                    if (selctedOrderTypeValue == "Delivery") {
-                      push(
-                        context,
-                        DeliveryAddressScreen(
-                          total: grandtotal,
-                          products: cartProducts,
-                          discount: per == 0.0 ? type : per,
-                          couponCode: txt.text,
-                          notes: noteController.text,
-                          couponId: couponId,
-                          vendorModel: vendorModel,
-                          extraAddons: commaSepratedAddOns,
-                          tipValue: tipValue.toString(),
-                          takeAway: selctedOrderTypeValue == "Delivery"
-                              ? false
-                              : true,
-                          deliveryCharge: deliveryCharges,
-                          taxModel: taxModel,
-                          specialDiscountMap: specialDiscountMap,
-                        ),
-                      );
-                    } else {
-                      push(
-                        context,
-                        PaymentScreen(
-                          total: grandtotal,
-                          discount: per == 0.0 ? type : per,
-                          couponCode: txt.text,
-                          couponId: couponId,
-                          notes: noteController.text,
-                          products: cartProducts,
-                          vendorModel: vendorModel,
-                          extraAddons: commaSepratedAddOns,
-                          tipValue: "0",
-                          takeAway: true,
-                          deliveryCharge: "0",
-                          taxModel: taxModel,
-                          specialDiscountMap: specialDiscountMap,
-                        ),
-                      );
-                      // placeOrder();
-                    }
-                  },
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 1,
-                    height: MediaQuery.of(context).size.height * 0.080,
-                    child: Container(
-                      color: Color(COLOR_PRIMARY),
-                      padding: const EdgeInsets.only(
-                          left: 15, right: 10, bottom: 8, top: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(children: [
-                            Text("Total : ".tr(),
-                                style: const TextStyle(
-                                  fontFamily: "Oswald",
-                                  color: Color(0xFFFFFFFF),
-                                )),
-                            Text(
-                              symbol +
-                                  grandtotal
-                                      .toDouble()
-                                      .toStringAsFixed(decimal),
-                              style: const TextStyle(
-                                fontFamily: "Oswald",
-                                color: Color(0xFFFFFFFF),
-                              ),
+                );
+              } else {
+                if (!isDeliverFound) {
+                  getDeliveyData();
+                }
+                return Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const ClampingScrollPhysics(),
+                              itemCount: webCartProducts!.length,
+                              itemBuilder: (context, index) {
+                                vendorID = webCartProducts![index].vendorID;
+                                return Container(
+                                  margin: const EdgeInsets.only(
+                                      left: 13, top: 10, right: 13, bottom: 10),
+                                  decoration: BoxDecoration(
+                                    color: isDarkMode(context)
+                                        ? Colors.grey.shade700
+                                        : Colors.white,
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.2),
+                                        spreadRadius: 2,
+                                        blurRadius: 2,
+                                        offset: const Offset(
+                                            0, 2), // changes position of shadow
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      buildWebCartRow(
+                                          webCartProducts![index], lstExtras),
+                                    ],
+                                  ),
+                                );
+                              },
                             ),
-                          ]),
-                          Text("PROCEED TO CHECKOUT".tr(),
-                              style: const TextStyle(
-                                fontFamily: "Oswald",
-                                color: Color(0xFFFFFFFF),
-                              )),
+                            buildTotalRow(
+                                webToCart(webCart!.items), lstExtras, vendorID),
+                          ],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if (couponId.isEmpty) {
+                          txt.text = "";
+                        }
+
+                        Map<String, dynamic> specialDiscountMap = {
+                          'special_discount': specialDiscountAmount,
+                          'special_discount_label': specialDiscount,
+                          'specialType': specialType
+                        };
+
+                        if (selctedOrderTypeValue == "Delivery") {
+                          push(
+                            context,
+                            DeliveryAddressScreen(
+                              total: grandtotal,
+                              products: webToCart(webCartProducts),
+                              discount: per == 0.0 ? type : per,
+                              couponCode: txt.text,
+                              notes: noteController.text,
+                              couponId: couponId,
+                              vendorModel: vendorModel,
+                              extraAddons: commaSepratedAddOns,
+                              tipValue: tipValue.toString(),
+                              takeAway: selctedOrderTypeValue == "Delivery"
+                                  ? false
+                                  : true,
+                              deliveryCharge: deliveryCharges,
+                              taxModel: taxModel,
+                              specialDiscountMap: specialDiscountMap,
+                            ),
+                          );
+                        } else {
+                          push(
+                            context,
+                            PaymentScreen(
+                              total: grandtotal,
+                              discount: per == 0.0 ? type : per,
+                              couponCode: txt.text,
+                              couponId: couponId,
+                              notes: noteController.text,
+                              products: webToCart(webCartProducts),
+                              vendorModel: vendorModel,
+                              extraAddons: commaSepratedAddOns,
+                              tipValue: "0",
+                              takeAway: true,
+                              deliveryCharge: "0",
+                              taxModel: taxModel,
+                              specialDiscountMap: specialDiscountMap,
+                            ),
+                          );
+                          // placeOrder();
+                        }
+                      },
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 1,
+                        height: MediaQuery.of(context).size.height * 0.080,
+                        child: Container(
+                          color: Color(COLOR_PRIMARY),
+                          padding: const EdgeInsets.only(
+                              left: 15, right: 10, bottom: 8, top: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(children: [
+                                Text("Total : ".tr(),
+                                    style: const TextStyle(
+                                      fontFamily: "Oswald",
+                                      color: Color(0xFFFFFFFF),
+                                    )),
+                                Text(
+                                  symbol +
+                                      grandtotal
+                                          .toDouble()
+                                          .toStringAsFixed(decimal),
+                                  style: const TextStyle(
+                                    fontFamily: "Oswald",
+                                    color: Color(0xFFFFFFFF),
+                                  ),
+                                ),
+                              ]),
+                              Text("PROCEED TO CHECKOUT".tr(),
+                                  style: const TextStyle(
+                                    fontFamily: "Oswald",
+                                    color: Color(0xFFFFFFFF),
+                                  )),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              }
+            })
+          : StreamBuilder<List<CartProduct>>(
+              stream: cartDatabase!.watchProducts,
+              initialData: const [],
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator.adaptive(
+                      valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
+                    ),
+                  );
+                }
+
+                if (!snapshot.hasData || (snapshot.data?.isEmpty ?? true)) {
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width * 1,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            "assets/images/carrito_vacio.png",
+                            height: 90,
+                            width: 90,
+                          ),
+                          showEmptyState('Empty Cart'.tr(), context),
                         ],
                       ),
                     ),
-                  ),
-                )
-              ],
-            );
-          }
-        },
-      ),
+                  );
+                } else {
+                  cartProducts = snapshot.data!;
+                  if (!isDeliverFound) {
+                    getDeliveyData();
+                  }
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const ClampingScrollPhysics(),
+                                itemCount: cartProducts.length,
+                                itemBuilder: (context, index) {
+                                  vendorID = cartProducts[index].vendorID;
+                                  return Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 13,
+                                        top: 10,
+                                        right: 13,
+                                        bottom: 10),
+                                    decoration: BoxDecoration(
+                                      color: isDarkMode(context)
+                                          ? Colors.grey.shade700
+                                          : Colors.white,
+                                      borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                          bottomLeft: Radius.circular(10),
+                                          bottomRight: Radius.circular(10)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.2),
+                                          spreadRadius: 2,
+                                          blurRadius: 2,
+                                          offset: const Offset(0,
+                                              2), // changes position of shadow
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        buildCartRow(
+                                            cartProducts[index], lstExtras),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                              buildTotalRow(
+                                  snapshot.data!, lstExtras, vendorID),
+                            ],
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          if (couponId.isEmpty) {
+                            txt.text = "";
+                          }
+
+                          Map<String, dynamic> specialDiscountMap = {
+                            'special_discount': specialDiscountAmount,
+                            'special_discount_label': specialDiscount,
+                            'specialType': specialType
+                          };
+
+                          if (selctedOrderTypeValue == "Delivery") {
+                            push(
+                              context,
+                              DeliveryAddressScreen(
+                                total: grandtotal,
+                                products: cartProducts,
+                                discount: per == 0.0 ? type : per,
+                                couponCode: txt.text,
+                                notes: noteController.text,
+                                couponId: couponId,
+                                vendorModel: vendorModel,
+                                extraAddons: commaSepratedAddOns,
+                                tipValue: tipValue.toString(),
+                                takeAway: selctedOrderTypeValue == "Delivery"
+                                    ? false
+                                    : true,
+                                deliveryCharge: deliveryCharges,
+                                taxModel: taxModel,
+                                specialDiscountMap: specialDiscountMap,
+                              ),
+                            );
+                          } else {
+                            push(
+                              context,
+                              PaymentScreen(
+                                total: grandtotal,
+                                discount: per == 0.0 ? type : per,
+                                couponCode: txt.text,
+                                couponId: couponId,
+                                notes: noteController.text,
+                                products: cartProducts,
+                                vendorModel: vendorModel,
+                                extraAddons: commaSepratedAddOns,
+                                tipValue: "0",
+                                takeAway: true,
+                                deliveryCharge: "0",
+                                taxModel: taxModel,
+                                specialDiscountMap: specialDiscountMap,
+                              ),
+                            );
+                            // placeOrder();
+                          }
+                        },
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 1,
+                          height: MediaQuery.of(context).size.height * 0.080,
+                          child: Container(
+                            color: Color(COLOR_PRIMARY),
+                            padding: const EdgeInsets.only(
+                                left: 15, right: 10, bottom: 8, top: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(children: [
+                                  Text("Total : ".tr(),
+                                      style: const TextStyle(
+                                        fontFamily: "Oswald",
+                                        color: Color(0xFFFFFFFF),
+                                      )),
+                                  Text(
+                                    symbol +
+                                        grandtotal
+                                            .toDouble()
+                                            .toStringAsFixed(decimal),
+                                    style: const TextStyle(
+                                      fontFamily: "Oswald",
+                                      color: Color(0xFFFFFFFF),
+                                    ),
+                                  ),
+                                ]),
+                                Text("PROCEED TO CHECKOUT".tr(),
+                                    style: const TextStyle(
+                                      fontFamily: "Oswald",
+                                      color: Color(0xFFFFFFFF),
+                                    )),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                }
+              },
+            ),
     );
   }
 
-  buildCartRow(CartProduct cartProduct, List<AddAddonsDemo> addons) {
+  buildWebCartRow(WebCartProduct cartProduct, List<AddAddonsDemo> addons) {
     List addOnVal = [];
     var quen = cartProduct.quantity;
     double priceTotalValue = 0.0;
@@ -443,7 +656,8 @@ class _CartScreenState extends State<CartScreen> {
             .then((value) {
           push(
             context,
-            NewVendorProductsScreen(vendorModel: value, objective: cartProduct.category_id),
+            NewVendorProductsScreen(
+                vendorModel: value, objective: cartProduct.category_id),
           );
         });
       },
@@ -457,30 +671,31 @@ class _CartScreenState extends State<CartScreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: CachedNetworkImage(
+                    height: 75,
+                    width: 75,
+                    imageUrl: getImageVAlidUrl(cartProduct.photo.toString()) ==
+                            placeholderImage
+                        ? ""
+                        : getImageVAlidUrl(cartProduct.photo.toString()),
+                    imageBuilder: (context, imageProvider) => Container(
+                      width: 75,
+                      height: 75,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      )),
+                    ),
+                    errorWidget: (context, url, error) => Image.asset(
+                      "assets/images/plato_generico.png",
                       height: 75,
                       width: 75,
-                      imageUrl: getImageVAlidUrl(cartProduct.photo.toString()) ==
-                      placeholderImage
-                  ? ""
-                  : getImageVAlidUrl(cartProduct.photo.toString()),
-                      imageBuilder: (context, imageProvider) => Container(
-                            width: 75,
-                            height: 75,
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            )),
-                          ),
-                      errorWidget: (context, url, error) => Image.asset(
-                "assets/images/plato_generico.png",
-                height:
-                  75,
-              width: 75,
-                cacheHeight:
-                  (MediaQuery.of(context).size.height * 0.11).toInt(),
-              cacheWidth: (MediaQuery.of(context).size.width * 0.23).toInt(),
-              ),),
+                      cacheHeight:
+                          (MediaQuery.of(context).size.height * 0.11).toInt(),
+                      cacheWidth:
+                          (MediaQuery.of(context).size.width * 0.23).toInt(),
+                    ),
+                  ),
                 ),
                 const SizedBox(
                   width: 10,
@@ -503,26 +718,26 @@ class _CartScreenState extends State<CartScreen> {
                             color: Color(COLOR_PRIMARY)),
                       ),
                       SizedBox(
-              height: addOnVal.isEmpty ? 0 : 30,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0),
-                child: ListView.builder(
-                    itemCount: addOnVal.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Text(
-                        "${addOnVal[index].toString().replaceAll("\"", "")} ${(index == addOnVal.length - 1) ? "" : ","}",
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: "Oswald",
+                        height: addOnVal.isEmpty ? 0 : 30,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 0),
+                          child: ListView.builder(
+                              itemCount: addOnVal.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                return Text(
+                                  "${addOnVal[index].toString().replaceAll("\"", "")} ${(index == addOnVal.length - 1) ? "" : ","}",
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontFamily: "Oswald",
+                                  ),
+                                );
+                              }),
                         ),
-                      );
-                    }),
-              ),
-            ),
+                      ),
                     ],
                   ),
                 ),
@@ -638,7 +853,296 @@ class _CartScreenState extends State<CartScreen> {
                       ).toList(),
                     ),
                   ),
-            
+
+            // cartProduct.variant_info != null?ListView.builder(
+            //   itemCount: variantInfo.variantOptions!.length,
+            //   shrinkWrap: true,
+            //   itemBuilder: (context, index) {
+            //     String key = cartProduct.variant_info.variantOptions!.keys.elementAt(index);
+            //     return Padding(
+            //       padding: const EdgeInsets.symmetric(vertical: 2),
+            //       child: Row(
+            //         children: [
+            //           Text("$key : "),
+            //           Text("${cartProduct.variant_info.variantOptions![key]}"),
+            //         ],
+            //       ),
+            //     );
+            //   },
+            // ):Container(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  buildCartRow(CartProduct cartProduct, List<AddAddonsDemo> addons) {
+    List addOnVal = [];
+    var quen = cartProduct.quantity;
+    double priceTotalValue = 0.0;
+    // priceTotalValue   = double.parse(cartProduct.price);
+    double addOnValDoule = 0;
+    for (int i = 0; i < lstExtras.length; i++) {
+      AddAddonsDemo addAddonsDemo = lstExtras[i];
+      if (addAddonsDemo.categoryID == cartProduct.id) {
+        addOnValDoule = addOnValDoule + double.parse(addAddonsDemo.price!);
+      }
+    }
+
+    ProductModel? productModel;
+    FireStoreUtils()
+        .getProductByID(cartProduct.id.split('~').first)
+        .then((value) {
+      productModel = value;
+    });
+
+    VariantInfo? variantInfo;
+    if (cartProduct.variant_info != null) {
+      variantInfo =
+          VariantInfo.fromJson(jsonDecode(cartProduct.variant_info.toString()));
+    }
+    if (cartProduct.extras == null) {
+      addOnVal.clear();
+    } else {
+      if (cartProduct.extras is String) {
+        if (cartProduct.extras == '[]') {
+          addOnVal.clear();
+        } else {
+          String extraDecode = cartProduct.extras
+              .toString()
+              .replaceAll("[", "")
+              .replaceAll("]", "")
+              .replaceAll("\"", "");
+          if (extraDecode.contains(",")) {
+            addOnVal = extraDecode.split(",");
+          } else {
+            if (extraDecode.trim().isNotEmpty) {
+              addOnVal = [extraDecode];
+            }
+          }
+        }
+      }
+
+      if (cartProduct.extras is List) {
+        addOnVal = List.from(cartProduct.extras);
+      }
+    }
+
+    if (cartProduct.extras_price != null &&
+        cartProduct.extras_price != "" &&
+        double.parse(cartProduct.extras_price!) != 0.0) {
+      priceTotalValue +=
+          double.parse(cartProduct.extras_price!) * cartProduct.quantity;
+    }
+    priceTotalValue += double.parse(cartProduct.price) * cartProduct.quantity;
+
+    // VariantInfo variantInfo= cartProduct.variant_info;
+    return InkWell(
+      onTap: () {
+        _fireStoreUtils
+            .getVendorByVendorID(
+                MyAppState.currentUser!.defaultRestaurant!["id"])
+            .then((value) {
+          push(
+            context,
+            NewVendorProductsScreen(
+                vendorModel: value, objective: cartProduct.category_id),
+          );
+        });
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: CachedNetworkImage(
+                    height: 75,
+                    width: 75,
+                    imageUrl: getImageVAlidUrl(cartProduct.photo.toString()) ==
+                            placeholderImage
+                        ? ""
+                        : getImageVAlidUrl(cartProduct.photo.toString()),
+                    imageBuilder: (context, imageProvider) => Container(
+                      width: 75,
+                      height: 75,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      )),
+                    ),
+                    errorWidget: (context, url, error) => Image.asset(
+                      "assets/images/plato_generico.png",
+                      height: 75,
+                      width: 75,
+                      cacheHeight:
+                          (MediaQuery.of(context).size.height * 0.11).toInt(),
+                      cacheWidth:
+                          (MediaQuery.of(context).size.width * 0.23).toInt(),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        cartProduct.name,
+                        style:
+                            const TextStyle(fontSize: 18, fontFamily: "Oswald"),
+                      ),
+                      Text(
+                        symbol +
+                            priceTotalValue.toDouble().toStringAsFixed(decimal),
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: "Oswald",
+                            color: Color(COLOR_PRIMARY)),
+                      ),
+                      SizedBox(
+                        height: addOnVal.isEmpty ? 0 : 30,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 0),
+                          child: ListView.builder(
+                              itemCount: addOnVal.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                return Text(
+                                  "${addOnVal[index].toString().replaceAll("\"", "")} ${(index == addOnVal.length - 1) ? "" : ","}",
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontFamily: "Oswald",
+                                  ),
+                                );
+                              }),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        if (quen != 0) {
+                          quen--;
+                          removetocard(cartProduct, quen);
+                        }
+                      },
+                      child: Image(
+                        image: const AssetImage("assets/images/minus.png"),
+                        color: Color(COLOR_PRIMARY),
+                        height: 30,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      '${cartProduct.quantity}'.tr(),
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if (productModel!.itemAttributes != null) {
+                          if (productModel!.itemAttributes!.variants!
+                              .where((element) =>
+                                  element.variantSku == variantInfo!.variantSku)
+                              .isNotEmpty) {
+                            if (int.parse(productModel!
+                                        .itemAttributes!.variants!
+                                        .where((element) =>
+                                            element.variantSku ==
+                                            variantInfo!.variantSku)
+                                        .first
+                                        .variantQuantity
+                                        .toString()) >
+                                    quen ||
+                                int.parse(productModel!
+                                        .itemAttributes!.variants!
+                                        .where((element) =>
+                                            element.variantSku ==
+                                            variantInfo!.variantSku)
+                                        .first
+                                        .variantQuantity
+                                        .toString()) ==
+                                    -1) {
+                              quen++;
+                              addtocard(cartProduct, quen);
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text("Food out of stock"),
+                              ));
+                            }
+                          } else {
+                            if (productModel!.quantity > quen ||
+                                productModel!.quantity == -1) {
+                              quen++;
+                              addtocard(cartProduct, quen);
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text("Food out of stock"),
+                              ));
+                            }
+                          }
+                        } else {
+                          if (productModel!.quantity > quen ||
+                              productModel!.quantity == -1) {
+                            quen++;
+                            addtocard(cartProduct, quen);
+                          } else {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("Food out of stock"),
+                            ));
+                          }
+                        }
+                      },
+                      child: Image(
+                        image: const AssetImage("assets/images/plus.png"),
+                        color: Color(COLOR_PRIMARY),
+                        height: 30,
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+            variantInfo == null || variantInfo.variantOptions!.isEmpty
+                ? Container()
+                : Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                    child: Wrap(
+                      spacing: 6.0,
+                      runSpacing: 6.0,
+                      children: List.generate(
+                        variantInfo.variantOptions!.length,
+                        (i) {
+                          return _buildChip(
+                              "${variantInfo!.variantOptions!.keys.elementAt(i)} : ${variantInfo.variantOptions![variantInfo.variantOptions!.keys.elementAt(i)]}",
+                              i);
+                        },
+                      ).toList(),
+                    ),
+                  ),
+
             // cartProduct.variant_info != null?ListView.builder(
             //   itemCount: variantInfo.variantOptions!.length,
             //   shrinkWrap: true,
@@ -685,9 +1189,15 @@ class _CartScreenState extends State<CartScreen> {
       if (e.extras_price != null &&
           e.extras_price != "" &&
           double.parse(e.extras_price!) != 0.0) {
-        subTotal += (double.parse(e.extras_price!) * e.quantity) * 100 / 116;
+        if (vendorModel?.country == "VE")
+          subTotal += (double.parse(e.extras_price!) * e.quantity) * 100 / 116;
+        else
+          subTotal += (double.parse(e.extras_price!) * e.quantity);
       }
-      subTotal += (double.parse(e.price) * e.quantity) * 100 / 116;
+      if (vendorModel?.country == "VE")
+        subTotal += (double.parse(e.price) * e.quantity) * 100 / 116;
+      else
+        subTotal += (double.parse(e.price) * e.quantity);
 
       grandtotal = subTotal + double.parse(deliveryCharges) + tipValue;
     }
@@ -740,7 +1250,7 @@ class _CartScreenState extends State<CartScreen> {
     }
     grandtotal +=
         getTaxValue(taxModel, subTotal - discountVal! - specialDiscountAmount);
-    
+
     print("EL TAX ES " + taxModel!.label!);
     // });
     // });
@@ -872,7 +1382,6 @@ class _CartScreenState extends State<CartScreen> {
           ),
           child: Column(
             children: [
-              
               const Divider(
                 color: Color(0xffE2E8F0),
                 height: 0.1,
@@ -996,8 +1505,10 @@ class _CartScreenState extends State<CartScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            taxModel!.label! == "" ? "Tax".tr() : taxModel!.label! +
-                                " ${(taxModel!.type == "fix") ? "" : "(${taxModel!.tax} %)"}",
+                            taxModel!.label! == ""
+                                ? "Tax".tr()
+                                : taxModel!.label! +
+                                    " ${(taxModel!.type == "fix") ? "" : "(${taxModel!.tax} %)"}",
                             style: TextStyle(
                                 fontFamily: "Oswald", fontSize: _font),
                           ),
@@ -1041,7 +1552,8 @@ class _CartScreenState extends State<CartScreen> {
               //           ],
               //         ))),
               Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -1050,9 +1562,17 @@ class _CartScreenState extends State<CartScreen> {
                         style: TextStyle(fontFamily: "Oswald", fontSize: _font),
                       ),
                       Text(
-                        selctedOrderTypeValue == "Delivery" ? "Delivery (${symbol + double.parse(deliveryCharges).toStringAsFixed(decimal)})" : selctedOrderTypeValue! + " (Free)",
+                        selctedOrderTypeValue == "Delivery"
+                            ? "Delivery (${symbol + double.parse(deliveryCharges).toStringAsFixed(decimal)})"
+                            : selctedOrderTypeValue! + " (Free)",
                         style: TextStyle(
-                            fontFamily: "Oswald", color: isDarkMode(context) ? const Color(0xffFFFFFF) : const Color(0xff333333), fontSize: selctedOrderTypeValue == "Delivery" ? _font : 15),
+                            fontFamily: "Oswald",
+                            color: isDarkMode(context)
+                                ? const Color(0xffFFFFFF)
+                                : const Color(0xff333333),
+                            fontSize: selctedOrderTypeValue == "Delivery"
+                                ? _font
+                                : 15),
                       ),
                     ],
                   )),
@@ -1276,31 +1796,73 @@ class _CartScreenState extends State<CartScreen> {
   //   }
   // }
 
-  addtocard(CartProduct cartProduct, qun) async {
-    await cartDatabase.updateProduct(CartProduct(
-        id: cartProduct.id,
-        name: cartProduct.name,
-        photo: cartProduct.photo,
-        price: cartProduct.price,
-        vendorID: cartProduct.vendorID,
-        quantity: qun,
-        category_id: cartProduct.category_id,
-        discountPrice: cartProduct.discountPrice!));
+  List<CartProduct> webToCart(webProducts) {
+    var newList = List.generate(
+        webCartProducts!.length,
+        (index) => CartProduct(
+            id: webCartProducts![index].id,
+            category_id: webCartProducts![index].category_id,
+            name: webCartProducts![index].name,
+            photo: webCartProducts![index].photo,
+            price: webCartProducts![index].price,
+            vendorID: vendorID,
+            quantity: webCartProducts![index].quantity));
+    return newList;
   }
 
-  removetocard(CartProduct cartProduct, qun) async {
-    if (qun >= 1) {
-      await cartDatabase.updateProduct(CartProduct(
+  addtocard(var cartProduct, qun) async {
+    if (kIsWeb) {
+      webCart!.updateProduct(WebCartProduct(
           id: cartProduct.id,
-          category_id: cartProduct.category_id,
           name: cartProduct.name,
           photo: cartProduct.photo,
           price: cartProduct.price,
           vendorID: cartProduct.vendorID,
           quantity: qun,
-          discountPrice: cartProduct.discountPrice));
+          category_id: cartProduct.category_id!,
+          discountPrice: cartProduct.discountPrice!));
     } else {
-      cartDatabase.removeProduct(cartProduct.id);
+      await cartDatabase!.updateProduct(CartProduct(
+          id: cartProduct.id,
+          name: cartProduct.name,
+          photo: cartProduct.photo,
+          price: cartProduct.price,
+          vendorID: cartProduct.vendorID,
+          quantity: qun,
+          category_id: cartProduct.category_id,
+          discountPrice: cartProduct.discountPrice!));
+    }
+  }
+
+  removetocard(var cartProduct, qun) async {
+    if (kIsWeb) {
+      if (qun >= 1) {
+        await webCart!.updateProduct(WebCartProduct(
+            id: cartProduct.id,
+            category_id: cartProduct.category_id!,
+            name: cartProduct.name,
+            photo: cartProduct.photo,
+            price: cartProduct.price,
+            vendorID: cartProduct.vendorID,
+            quantity: qun,
+            discountPrice: cartProduct.discountPrice));
+      } else {
+        webCart!.removeProduct(cartProduct.id);
+      }
+    } else {
+      if (qun >= 1) {
+        await cartDatabase!.updateProduct(CartProduct(
+            id: cartProduct.id,
+            category_id: cartProduct.category_id,
+            name: cartProduct.name,
+            photo: cartProduct.photo,
+            price: cartProduct.price,
+            vendorID: cartProduct.vendorID,
+            quantity: qun,
+            discountPrice: cartProduct.discountPrice));
+      } else {
+        cartDatabase!.removeProduct(cartProduct.id);
+      }
     }
   }
 

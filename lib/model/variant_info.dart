@@ -5,7 +5,12 @@ class VariantInfo {
   String? variantImage;
   Map<String, dynamic>? variantOptions;
 
-  VariantInfo({this.variantId, this.variantPrice, this.variantSku, this.variantImage, this.variantOptions});
+  VariantInfo(
+      {this.variantId,
+      this.variantPrice,
+      this.variantSku,
+      this.variantImage,
+      this.variantOptions});
 
   VariantInfo.fromJson(Map<String, dynamic> json) {
     variantId = json['variant_id'] ?? '';

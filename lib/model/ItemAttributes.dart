@@ -5,9 +5,15 @@ class ItemAttributes {
   ItemAttributes({this.attributes, this.variants});
 
   ItemAttributes.fromJson(Map<String, dynamic> json) {
-    List<Attributes> attribute = json.containsKey('attributes') ? List<Attributes>.from((json['attributes'] as List<dynamic>).map((e) => Attributes.fromJson(e))).toList() : [].cast<Attributes>();
+    List<Attributes> attribute = json.containsKey('attributes')
+        ? List<Attributes>.from((json['attributes'] as List<dynamic>)
+            .map((e) => Attributes.fromJson(e))).toList()
+        : [].cast<Attributes>();
 
-    List<Variants> variant = json.containsKey('variants') ? List<Variants>.from((json['variants'] as List<dynamic>).map((e) => Variants.fromJson(e))).toList() : [].cast<Variants>();
+    List<Variants> variant = json.containsKey('variants')
+        ? List<Variants>.from((json['variants'] as List<dynamic>)
+            .map((e) => Variants.fromJson(e))).toList()
+        : [].cast<Variants>();
 
     attributes = attribute;
     variants = variant;
@@ -47,7 +53,12 @@ class Variants {
   String? variantQuantity;
   String? variantSku;
 
-  Variants({this.variantId, this.variantImage, this.variantPrice, this.variantQuantity, this.variantSku});
+  Variants(
+      {this.variantId,
+      this.variantImage,
+      this.variantPrice,
+      this.variantQuantity,
+      this.variantSku});
 
   Variants.fromJson(Map<String, dynamic> json) {
     variantId = json['variant_id'];

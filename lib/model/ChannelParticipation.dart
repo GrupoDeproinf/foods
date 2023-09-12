@@ -6,7 +6,8 @@ class ChannelParticipation {
   ChannelParticipation({this.channel = '', this.user = ''});
 
   factory ChannelParticipation.fromJson(Map<String, dynamic> parsedJson) {
-    return ChannelParticipation(channel: parsedJson['channel'] ?? '', user: parsedJson['user'] ?? '');
+    return ChannelParticipation(
+        channel: parsedJson['channel'] ?? '', user: parsedJson['user'] ?? '');
   }
 
   Map<String, dynamic> toJson() {

@@ -131,15 +131,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(right: 16.0, left: 16, top: 16, bottom: 8),
+                      padding: const EdgeInsets.only(
+                          right: 16.0, left: 16, top: 16, bottom: 8),
                       child: Text(
                         'Push Notifications',
-                        style: TextStyle(color: isDarkMode(context) ? Colors.white54 : Colors.black54, fontSize: 18),
+                        style: TextStyle(
+                            color: isDarkMode(context)
+                                ? Colors.white54
+                                : Colors.black54,
+                            fontSize: 18),
                       ).tr(),
                     ),
                     Material(
                       elevation: 2,
-                      color: isDarkMode(context) ? Colors.black12 : Colors.white,
+                      color:
+                          isDarkMode(context) ? Colors.black12 : Colors.white,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,7 +170,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 'Order Updates',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: isDarkMode(context) ? Colors.white : Colors.black,
+                                  color: isDarkMode(context)
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
                               ).tr(),
                               value: orderUpdates,
@@ -194,7 +202,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 'Promotions',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: isDarkMode(context) ? Colors.white : Colors.black,
+                                  color: isDarkMode(context)
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
                               ).tr(),
                               value: promotions,
@@ -208,10 +218,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 32.0, bottom: 16),
                       child: ConstrainedBox(
-                        constraints: const BoxConstraints(minWidth: double.infinity),
+                        constraints:
+                            const BoxConstraints(minWidth: double.infinity),
                         child: Material(
                           elevation: 2,
-                          color: isDarkMode(context) ? Colors.black12 : Colors.white,
+                          color: isDarkMode(context)
+                              ? Colors.black12
+                              : Colors.white,
                           child: CupertinoButton(
                             padding: const EdgeInsets.all(12.0),
                             onPressed: () async {
@@ -220,24 +233,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               user.settings.orderUpdates = orderUpdates;
                               user.settings.newArrivals = newArrivals;
                               user.settings.promotions = promotions;
-                              User? updateUser = await FireStoreUtils.updateCurrentUser(user);
+                              User? updateUser =
+                                  await FireStoreUtils.updateCurrentUser(user);
                               hideProgress();
                               if (updateUser != null) {
                                 this.user = updateUser;
                                 MyAppState.currentUser = user;
-                                ScaffoldMessenger.of(buildContext).showSnackBar(SnackBar(
-                                    duration: Duration(seconds: 3),
-                                    content: Text(
-                                      'settingsSavedSuccessfully',
-                                      style: TextStyle(fontSize: 17),
-                                    ).tr()));
+                                ScaffoldMessenger.of(buildContext)
+                                    .showSnackBar(SnackBar(
+                                        duration: Duration(seconds: 3),
+                                        content: Text(
+                                          'settingsSavedSuccessfully',
+                                          style: TextStyle(fontSize: 17),
+                                        ).tr()));
                               }
                             },
                             child: Text(
                               'save',
-                              style: TextStyle(fontSize: 18, color: Color(COLOR_PRIMARY)),
+                              style: TextStyle(
+                                  fontSize: 18, color: Color(COLOR_PRIMARY)),
                             ).tr(),
-                            color: isDarkMode(context) ? Colors.black12 : Colors.white,
+                            color: isDarkMode(context)
+                                ? Colors.black12
+                                : Colors.white,
                           ),
                         ),
                       ),

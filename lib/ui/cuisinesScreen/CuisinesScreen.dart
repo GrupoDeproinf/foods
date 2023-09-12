@@ -8,7 +8,11 @@ import 'package:custom_food/services/helper.dart';
 import 'package:custom_food/ui/categoryDetailsScreen/CategoryDetailsScreen.dart';
 
 class CuisinesScreen extends StatefulWidget {
-  const CuisinesScreen({Key? key, this.isPageCallFromHomeScreen = false, this.isPageCallForDineIn = false}) : super(key: key);
+  const CuisinesScreen(
+      {Key? key,
+      this.isPageCallFromHomeScreen = false,
+      this.isPageCallForDineIn = false})
+      : super(key: key);
 
   @override
   _CuisinesScreenState createState() => _CuisinesScreenState();
@@ -30,7 +34,9 @@ class _CuisinesScreenState extends State<CuisinesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: isDarkMode(context) ? Color(DARK_VIEWBG_COLOR) : null,
-        appBar: widget.isPageCallFromHomeScreen! ? AppGlobal.buildAppBar(context, "Categories") : null,
+        appBar: widget.isPageCallFromHomeScreen!
+            ? AppGlobal.buildAppBar(context, "Categories")
+            : null,
         body: FutureBuilder<List<VendorCategoryModel>>(
             future: categoriesFuture,
             initialData: [],
@@ -47,7 +53,10 @@ class _CuisinesScreenState extends State<CuisinesScreen> {
                     padding: EdgeInsets.all(10),
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
-                      return snapshot.data != null ? buildCuisineCell(snapshot.data![index]) : showEmptyState('No Categories'.tr(), context, description: "add-categories".tr());
+                      return snapshot.data != null
+                          ? buildCuisineCell(snapshot.data![index])
+                          : showEmptyState('No Categories'.tr(), context,
+                              description: "add-categories".tr());
                     });
               }
               return CircularProgressIndicator();
@@ -72,13 +81,15 @@ class _CuisinesScreenState extends State<CuisinesScreen> {
               image: DecorationImage(
                 image: NetworkImage(cuisineModel.photo.toString()),
                 fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.5), BlendMode.darken),
+                colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.5), BlendMode.darken),
               ),
             ),
             child: Center(
               child: Text(
                 cuisineModel.title.toString(),
-                style: TextStyle(color: Colors.white, fontFamily: "Oswald", fontSize: 27),
+                style: TextStyle(
+                    color: Colors.white, fontFamily: "Oswald", fontSize: 27),
               ).tr(),
             ),
           ),

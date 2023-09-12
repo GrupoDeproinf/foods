@@ -1,4 +1,3 @@
-
 import 'package:custom_food/model/conversation_model.dart';
 
 class ChatVideoContainer {

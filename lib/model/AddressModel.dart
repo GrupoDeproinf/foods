@@ -17,7 +17,16 @@ class AddressModel {
 
   String postalCode;
 
-  AddressModel({this.city = '', this.country = '', this.email = '', this.line1 = '', this.line2 = '', location, this.name = '', this.postalCode = ''}) : this.location = location ?? UserLocation();
+  AddressModel(
+      {this.city = '',
+      this.country = '',
+      this.email = '',
+      this.line1 = '',
+      this.line2 = '',
+      location,
+      this.name = '',
+      this.postalCode = ''})
+      : this.location = location ?? UserLocation();
 
   factory AddressModel.fromJson(Map<String, dynamic> parsedJson) {
     return AddressModel(
@@ -26,7 +35,9 @@ class AddressModel {
       email: parsedJson['email'] ?? '',
       line1: parsedJson['line1'] ?? '',
       line2: parsedJson['line2'] ?? '',
-      location: parsedJson.containsKey('location') ? UserLocation.fromJson(parsedJson['location']) : UserLocation(),
+      location: parsedJson.containsKey('location')
+          ? UserLocation.fromJson(parsedJson['location'])
+          : UserLocation(),
       name: parsedJson['name'] ?? '',
       postalCode: parsedJson['postalCode'] ?? '',
     );
@@ -71,7 +82,21 @@ class NewAddressModel {
 
   String zone;
 
-  NewAddressModel({this.addressName = '', this.city = '', this.country = '', this.def = false, this.line1 = '', this.line2 = '', lat, lon, this.name = '', this.phone = '', this.zipcode = '', this.zone = ''}) : this.lat = lat ?? UserLocation().latitude.toString(), this.lon = lon ?? UserLocation().longitude.toString();
+  NewAddressModel(
+      {this.addressName = '',
+      this.city = '',
+      this.country = '',
+      this.def = false,
+      this.line1 = '',
+      this.line2 = '',
+      lat,
+      lon,
+      this.name = '',
+      this.phone = '',
+      this.zipcode = '',
+      this.zone = ''})
+      : this.lat = lat ?? UserLocation().latitude.toString(),
+        this.lon = lon ?? UserLocation().longitude.toString();
 
   factory NewAddressModel.fromJson(Map<String, dynamic> parsedJson) {
     return NewAddressModel(
@@ -96,10 +121,10 @@ class NewAddressModel {
       'city': this.city,
       'country': this.country,
       'default': this.def,
-      'lat':this.lat,
+      'lat': this.lat,
       'line1': this.line1,
       'line2': this.line2,
-      'lon':this.lon,
+      'lon': this.lon,
       'name': this.name,
       'phone': this.phone,
       'zipcode': this.zipcode,

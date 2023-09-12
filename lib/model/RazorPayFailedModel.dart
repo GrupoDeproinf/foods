@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-RazorPayFailedModel razorPayFailedModelFromJson(String str) => RazorPayFailedModel.fromJson(json.decode(str));
+RazorPayFailedModel razorPayFailedModelFromJson(String str) =>
+    RazorPayFailedModel.fromJson(json.decode(str));
 
-String razorPayFailedModelToJson(RazorPayFailedModel data) => json.encode(data.toJson());
+String razorPayFailedModelToJson(RazorPayFailedModel data) =>
+    json.encode(data.toJson());
 
 class RazorPayFailedModel {
   RazorPayFailedModel({
@@ -17,7 +19,8 @@ class RazorPayFailedModel {
   Error error;
   int httpStatusCode;
 
-  factory RazorPayFailedModel.fromJson(Map<String, dynamic>? json) => RazorPayFailedModel(
+  factory RazorPayFailedModel.fromJson(Map<String, dynamic>? json) =>
+      RazorPayFailedModel(
         error: Error.fromJson(json!["error"]),
         httpStatusCode: json["http_status_code"],
       );

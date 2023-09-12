@@ -127,13 +127,14 @@ class _OrdersScreenState extends State<OrdersScreen> {
     var asset = "";
     orderModel.products.forEach((element) {
       try {
-        if (element.extras_price!.isNotEmpty &&
+        if (element.extras_price != null && element.extras_price!.isNotEmpty &&
             double.parse(element.extras_price!) != 0.0) {
           total += element.quantity * double.parse(element.extras_price!);
         }
         total += element.quantity * double.parse(element.price);
       } catch (ex) {}
     });
+    if(orderModel.discount != null && orderModel.discount != "")
     total = total - orderModel.discount!;
     total = total + (double.tryParse(orderModel.deliveryCharge!) ?? 0);
     switch (orderModel.status) {
@@ -178,14 +179,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           height: 55,
                           width: 55,
                           // width: 50,
-                          imageUrl: getImageVAlidUrl(orderModel
-                                      .products.first.photo
-                                      .toString()) ==
-                                  placeholderImage
-                              ? ""
-                              : getImageVAlidUrl(
-                                  orderModel.products.first.photo.toString()),
-
+                          imageUrl: "",
                           imageBuilder: (context, imageProvider) => Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
@@ -195,7 +189,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                 )),
                           ),
                           placeholder: (context, url) => Image.asset(
-                            "assets/images/plato_generico.png",
+                            asset,
                             height: 55,
                             width: 55,
                             cacheHeight:
@@ -206,23 +200,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                     .toInt(),
                           ),
                           errorWidget: (context, url, widget) => Image.asset(
-                            "assets/images/plato_generico.png",
+                            asset,
                             height: 55,
                             width: 55,
-                            cacheHeight:
-                                (MediaQuery.of(context).size.height * 0.11)
-                                    .toInt(),
-                            cacheWidth:
-                                (MediaQuery.of(context).size.width * 0.23)
-                                    .toInt(),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Image.asset(
-                            asset,
-                            height: 25,
-                            width: 25,
                             cacheHeight:
                                 (MediaQuery.of(context).size.height * 0.11)
                                     .toInt(),
@@ -319,16 +299,31 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                orderModel.paymentMethod != "Pago Móvil".tr()
+                                orderModel.vendor.country != "VE"
                                     ? symbol +
-                                        (((total -
+                                        (double.parse(orderModel
+                                                    .deliveryCharge!) +
+                                                (total -
+                                                    double.parse(orderModel
+                                                        .deliveryCharge!)) +
+                                                (total -
                                                         double.parse(orderModel
                                                             .deliveryCharge!)) *
-                                                    1.03) +
-                                                double.parse(
-                                                    orderModel.deliveryCharge!))
+                                                    orderModel.taxModel!.tax! /
+                                                    100)
                                             .toStringAsFixed(decimal)
-                                    : symbol + total.toStringAsFixed(decimal),
+                                    : orderModel.paymentMethod !=
+                                            "Pago Móvil".tr()
+                                        ? symbol +
+                                            (((total -
+                                                            double.parse(orderModel
+                                                                .deliveryCharge!)) *
+                                                        1.03) +
+                                                    double.parse(orderModel
+                                                        .deliveryCharge!))
+                                                .toStringAsFixed(decimal)
+                                        : symbol +
+                                            total.toStringAsFixed(decimal),
                                 style: TextStyle(
                                     fontSize: 20,
                                     color: isDarkMode(context)

@@ -15,20 +15,19 @@ class PaymentModel {
 
   Timestamp date;
 
-  PaymentModel(
-      {
-      required this.amount,
-      this.exchangeRate,
-      required this.paymentMethod,
-      this.bank,
-      this.email,
-      required this.confirmed,
-      this.fullName,
-      this.phone,
-      this.paymentId,
-      required this.date,
-      this.confirmDate,
-      });
+  PaymentModel({
+    required this.amount,
+    this.exchangeRate,
+    required this.paymentMethod,
+    this.bank,
+    this.email,
+    required this.confirmed,
+    this.fullName,
+    this.phone,
+    this.paymentId,
+    required this.date,
+    this.confirmDate,
+  });
 
   factory PaymentModel.fromJson(Map<String, dynamic> parsedJson) {
     return PaymentModel(

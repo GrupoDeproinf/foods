@@ -42,7 +42,6 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
       email.text = MyAppState.currentUser!.email;
       mobile.text = MyAppState.currentUser!.phoneNumber;
     });
-
   }
 
   @override
@@ -53,9 +52,12 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
           child: Form(
             key: _key,
             autovalidateMode: _validate,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                    Widget>[
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 8, top: 24),
+                padding: const EdgeInsets.only(
+                    left: 16.0, right: 16, bottom: 8, top: 24),
                 child: Text(
                   'publicInfo',
                   style: TextStyle(fontSize: 16, color: Colors.grey),
@@ -72,7 +74,9 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                           title: Text(
                             'firstName'.tr(),
                             style: TextStyle(
-                              color: isDarkMode(context) ? Colors.white : Colors.black,
+                              color: isDarkMode(context)
+                                  ? Colors.white
+                                  : Colors.black,
                             ),
                           ).tr(),
                           trailing: ConstrainedBox(
@@ -82,18 +86,29 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                               validator: validateName,
                               textInputAction: TextInputAction.next,
                               textAlign: TextAlign.end,
-                              style: TextStyle(fontSize: 18, color: isDarkMode(context) ? Colors.white : Colors.black),
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: isDarkMode(context)
+                                      ? Colors.white
+                                      : Colors.black),
                               cursorColor: const Color(COLOR_ACCENT),
                               textCapitalization: TextCapitalization.words,
                               keyboardType: TextInputType.text,
-                              decoration: InputDecoration(border: InputBorder.none, hintText: 'firstName'.tr(), contentPadding: const EdgeInsets.symmetric(vertical: 5)),
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'firstName'.tr(),
+                                  contentPadding:
+                                      const EdgeInsets.symmetric(vertical: 5)),
                             ),
                           ),
                         ),
                         ListTile(
                           title: Text(
                             'lastName'.tr(),
-                            style: TextStyle(color: isDarkMode(context) ? Colors.white : Colors.black),
+                            style: TextStyle(
+                                color: isDarkMode(context)
+                                    ? Colors.white
+                                    : Colors.black),
                           ).tr(),
                           trailing: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 100),
@@ -102,17 +117,26 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                               validator: validateName,
                               textInputAction: TextInputAction.next,
                               textAlign: TextAlign.end,
-                              style: TextStyle(fontSize: 18, color: isDarkMode(context) ? Colors.white : Colors.black),
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: isDarkMode(context)
+                                      ? Colors.white
+                                      : Colors.black),
                               cursorColor: const Color(COLOR_ACCENT),
                               textCapitalization: TextCapitalization.words,
                               keyboardType: TextInputType.text,
-                              decoration: InputDecoration(border: InputBorder.none, hintText: 'lastName'.tr(), contentPadding: const EdgeInsets.symmetric(vertical: 5)),
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'lastName'.tr(),
+                                  contentPadding:
+                                      const EdgeInsets.symmetric(vertical: 5)),
                             ),
                           ),
                         ),
                       ]).toList())),
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 8, top: 24),
+                padding: const EdgeInsets.only(
+                    left: 16.0, right: 16, bottom: 8, top: 24),
                 child: Text(
                   'privateDetails',
                   style: TextStyle(fontSize: 16, color: Colors.grey),
@@ -130,7 +154,10 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                         ListTile(
                           title: Text(
                             'emailAddress'.tr(),
-                            style: TextStyle(color: isDarkMode(context) ? Colors.white : Colors.black),
+                            style: TextStyle(
+                                color: isDarkMode(context)
+                                    ? Colors.white
+                                    : Colors.black),
                           ).tr(),
                           trailing: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 200),
@@ -139,17 +166,28 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                               validator: validateEmail,
                               textInputAction: TextInputAction.next,
                               textAlign: TextAlign.end,
-                              style: TextStyle(fontSize: 18, color: isDarkMode(context) ? Colors.white : Colors.black),
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: isDarkMode(context)
+                                      ? Colors.white
+                                      : Colors.black),
                               cursorColor: const Color(COLOR_ACCENT),
                               keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(border: InputBorder.none, hintText: 'emailAddress'.tr(), contentPadding: const EdgeInsets.symmetric(vertical: 5)),
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'emailAddress'.tr(),
+                                  contentPadding:
+                                      const EdgeInsets.symmetric(vertical: 5)),
                             ),
                           ),
                         ),
                         ListTile(
                           title: Text(
                             'phoneNumber'.tr(),
-                            style: TextStyle(color: isDarkMode(context) ? Colors.white : Colors.black),
+                            style: TextStyle(
+                                color: isDarkMode(context)
+                                    ? Colors.white
+                                    : Colors.black),
                           ).tr(),
                           trailing: InkWell(
                             onTap: () {
@@ -164,10 +202,12 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
               Padding(
                   padding: const EdgeInsets.only(top: 32.0, bottom: 16),
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: double.infinity),
+                    constraints:
+                        const BoxConstraints(minWidth: double.infinity),
                     child: Material(
                       elevation: 2,
-                      color: isDarkMode(context) ? Colors.black12 : Colors.white,
+                      color:
+                          isDarkMode(context) ? Colors.black12 : Colors.white,
                       child: CupertinoButton(
                         padding: const EdgeInsets.all(12.0),
                         onPressed: () async {
@@ -175,7 +215,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                         },
                         child: Text(
                           'save',
-                          style: TextStyle(fontSize: 18, color: Color(COLOR_PRIMARY)),
+                          style: TextStyle(
+                              fontSize: 18, color: Color(COLOR_PRIMARY)),
                         ).tr(),
                       ),
                     ),
@@ -214,7 +255,10 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
       title: const Text("Change Phone Number").tr(),
       content: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), shape: BoxShape.rectangle, border: Border.all(color: Colors.grey.shade200)),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            shape: BoxShape.rectangle,
+            border: Border.all(color: Colors.grey.shade200)),
         child: InternationalPhoneNumberInput(
           onInputChanged: (value) {
             _phoneNumber = "${value.phoneNumber}";
@@ -236,7 +280,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
             borderSide: BorderSide.none,
           ),
           initialValue: PhoneNumber(isoCode: 'US'),
-          selectorConfig: const SelectorConfig(selectorType: PhoneInputSelectorType.DIALOG),
+          selectorConfig:
+              const SelectorConfig(selectorType: PhoneInputSelectorType.DIALOG),
         ),
       ),
       actions: [
@@ -254,12 +299,12 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
     );
   }
 
-
   _validateAndSave() async {
     if (_key.currentState?.validate() ?? false) {
       _key.currentState!.save();
       AuthProviders? authProvider;
-      List<auth.UserInfo> userInfoList = auth.FirebaseAuth.instance.currentUser?.providerData ?? [];
+      List<auth.UserInfo> userInfoList =
+          auth.FirebaseAuth.instance.currentUser?.providerData ?? [];
       await Future.forEach(userInfoList, (auth.UserInfo info) {
         if (info.providerId == 'password') {
           authProvider = AuthProviders.PASSWORD;
@@ -268,7 +313,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
         }
       });
       bool? result = false;
-      if (authProvider == AuthProviders.PHONE && auth.FirebaseAuth.instance.currentUser!.phoneNumber != mobile) {
+      if (authProvider == AuthProviders.PHONE &&
+          auth.FirebaseAuth.instance.currentUser!.phoneNumber != mobile) {
         result = await showDialog(
           context: context,
           builder: (context) => ReAuthUserScreen(
@@ -282,7 +328,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
           await _updateUser();
           await hideProgress();
         }
-      } else if (authProvider == AuthProviders.PASSWORD && auth.FirebaseAuth.instance.currentUser!.email != email) {
+      } else if (authProvider == AuthProviders.PASSWORD &&
+          auth.FirebaseAuth.instance.currentUser!.email != email) {
         result = await showDialog(
           context: context,
           builder: (context) => ReAuthUserScreen(

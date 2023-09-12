@@ -1,5 +1,3 @@
-
-
 class WorkingHoursModel {
   String? day;
   List<Timeslot>? timeslot;

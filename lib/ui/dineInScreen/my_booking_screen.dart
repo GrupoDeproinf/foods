@@ -23,7 +23,8 @@ class _MyBookingScreenState extends State<MyBookingScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-          backgroundColor: isDarkMode(context) ? Color(DARK_COLOR) : Color(0xffFFFFFF),
+          backgroundColor:
+              isDarkMode(context) ? Color(DARK_COLOR) : Color(0xffFFFFFF),
           appBar: TabBar(
             labelColor: Color(COLOR_PRIMARY),
             indicatorColor: Color(COLOR_PRIMARY),

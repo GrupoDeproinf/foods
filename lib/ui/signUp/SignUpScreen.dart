@@ -153,13 +153,15 @@ class _SignUpState extends State<SignUpScreen> {
                             'assets/images/placeholder.jpg',
                             fit: BoxFit.cover,
                           )
-                        : kIsWeb ? Image.network(
-                            _image!.path,
-                            fit: BoxFit.cover,
-                          ) : Image.file(
-                            _image!,
-                            fit: BoxFit.cover,
-                          ),
+                        : kIsWeb
+                            ? Image.network(
+                                _image!.path,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.file(
+                                _image!,
+                                fit: BoxFit.cover,
+                              ),
                   ),
                 ),
               ),

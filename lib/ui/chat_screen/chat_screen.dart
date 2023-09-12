@@ -31,7 +31,17 @@ class ChatScreens extends StatefulWidget {
   final String? token;
   final String? chatType;
 
-  ChatScreens({Key? key, this.orderId, this.customerId, this.customerName, this.restaurantName, this.restaurantId, this.customerProfileImage, this.restaurantProfileImage, this.token, this.chatType})
+  ChatScreens(
+      {Key? key,
+      this.orderId,
+      this.customerId,
+      this.customerName,
+      this.restaurantName,
+      this.restaurantId,
+      this.customerProfileImage,
+      this.restaurantProfileImage,
+      this.token,
+      this.chatType})
       : super(key: key);
 
   @override
@@ -47,7 +57,8 @@ class _ChatScreensState extends State<ChatScreens> {
   void initState() {
     super.initState();
     if (_controller.hasClients) {
-      Timer(const Duration(milliseconds: 500), () => _controller.jumpTo(_controller.position.maxScrollExtent));
+      Timer(const Duration(milliseconds: 500),
+          () => _controller.jumpTo(_controller.position.maxScrollExtent));
     }
   }
 
@@ -56,12 +67,16 @@ class _ChatScreensState extends State<ChatScreens> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        actionsIconTheme: IconThemeData(color: isDarkMode(context) ? Colors.grey.shade200 : Colors.white),
-        iconTheme: IconThemeData(color: isDarkMode(context) ? Colors.grey.shade200 : Colors.white),
+        actionsIconTheme: IconThemeData(
+            color: isDarkMode(context) ? Colors.grey.shade200 : Colors.white),
+        iconTheme: IconThemeData(
+            color: isDarkMode(context) ? Colors.grey.shade200 : Colors.white),
         backgroundColor: Color(COLOR_PRIMARY),
         title: Text(
           widget.restaurantName.toString(),
-          style: TextStyle(color: isDarkMode(context) ? Colors.grey.shade200 : Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: isDarkMode(context) ? Colors.grey.shade200 : Colors.white,
+              fontWeight: FontWeight.bold),
         ),
       ),
       body: Padding(
@@ -80,15 +95,26 @@ class _ChatScreensState extends State<ChatScreens> {
                   scrollController: _controller,
                   physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, documentSnapshots, index) {
-                    ConversationModel inboxModel = ConversationModel.fromJson(documentSnapshots[index].data() as Map<String, dynamic>);
+                    ConversationModel inboxModel = ConversationModel.fromJson(
+                        documentSnapshots[index].data()
+                            as Map<String, dynamic>);
                     print(index);
                     print(MyAppState.currentUser!.userID);
-                    print(inboxModel.senderId == MyAppState.currentUser!.userID);
-                    return chatItemView(inboxModel.senderId == MyAppState.currentUser!.userID, inboxModel);
+                    print(
+                        inboxModel.senderId == MyAppState.currentUser!.userID);
+                    return chatItemView(
+                        inboxModel.senderId == MyAppState.currentUser!.userID,
+                        inboxModel);
                   },
                   onEmpty: Center(child: Text("No Conversion found")),
                   // orderBy is compulsory to enable pagination
-                  query: FirebaseFirestore.instance.collection(widget.chatType == "Driver"?'chat_driver':'chat_restaurant').doc(widget.orderId).collection("thread").orderBy('createdAt', descending: false),
+                  query: FirebaseFirestore.instance
+                      .collection(widget.chatType == "Driver"
+                          ? 'chat_driver'
+                          : 'chat_restaurant')
+                      .doc(widget.orderId)
+                      .collection("thread")
+                      .orderBy('createdAt', descending: false),
                   //Change types customerId
                   itemBuilderType: PaginateBuilderType.listView,
                   // to fetch real-time data
@@ -128,21 +154,32 @@ class _ChatScreensState extends State<ChatScreens> {
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.black.withOpacity(0.05),
-                            contentPadding: const EdgeInsets.only(top: 3, left: 10),
+                            contentPadding:
+                                const EdgeInsets.only(top: 3, left: 10),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black.withOpacity(0.05), width: 0.0),
-                              borderRadius: const BorderRadius.all(Radius.circular(30)),
+                              borderSide: BorderSide(
+                                  color: Colors.black.withOpacity(0.05),
+                                  width: 0.0),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(30)),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black.withOpacity(0.05), width: 0.0),
-                              borderRadius: const BorderRadius.all(Radius.circular(30)),
+                              borderSide: BorderSide(
+                                  color: Colors.black.withOpacity(0.05),
+                                  width: 0.0),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(30)),
                             ),
                             hintText: 'Start typing ...',
                           ),
                           onSubmitted: (value) async {
                             if (_messageController.text.isNotEmpty) {
-                              _sendMessage(_messageController.text, null, '', 'text');
-                              Timer(const Duration(milliseconds: 500), () => _controller.jumpTo(_controller.position.maxScrollExtent));
+                              _sendMessage(
+                                  _messageController.text, null, '', 'text');
+                              Timer(
+                                  const Duration(milliseconds: 500),
+                                  () => _controller.jumpTo(
+                                      _controller.position.maxScrollExtent));
                               _messageController.clear();
                               setState(() {});
                             }
@@ -158,7 +195,8 @@ class _ChatScreensState extends State<ChatScreens> {
                         child: IconButton(
                           onPressed: () async {
                             if (_messageController.text.isNotEmpty) {
-                              _sendMessage(_messageController.text, null, '', 'text');
+                              _sendMessage(
+                                  _messageController.text, null, '', 'text');
                               _messageController.clear();
                               setState(() {});
                             }
@@ -190,13 +228,21 @@ class _ChatScreensState extends State<ChatScreens> {
                   data.messageType == "text"
                       ? Container(
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                                bottomLeft: Radius.circular(10)),
                             color: Color(COLOR_PRIMARY),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
                           child: Text(
                             data.message.toString(),
-                            style: TextStyle(color: data.senderId == MyAppState.currentUser!.userID ? Colors.white : Colors.black),
+                            style: TextStyle(
+                                color: data.senderId ==
+                                        MyAppState.currentUser!.userID
+                                    ? Colors.white
+                                    : Colors.black),
                           ),
                         )
                       : data.messageType == "image"
@@ -206,26 +252,35 @@ class _ChatScreensState extends State<ChatScreens> {
                                 maxWidth: 200,
                               ),
                               child: ClipRRect(
-                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
-                                child: Stack(alignment: Alignment.center, children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      push(
-                                          context,
-                                          FullScreenImageViewer(
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                    bottomLeft: Radius.circular(10)),
+                                child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          push(
+                                              context,
+                                              FullScreenImageViewer(
+                                                imageUrl: data.url!.url,
+                                              ));
+                                        },
+                                        child: Hero(
+                                          tag: data.url!.url,
+                                          child: CachedNetworkImage(
                                             imageUrl: data.url!.url,
-                                          ));
-                                    },
-                                    child: Hero(
-                                      tag: data.url!.url,
-                                      child: CachedNetworkImage(
-                                        imageUrl: data.url!.url,
-                                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                                            placeholder: (context, url) => Center(
+                                                child:
+                                                    CircularProgressIndicator()),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    const Icon(Icons.error),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ]),
+                                    ]),
                               ))
                           : FloatingActionButton(
                               mini: true,
@@ -245,7 +300,11 @@ class _ChatScreensState extends State<ChatScreens> {
                               ),
                             ),
                   SizedBox(height: 5),
-                  Text(DateFormat('MMM d, yyyy hh:mm aa').format(DateTime.fromMillisecondsSinceEpoch(data.createdAt!.millisecondsSinceEpoch)), style: TextStyle(color: Colors.grey, fontSize: 12)),
+                  Text(
+                      DateFormat('MMM d, yyyy hh:mm aa').format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                              data.createdAt!.millisecondsSinceEpoch)),
+                      style: TextStyle(color: Colors.grey, fontSize: 12)),
                 ],
               ),
             )
@@ -259,13 +318,21 @@ class _ChatScreensState extends State<ChatScreens> {
                     data.messageType == "text"
                         ? Container(
                             decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                              borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10),
+                                  bottomRight: Radius.circular(10)),
                               color: Colors.grey.shade300,
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
                             child: Text(
                               data.message.toString(),
-                              style: TextStyle(color: data.senderId == MyAppState.currentUser!.userID ? Colors.white : Colors.black),
+                              style: TextStyle(
+                                  color: data.senderId ==
+                                          MyAppState.currentUser!.userID
+                                      ? Colors.white
+                                      : Colors.black),
                             ),
                           )
                         : data.messageType == "image"
@@ -275,26 +342,35 @@ class _ChatScreensState extends State<ChatScreens> {
                                   maxWidth: 200,
                                 ),
                                 child: ClipRRect(
-                                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                  child: Stack(alignment: Alignment.center, children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        push(
-                                            context,
-                                            FullScreenImageViewer(
+                                  borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      topRight: Radius.circular(10),
+                                      bottomRight: Radius.circular(10)),
+                                  child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            push(
+                                                context,
+                                                FullScreenImageViewer(
+                                                  imageUrl: data.url!.url,
+                                                ));
+                                          },
+                                          child: Hero(
+                                            tag: data.url!.url,
+                                            child: CachedNetworkImage(
                                               imageUrl: data.url!.url,
-                                            ));
-                                      },
-                                      child: Hero(
-                                        tag: data.url!.url,
-                                        child: CachedNetworkImage(
-                                          imageUrl: data.url!.url,
-                                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                                              placeholder: (context, url) => Center(
+                                                  child:
+                                                      CircularProgressIndicator()),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ]),
+                                      ]),
                                 ))
                             : FloatingActionButton(
                                 mini: true,
@@ -316,13 +392,18 @@ class _ChatScreensState extends State<ChatScreens> {
                   ],
                 ),
                 SizedBox(height: 5),
-                Text(DateFormat('MMM d, yyyy hh:mm aa').format(DateTime.fromMillisecondsSinceEpoch(data.createdAt!.millisecondsSinceEpoch)), style: TextStyle(color: Colors.grey, fontSize: 12)),
+                Text(
+                    DateFormat('MMM d, yyyy hh:mm aa').format(
+                        DateTime.fromMillisecondsSinceEpoch(
+                            data.createdAt!.millisecondsSinceEpoch)),
+                    style: TextStyle(color: Colors.grey, fontSize: 12)),
               ],
             ),
     );
   }
 
-  _sendMessage(String message, Url? url, String videoThumbnail, String messageType) async {
+  _sendMessage(String message, Url? url, String videoThumbnail,
+      String messageType) async {
     InboxModel inboxModel = InboxModel(
         lastSenderId: widget.customerId,
         customerId: widget.customerId,
@@ -355,11 +436,17 @@ class _ChatScreensState extends State<ChatScreens> {
 
     if (url != null) {
       if (url.mime.contains('image')) {
-        conversationModel.message = "sentAnImage".tr(args: ['${MyAppState.currentUser!.firstName} ${MyAppState.currentUser!.lastName}']);
+        conversationModel.message = "sentAnImage".tr(args: [
+          '${MyAppState.currentUser!.firstName} ${MyAppState.currentUser!.lastName}'
+        ]);
       } else if (url.mime.contains('video')) {
-        conversationModel.message = "sentAVideo".tr(args: ['${MyAppState.currentUser!.firstName} ${MyAppState.currentUser!.lastName}']);
+        conversationModel.message = "sentAVideo".tr(args: [
+          '${MyAppState.currentUser!.firstName} ${MyAppState.currentUser!.lastName}'
+        ]);
       } else if (url.mime.contains('audio')) {
-        conversationModel.message = "sentAVoiceMessage".tr(args: ['${MyAppState.currentUser!.firstName} ${MyAppState.currentUser!.lastName}']);
+        conversationModel.message = "sentAVoiceMessage".tr(args: [
+          '${MyAppState.currentUser!.firstName} ${MyAppState.currentUser!.lastName}'
+        ]);
       }
     }
 
@@ -369,7 +456,8 @@ class _ChatScreensState extends State<ChatScreens> {
       await FireStoreUtils.addRestaurantChat(conversationModel);
     }
 
-    FireStoreUtils.sendFcmMessage( widget.customerName.toString(), conversationModel.message.toString(),widget.token.toString());
+    FireStoreUtils.sendFcmMessage(widget.customerName.toString(),
+        conversationModel.message.toString(), widget.token.toString());
   }
 
   final ImagePicker _imagePicker = ImagePicker();
@@ -386,9 +474,11 @@ class _ChatScreensState extends State<ChatScreens> {
           isDefaultAction: false,
           onPressed: () async {
             Navigator.pop(context);
-            XFile? image = await _imagePicker.pickImage(source: ImageSource.gallery);
+            XFile? image =
+                await _imagePicker.pickImage(source: ImageSource.gallery);
             if (image != null) {
-              Url url = await FireStoreUtils().uploadChatImageToFireStorage(File(image.path), context);
+              Url url = await FireStoreUtils()
+                  .uploadChatImageToFireStorage(File(image.path), context);
               _sendMessage('', url, '', 'image');
             }
           },
@@ -398,10 +488,14 @@ class _ChatScreensState extends State<ChatScreens> {
           isDefaultAction: false,
           onPressed: () async {
             Navigator.pop(context);
-            XFile? galleryVideo = await _imagePicker.pickVideo(source: ImageSource.gallery);
+            XFile? galleryVideo =
+                await _imagePicker.pickVideo(source: ImageSource.gallery);
             if (galleryVideo != null) {
-              ChatVideoContainer videoContainer = await FireStoreUtils().uploadChatVideoToFireStorage(File(galleryVideo.path), context);
-              _sendMessage('', videoContainer.videoUrl, videoContainer.thumbnailUrl, 'video');
+              ChatVideoContainer videoContainer = await FireStoreUtils()
+                  .uploadChatVideoToFireStorage(
+                      File(galleryVideo.path), context);
+              _sendMessage('', videoContainer.videoUrl,
+                  videoContainer.thumbnailUrl, 'video');
             }
           },
         ),
@@ -410,9 +504,11 @@ class _ChatScreensState extends State<ChatScreens> {
           isDestructiveAction: false,
           onPressed: () async {
             Navigator.pop(context);
-            XFile? image = await _imagePicker.pickImage(source: ImageSource.camera);
+            XFile? image =
+                await _imagePicker.pickImage(source: ImageSource.camera);
             if (image != null) {
-              Url url = await FireStoreUtils().uploadChatImageToFireStorage(File(image.path), context);
+              Url url = await FireStoreUtils()
+                  .uploadChatImageToFireStorage(File(image.path), context);
               _sendMessage('', url, '', 'image');
             }
           },
@@ -422,10 +518,14 @@ class _ChatScreensState extends State<ChatScreens> {
           isDestructiveAction: false,
           onPressed: () async {
             Navigator.pop(context);
-            XFile? recordedVideo = await _imagePicker.pickVideo(source: ImageSource.camera);
+            XFile? recordedVideo =
+                await _imagePicker.pickVideo(source: ImageSource.camera);
             if (recordedVideo != null) {
-              ChatVideoContainer videoContainer = await FireStoreUtils().uploadChatVideoToFireStorage(File(recordedVideo.path), context);
-              _sendMessage('', videoContainer.videoUrl, videoContainer.thumbnailUrl, 'video');
+              ChatVideoContainer videoContainer = await FireStoreUtils()
+                  .uploadChatVideoToFireStorage(
+                      File(recordedVideo.path), context);
+              _sendMessage('', videoContainer.videoUrl,
+                  videoContainer.thumbnailUrl, 'video');
             }
           },
         )

@@ -10,7 +10,8 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: isDarkMode(context) ? Color(DARK_VIEWBG_COLOR) : Colors.white,
+      backgroundColor:
+          isDarkMode(context) ? Color(DARK_VIEWBG_COLOR) : Colors.white,
       body: Stack(children: [
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -21,23 +22,27 @@ class AuthScreen extends StatelessWidget {
                 'assets/images/logoSC-03.png',
                 color: Color(0xFFbd9028),
                 fit: BoxFit.cover,
-        
                 height: 150,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16, top: 32, right: 16, bottom: 8),
+              padding: const EdgeInsets.only(
+                  left: 16, top: 32, right: 16, bottom: 8),
               child: Text(
                 'Welcome to FOODIES',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontFamily:"Oswald", color: Color(COLOR_PRIMARY), fontSize: 24.0, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontFamily: "Oswald",
+                    color: Color(COLOR_PRIMARY),
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold),
               ).tr(),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
               child: Text(
                 'Order food from restaurants around you and track food in real-time',
-                style: TextStyle(fontFamily:"Oswald", fontSize: 18),
+                style: TextStyle(fontFamily: "Oswald", fontSize: 18),
                 textAlign: TextAlign.center,
               ).tr(),
             ),
@@ -58,7 +63,11 @@ class AuthScreen extends StatelessWidget {
                   ),
                   child: Text(
                     'Log In',
-                    style: TextStyle(fontFamily:"Oswald", fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                        fontFamily: "Oswald",
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ).tr(),
                   onPressed: () {
                     push(context, LoginScreen());
@@ -67,13 +76,18 @@ class AuthScreen extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 40.0, left: 40.0, top: 20, bottom: 20),
+              padding: const EdgeInsets.only(
+                  right: 40.0, left: 40.0, top: 20, bottom: 20),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(minWidth: double.infinity),
                 child: TextButton(
                   child: Text(
                     'Sign Up',
-                    style: TextStyle(fontFamily:"Oswald", fontSize: 20, fontWeight: FontWeight.bold, color: Color(COLOR_PRIMARY)),
+                    style: TextStyle(
+                        fontFamily: "Oswald",
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(COLOR_PRIMARY)),
                   ).tr(),
                   onPressed: () {
                     push(context, SignUpScreen());

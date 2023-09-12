@@ -6,7 +6,13 @@ class BannerModel {
   String? redirect_type;
   String? redirect_id;
 
-  BannerModel({this.setOrder, this.photo, this.title, this.redirect_type, this.redirect_id, this.isPublish});
+  BannerModel(
+      {this.setOrder,
+      this.photo,
+      this.title,
+      this.redirect_type,
+      this.redirect_id,
+      this.isPublish});
 
   BannerModel.fromJson(Map<String, dynamic> json) {
     setOrder = json['set_order'];

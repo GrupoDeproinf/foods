@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:clipboard/clipboard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:custom_food/constants.dart';
 import 'package:custom_food/main.dart';
@@ -12,6 +13,7 @@ import 'package:custom_food/model/VendorModel.dart';
 import 'package:custom_food/services/FirebaseHelper.dart';
 import 'package:custom_food/services/helper.dart';
 import 'package:custom_food/services/localDatabase.dart';
+import 'package:custom_food/services/web_cart/webCart.dart';
 import 'package:custom_food/ui/placeOrderScreen/PlaceOrderScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
@@ -351,6 +353,29 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                           .deliveryCharge!)) *
                                                   0.03)
                                               .toStringAsFixed(decimal)))
+                                      .toStringAsFixed(decimal),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Visibility(
+                        visible: widget.vendorModel!.country != "VE",
+                        child: Container(
+                          color:
+                              isDarkMode(context) ? Colors.black : Colors.white,
+                          child: ListTile(
+                            leading: Text(
+                              "Total".tr(),
+                              style: TextStyle(
+                                  color: Color(COLOR_PRIMARY),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18),
+                            ),
+                            trailing: Text(
+                              symbol +
+                                  (widget.total.toDouble())
                                       .toStringAsFixed(decimal),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 18),
@@ -1042,8 +1067,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         '${MyAppState.currentUser!.firstName}' + "hasOrdered",
         placedOrder.vendor.fcmToken);
 
+    if(kIsWeb){
+      Provider.of<WebCart>(context, listen: false).deleteAllProducts();
+    }
+    else{
     Provider.of<CartDatabase>(context, listen: false).deleteAllProducts();
-
+}
     pushAndRemoveUntil(
         context,
         ContainerScreen(

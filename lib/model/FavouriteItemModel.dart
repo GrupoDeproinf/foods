@@ -6,7 +6,10 @@ class FavouriteItemModel {
   FavouriteItemModel({this.storeId, this.userId, this.productId});
 
   factory FavouriteItemModel.fromJson(Map<String, dynamic> parsedJson) {
-    return FavouriteItemModel(storeId: parsedJson["store_id"] ?? "", userId: parsedJson["user_id"] ?? "", productId: parsedJson["product_id"] ?? "");
+    return FavouriteItemModel(
+        storeId: parsedJson["store_id"] ?? "",
+        userId: parsedJson["user_id"] ?? "",
+        productId: parsedJson["product_id"] ?? "");
   }
 
   Map<String, dynamic> toJson() {

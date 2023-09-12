@@ -57,7 +57,6 @@ ValueNotifier<T> useState<T>(T initialData) {
   return ValueNotifier<T>(initialData);
 }
 
-
 class MapLocationPicker extends StatefulWidget {
   /// Padding around the map
   final EdgeInsets padding;
@@ -351,8 +350,10 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
     _initialPosition = widget.currentLatLng ?? _initialPosition;
     _mapType = widget.mapType;
     _searchController = widget.searchController ?? _searchController;
-    if(widget.currentLatLng != null)
-    _decodeAddress(Location(lat: widget.currentLatLng!.latitude, lng: widget.currentLatLng!.longitude));
+    if (widget.currentLatLng != null)
+      _decodeAddress(Location(
+          lat: widget.currentLatLng!.latitude,
+          lng: widget.currentLatLng!.longitude));
     super.initState();
   }
 
@@ -464,7 +465,6 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                 },
               ),
               const Spacer(),
-              
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: FloatingActionButton(
@@ -482,8 +482,8 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                     final controller = await _controller.future;
                     controller.animateCamera(
                         CameraUpdate.newCameraPosition(cameraPosition()));
-                    _decodeAddress(Location(lat:
-                        position.latitude, lng: position.longitude));
+                    _decodeAddress(Location(
+                        lat: position.latitude, lng: position.longitude));
                     setState(() {});
                   },
                   child: const Icon(Icons.my_location),
@@ -500,7 +500,9 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                       title: Text(_address.tr()),
                       trailing: IconButton(
                         tooltip: widget.bottomCardTooltip.tr(),
-                        icon: widget.bottomCardIcon ?? Icon(Icons.send, color: Theme.of(context).primaryColor),
+                        icon: widget.bottomCardIcon ??
+                            Icon(Icons.send,
+                                color: Theme.of(context).primaryColor),
                         onPressed: () async {
                           widget.onNext.call(_geocodingResult);
                           if (widget.canPopOnNextButtonTaped) {
@@ -560,8 +562,6 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
   }
 }
 
-
-
 class AutoCompleteState {
   AutoCompleteState({
     this.httpClient,
@@ -588,7 +588,6 @@ class AutoCompleteState {
 
     /// API key for Google Places API
     String apiKey, {
-
     /// Session token for Google Places API
     String? sessionToken,
 
