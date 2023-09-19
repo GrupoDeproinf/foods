@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:custom_food/constants.dart';
 import 'package:custom_food/main.dart';
@@ -86,13 +87,15 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
   @override
   Widget build(BuildContext context) {
     if (MyAppState.currentUser!.shippingAddress.country != '') {
-      country = MyAppState.currentUser!.shippingAddress.country;
+      country = kIsWeb ? "" : MyAppState.currentUser!.shippingAddress.country;
     }
-    street.text = MyAppState.currentUser!.shippingAddress.line1;
-    landmark.text = MyAppState.currentUser!.shippingAddress.line2;
-    city.text = MyAppState.currentUser!.shippingAddress.city;
-    zipcode.text = MyAppState.currentUser!.shippingAddress.postalCode;
-    cutries.text = MyAppState.currentUser!.shippingAddress.country;
+    street.text = kIsWeb ? "" : MyAppState.currentUser!.shippingAddress.line1;
+    landmark.text = kIsWeb ? "" : MyAppState.currentUser!.shippingAddress.line2;
+    city.text = kIsWeb ? "" : MyAppState.currentUser!.shippingAddress.city;
+    zipcode.text =
+        kIsWeb ? "" : MyAppState.currentUser!.shippingAddress.postalCode;
+    cutries.text =
+        kIsWeb ? "" : MyAppState.currentUser!.shippingAddress.country;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -501,8 +504,24 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
                               ),
                               onTap: () async {
                                 setState(() => charging = true);
-                                Position position =
-                                    await Geolocator.getCurrentPosition(
+                                Position position = (kIsWeb ||
+                                        (!kIsWeb &&
+                                            (MyAppState().activatedLocation ==
+                                                    null ||
+                                                !MyAppState()
+                                                    .activatedLocation! || MyAppState().locationActive == null ||
+                        !MyAppState().locationActive!)))
+                                    ? Position(
+                                        longitude:
+                                            widget.vendorModel!.longitude,
+                                        latitude: widget.vendorModel!.latitude,
+                                        timestamp: DateTime.now(),
+                                        accuracy: 0,
+                                        altitude: 0,
+                                        heading: 0,
+                                        speed: 0,
+                                        speedAccuracy: 0)
+                                    : await Geolocator.getCurrentPosition(
                                             desiredAccuracy:
                                                 LocationAccuracy.high)
                                         .whenComplete(() {});
@@ -882,7 +901,8 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
         var payments =
             await FireStoreUtils().getPayments(widget.vendorModel!.id);
 
-        var rate = double.tryParse(await FireStoreUtils().getRate() ?? "0.0") ?? 0.0;
+        var rate =
+            double.tryParse(await FireStoreUtils().getRate() ?? "0.0") ?? 0.0;
 
         hideProgress();
         hideProgress();

@@ -60,8 +60,8 @@ class User with ChangeNotifier {
       : this.lastOnlineTimestamp = lastOnlineTimestamp ?? Timestamp.now(),
         this.settings = settings ?? UserSettings(),
         this.appIdentifier = kIsWeb
-            ? "Salón Cantón Web"
-            : 'Salón Cantón ${Platform.operatingSystem}',
+            ? "FOODS Web"
+            : 'FOODS ${Platform.operatingSystem}',
         this.shippingAddress = shippingAddress ?? AddressModel(),
         this.location = location ?? UserLocation();
 

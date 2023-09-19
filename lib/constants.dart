@@ -10,10 +10,10 @@ import 'package:geolocator/geolocator.dart';
 import 'model/TaxModel.dart';
 
 const FINISHED_ON_BOARDING = 'finishedOnBoarding';
-const COLOR_ACCENT = 0xFF984D65;
+const COLOR_ACCENT = 0xFFFFA630;
 const COLOR_PRIMARY_DARK = 0xFF683A;
-const COLOR_PRIMARY = 0xFF984D65;
-const COLOR_APPBAR = 0xFF551631;
+const COLOR_PRIMARY = 0xFFFFA630;
+const COLOR_APPBAR = 0xFFC3423F;
 const COLOR_CHOICE = 0xFFDDBE7D;
 const FACEBOOK_BUTTON_COLOR = 0xFF415893;
 const googleButtonColor = 0xFFefeeee;

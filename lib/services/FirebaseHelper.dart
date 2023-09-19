@@ -3,6 +3,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+
 import 'bCV_Rates/bcv_dart.dart' as bcv;
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -983,12 +985,11 @@ class FireStoreUtils {
   Future<List<VendorModel>> getVendors() async {
     List<VendorModel> vendors = [];
     QuerySnapshot<Map<String, dynamic>> vendorsQuery =
-        await firestore.collection(VENDORS).get();
+        await firestore.collection(VENDORS).where("reststatus", isEqualTo: true).get();
     await Future.forEach(vendorsQuery.docs,
         (QueryDocumentSnapshot<Map<String, dynamic>> document) {
       try {
         vendors.add(VendorModel.fromJson(document.data()));
-        print("*-*-/*-*-" + document["title"].toString());
       } catch (e) {
         print('FireStoreUtils.getVendors Parse error $e');
       }
@@ -1958,7 +1959,7 @@ class FireStoreUtils {
       user.email = userData.email;
       //user.active = true;
       user.role = USER_ROLE_CUSTOMER;
-      user.fcmToken = await firebaseMessaging.getToken() ?? '';
+      user.fcmToken = kIsWeb ? "" : await firebaseMessaging.getToken() ?? '';
       dynamic result = await updateCurrentUser(user);
       return result;
     } else if (user == null) {
@@ -1971,7 +1972,7 @@ class FireStoreUtils {
           lastName: lastName,
           active: true,
           role: USER_ROLE_CUSTOMER,
-          fcmToken: await firebaseMessaging.getToken() ?? '',
+          fcmToken: kIsWeb ? "" : await firebaseMessaging.getToken() ?? '',
           phoneNumber: '',
           settings: UserSettings());
       String? errorMessage = await firebaseCreateNewUser(user);
@@ -2131,7 +2132,7 @@ class FireStoreUtils {
         user = User.fromJson(documentSnapshot.data() ?? {});
         // if(  USER_ROLE_CUSTOMER ==user.role)
         // {
-        user.fcmToken = await firebaseMessaging.getToken() ?? '';
+        user.fcmToken = kIsWeb ? "" : await firebaseMessaging.getToken() ?? '';
 
         //user.active = true;
 
@@ -2273,7 +2274,7 @@ class FireStoreUtils {
           role: USER_ROLE_CUSTOMER,
           userID: result.user?.uid ?? '',
           lastName: lastName,
-          fcmToken: await firebaseMessaging.getToken() ?? '',
+          fcmToken: kIsWeb ? "" : await firebaseMessaging.getToken() ?? '',
           profilePictureURL: profilePicUrl);
       String? errorMessage = await firebaseCreateNewUser(user);
       if (errorMessage == null) {

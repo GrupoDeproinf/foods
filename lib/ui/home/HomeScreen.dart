@@ -6,6 +6,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:custom_food/AppGlobal.dart';
 import 'package:custom_food/constants.dart';
@@ -95,12 +96,9 @@ class _HomeScreenState extends State<HomeScreen> {
     islocationGet = true;
     if (MyAppState.selectedPosotion.longitude == 0 &&
         MyAppState.selectedPosotion.latitude == 0) {
-      print("AQUÍ POR FAVOR");
       Position position = await Geolocator.getCurrentPosition(
               desiredAccuracy: LocationAccuracy.high)
           .whenComplete(() {});
-      print(position);
-      print("Y AQUÍ CUANDO ESTÁ LISTO");
       MyAppState.selectedPosotion = position;
       islocationGet = false;
     }
@@ -181,163 +179,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool isLocationPermissionAllowed = false;
   loc.Location location = loc.Location();
-
-  getLocWeb() async {
-    islocationGet = true;
-    if (MyAppState.selectedPosotion.longitude == 0 &&
-        MyAppState.selectedPosotion.latitude == 0) {
-      print("AQUÍ POR FAVOR");
-      Position position = await Geolocator.getCurrentPosition(
-              desiredAccuracy: LocationAccuracy.best)
-          .whenComplete(() {});
-
-      print("Y AQUÍ CUANDO ESTÁ LISTO");
-      MyAppState.selectedPosotion = position;
-      islocationGet = false;
-    }
-
-    var response = await GoogleGeocoding(JS_API_KEY).geocoding.getReverse(
-          LatLon(MyAppState.selectedPosotion.latitude,
-              MyAppState.selectedPosotion.longitude),
-          language: "es",
-        );
-
-    var reversed = response!.results!.first;
-
-    String name = "";
-    String? locality,
-        postalCode,
-        country,
-        isoCountry,
-        administrativeAreaLevel1,
-        administrativeAreaLevel2,
-        city,
-        subLocalityLevel1,
-        subLocalityLevel2;
-    bool isOnStreet = false;
-    if (reversed.addressComponents!.length != null &&
-        reversed.addressComponents!.length > 0) {
-      for (var i = 0; i < reversed.addressComponents!.length; i++) {
-        var tmp = reversed.addressComponents![i];
-        var types = tmp.types;
-        var shortName = tmp.shortName ?? tmp.longName ?? "";
-        var longName = tmp.longName;
-        if (types == null) {
-          continue;
-        }
-        if (i == 0) {
-          // [street_number]
-          name = shortName;
-          isOnStreet = types.contains('street_number');
-          // other index 0 types
-          // [establishment, point_of_interest, subway_station, transit_station]
-          // [premise]
-          // [route]
-        } else if (i == 1 && isOnStreet) {
-          if (types.contains('route')) {
-            name += ", $shortName";
-          }
-        } else {
-          if (types.contains("sublocality_level_1")) {
-            subLocalityLevel1 = shortName;
-          } else if (types.contains("sublocality_level_2")) {
-            subLocalityLevel2 = shortName;
-          } else if (types.contains("locality")) {
-            locality = longName;
-          } else if (types.contains("administrative_area_level_2")) {
-            administrativeAreaLevel2 = shortName;
-          } else if (types.contains("administrative_area_level_1")) {
-            administrativeAreaLevel1 = longName;
-          } else if (types.contains("country")) {
-            country = longName;
-            isoCountry = shortName;
-          } else if (types.contains('postal_code')) {
-            postalCode = shortName;
-          }
-        }
-      }
-    }
-    locality = locality ?? administrativeAreaLevel1;
-    city = locality;
-    var placeMark = Placemark(
-      name: name,
-      street: name,
-      locality: locality,
-      subLocality: subLocalityLevel1,
-      postalCode: postalCode,
-      country: country,
-      isoCountryCode: isoCountry,
-      administrativeArea: administrativeAreaLevel1,
-      subAdministrativeArea: administrativeAreaLevel2,
-    );
-
-    if (mounted) {
-      setState(() {
-        currentLocation = placeMark.name.toString() +
-            ", " +
-            placeMark.subLocality.toString() +
-            ", " +
-            placeMark.locality.toString();
-      });
-      getData(isoCountry);
-    }
-    if (MyAppState.currentUser != null) {
-      if (MyAppState.currentUser!.location.longitude == 0.01 &&
-          MyAppState.currentUser!.location.longitude == 0.01) {
-        await FirebaseFirestore.instance
-            .collection(USERS)
-            .doc(MyAppState.currentUser!.userID)
-            .update(
-          {
-            "location": UserLocation(
-                    latitude: MyAppState.selectedPosotion.latitude,
-                    longitude: MyAppState.selectedPosotion.longitude)
-                .toJson()
-          },
-        );
-      }
-      MyAppState.currentUser!.location = UserLocation(
-          latitude: MyAppState.selectedPosotion.latitude,
-          longitude: MyAppState.selectedPosotion.longitude);
-      AddressModel userAddress = AddressModel(
-          name: MyAppState.currentUser!.fullName(),
-          postalCode: placeMark.postalCode.toString(),
-          line1: placeMark.name.toString() +
-              ", " +
-              placeMark.subLocality.toString(),
-          line2: placeMark.administrativeArea.toString(),
-          country: placeMark.country.toString(),
-          city: placeMark.locality.toString(),
-          location: MyAppState.currentUser!.location,
-          email: MyAppState.currentUser!.email);
-      MyAppState.currentUser!.shippingAddress = userAddress;
-      await FireStoreUtils.updateCurrentUserAddress(userAddress);
-      var query = await FirebaseFirestore.instance
-          .collection(USERS)
-          .doc(MyAppState.currentUser!.userID)
-          .collection("addresses")
-          .get();
-      if (query.docs.length == 0) {
-        NewAddressModel userAddress = NewAddressModel(
-            addressName: 'mainAdd'.tr(),
-            name: MyAppState.currentUser!.fullName(),
-            def: true,
-            zipcode: placeMark.postalCode.toString(),
-            line1: placeMark.name.toString() +
-                ", " +
-                placeMark.subLocality.toString(),
-            line2: placeMark.administrativeArea.toString(),
-            country: placeMark.country.toString(),
-            city: placeMark.locality.toString(),
-            lat: MyAppState.currentUser!.location.latitude.toString(),
-            lon: MyAppState.currentUser!.location.longitude.toString(),
-            phone: MyAppState.currentUser!.phoneNumber,
-            zone: placeMark.subLocality.toString());
-        await FireStoreUtils.updateAddressList(userAddress);
-      }
-    }
-    //_currentPosition = await location.getLocation();
-  }
 
   getLoc() async {
     print("LOC 1");
@@ -431,7 +272,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    kIsWeb ? getLocWeb() : getLoc();
+    if (!kIsWeb) {
+      if (MyAppState().activatedLocation != null &&
+          MyAppState().activatedLocation! && MyAppState().locationActive != null &&
+                        MyAppState().locationActive!) {
+        getLoc();
+      } else {
+        getData(null);
+      }
+    } else {
+      getData(null);
+    }
     getBanner();
   }
 
@@ -484,12 +335,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLocationAvail = (MyAppState.selectedPosotion.latitude == 0 &&
-        MyAppState.selectedPosotion.longitude == 0);
+    bool isLocationAvail =
+        kIsWeb ? false : ((MyAppState().activatedLocation ?? false) == true && (MyAppState().locationActive ?? false) == true);
     return SafeArea(
       child: Scaffold(
           backgroundColor: const Color(0xffE7E7E7),
-          body: isLocationAvail
+          body: !kIsWeb &&
+                  isLocationAvail &&
+                  MyAppState().activatedLocation != null && MyAppState().locationActive != null &&
+                  (MyAppState.selectedPosotion.latitude == 0 &&
+                      MyAppState.selectedPosotion.longitude == 0)
               ? Center(
                   child: showEmptyState("notHaveLocation".tr(), context,
                       description: "locationSearchingRestaurants".tr(),
@@ -519,84 +374,89 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          padding: EdgeInsets.only(bottom: 10),
-                          color: Color(COLOR_APPBAR),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 18),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.location_on_outlined,
-                                          color: Colors.white,
-                                          size: 18,
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                                  currentLocation.toString(),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                        if (!kIsWeb &&
+                            MyAppState().activatedLocation != null &&
+                            MyAppState().activatedLocation! && MyAppState().locationActive != null &&
+                        MyAppState().locationActive!)
+                          Container(
+                            padding: EdgeInsets.only(bottom: 10),
+                            color: Color(COLOR_APPBAR),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 18),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.location_on_outlined,
+                                            color: Colors.white,
+                                            size: 18,
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                                    currentLocation.toString(),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontFamily: "Oswald",
+                                                        color: Colors.white,
+                                                        fontSize: 16))
+                                                .tr(),
+                                          ),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .push(PageRouteBuilder(
+                                                  pageBuilder: (context,
+                                                          animation,
+                                                          secondaryAnimation) =>
+                                                      const CurrentAddressChangeScreen(),
+                                                  transitionsBuilder: (context,
+                                                      animation,
+                                                      secondaryAnimation,
+                                                      child) {
+                                                    return child;
+                                                  },
+                                                ))
+                                                    .then((value) {
+                                                  if (value != null &&
+                                                      mounted) {
+                                                    setState(() {
+                                                      currentLocation = value;
+                                                      getData(null);
+                                                    });
+                                                  }
+                                                });
+                                              },
+                                              child: Text(
+                                                  "Change".tr().toUpperCase(),
                                                   style: TextStyle(
                                                       fontFamily: "Oswald",
-                                                      color: Colors.white,
-                                                      fontSize: 16))
-                                              .tr(),
-                                        ),
-                                        ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context)
-                                                  .push(PageRouteBuilder(
-                                                pageBuilder: (context,
-                                                        animation,
-                                                        secondaryAnimation) =>
-                                                    const CurrentAddressChangeScreen(),
-                                                transitionsBuilder: (context,
-                                                    animation,
-                                                    secondaryAnimation,
-                                                    child) {
-                                                  return child;
-                                                },
-                                              ))
-                                                  .then((value) {
-                                                if (value != null && mounted) {
-                                                  setState(() {
-                                                    currentLocation = value;
-                                                    getData(null);
-                                                  });
-                                                }
-                                              });
-                                            },
-                                            child: Text(
-                                                "Change".tr().toUpperCase(),
-                                                style: TextStyle(
-                                                    fontFamily: "Oswald",
-                                                    fontSize: 13)),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.white,
-                                              foregroundColor:
-                                                  Color(COLOR_PRIMARY),
-                                              padding: EdgeInsets.zero,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20)),
-                                              elevation: 4.0,
-                                            )),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                      ],
-                                    )),
-                              ]),
-                        ),
+                                                      fontSize: 13)),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.white,
+                                                foregroundColor:
+                                                    Color(COLOR_PRIMARY),
+                                                padding: EdgeInsets.zero,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20)),
+                                                elevation: 4.0,
+                                              )),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                        ],
+                                      )),
+                                ]),
+                          ),
                         Container(
                           padding: EdgeInsets.symmetric(vertical: 5),
                           color: Color(COLOR_CHOICE),
@@ -627,19 +487,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .withOpacity(0.2)),
                                           onChanged: (newValue) async {
                                             int cartProd = 0;
-                                            if(!kIsWeb){
-                                            await Provider.of<CartDatabase>(
-                                                    context,
-                                                    listen: false)
-                                                .allCartProducts
-                                                .then((value) {
-                                              cartProd = value.length;
-                                            });
-                                            }else{
-                                              Provider.of<WebCart>(
-                                                    context,
-                                                    listen: false)
-                                                .items.forEach((value) {cartProd = cartProd + value.quantity;});
+                                            if (!kIsWeb) {
+                                              await Provider.of<CartDatabase>(
+                                                      context,
+                                                      listen: false)
+                                                  .allCartProducts
+                                                  .then((value) {
+                                                cartProd = value.length;
+                                              });
+                                            } else {
+                                              Provider.of<WebCart>(context,
+                                                      listen: false)
+                                                  .items
+                                                  .forEach((value) {
+                                                cartProd =
+                                                    cartProd + value.quantity;
+                                              });
                                             }
 
                                             if (cartProd > 0) {
@@ -659,13 +522,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       'OK'.tr(),
                                                   action: () {
                                                     Navigator.of(context).pop();
-                                                    if(!kIsWeb){
-                                        Provider.of<CartDatabase>(context,
-                                                listen: false)
-                                            .deleteAllProducts();}
-                                        else{
-                                          Provider.of<WebCart>(context, listen: false).deleteAll();
-                                        }
+                                                    if (!kIsWeb) {
+                                                      Provider.of<CartDatabase>(
+                                                              context,
+                                                              listen: false)
+                                                          .deleteAllProducts();
+                                                    } else {
+                                                      Provider.of<WebCart>(
+                                                              context,
+                                                              listen: false)
+                                                          .deleteAll();
+                                                    }
                                                     setState(() {
                                                       selectedRest = newValue
                                                           as VendorModel?;
@@ -744,19 +611,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .withOpacity(0.2)),
                                           onChanged: (newValue) async {
                                             int cartProd = 0;
-                                            if(!kIsWeb){
-                                            await Provider.of<CartDatabase>(
-                                                    context,
-                                                    listen: false)
-                                                .allCartProducts
-                                                .then((value) {
-                                              cartProd = value.length;
-                                            });
-                                            }else{
-                                              Provider.of<WebCart>(
-                                                    context,
-                                                    listen: false)
-                                                .items.forEach((value) {cartProd = cartProd + value.quantity;});
+                                            if (!kIsWeb) {
+                                              await Provider.of<CartDatabase>(
+                                                      context,
+                                                      listen: false)
+                                                  .allCartProducts
+                                                  .then((value) {
+                                                cartProd = value.length;
+                                              });
+                                            } else {
+                                              Provider.of<WebCart>(context,
+                                                      listen: false)
+                                                  .items
+                                                  .forEach((value) {
+                                                cartProd =
+                                                    cartProd + value.quantity;
+                                              });
                                             }
 
                                             if (cartProd > 0) {
@@ -776,13 +646,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       'OK'.tr(),
                                                   action: () {
                                                     Navigator.of(context).pop();
-                                                    if(!kIsWeb){
-                                        Provider.of<CartDatabase>(context,
-                                                listen: false)
-                                            .deleteAllProducts();}
-                                        else{
-                                          Provider.of<WebCart>(context, listen: false).deleteAll();
-                                        }
+                                                    if (!kIsWeb) {
+                                                      Provider.of<CartDatabase>(
+                                                              context,
+                                                              listen: false)
+                                                          .deleteAllProducts();
+                                                    } else {
+                                                      Provider.of<WebCart>(
+                                                              context,
+                                                              listen: false)
+                                                          .deleteAll();
+                                                    }
                                                     setState(() {
                                                       setState(() {
                                                         if (newValue !=
@@ -935,16 +809,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                       padding: const EdgeInsets.only(left: 10),
                                       constraints:
                                           BoxConstraints(maxHeight: 180),
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: snapshot.data!.length >= 15
-                                            ? 15
-                                            : snapshot.data!.length,
-                                        itemBuilder: (context, index) {
-                                          return buildCategoryItem(
-                                              snapshot.data![index]);
-                                        },
+                                      child: ScrollConfiguration(
+                                        behavior: MyCustomScrollBehavior(),
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: snapshot.data!.length >= 15
+                                              ? 15
+                                              : snapshot.data!.length,
+                                          itemBuilder: (context, index) {
+                                            return buildCategoryItem(
+                                                snapshot.data![index]);
+                                          },
+                                        ),
                                       ));
                                 } else {
                                   return showEmptyState(
@@ -1035,15 +912,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                       padding: const EdgeInsets.only(left: 10),
                                       constraints:
                                           BoxConstraints(maxHeight: 110),
-                                      child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: snapshot.data!.length >= 15
-                                            ? 15
-                                            : snapshot.data!.length,
-                                        itemBuilder: (context, index) {
-                                          return buildTopSellingItem(
-                                              snapshot.data![index]);
-                                        },
+                                      child: ScrollConfiguration(
+                                        behavior: MyCustomScrollBehavior(),
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: snapshot.data!.length >= 15
+                                              ? 15
+                                              : snapshot.data!.length,
+                                          itemBuilder: (context, index) {
+                                            return buildTopSellingItem(
+                                                snapshot.data![index]);
+                                          },
+                                        ),
                                       ));
                                 } else {
                                   return showEmptyState(
@@ -2008,7 +1888,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       : getImageVAlidUrl(model.photo.toString()),
               imageBuilder: (context, imageProvider) => Container(
                 height: MediaQuery.of(context).size.height * 0.11,
-                width: MediaQuery.of(context).size.width * 0.23,
+                width: kIsWeb
+                    ? MediaQuery.of(context).size.height * 0.11
+                    : MediaQuery.of(context).size.width * 0.23,
                 decoration: BoxDecoration(
                     border: Border.all(width: 6, color: Color(COLOR_PRIMARY)),
                     borderRadius: BorderRadius.circular(30)),
@@ -2054,7 +1936,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: 60,
                 cacheHeight:
                     (MediaQuery.of(context).size.height * 0.11).toInt(),
-                cacheWidth: (MediaQuery.of(context).size.width * 0.23).toInt(),
+                cacheWidth: kIsWeb
+                    ? (MediaQuery.of(context).size.height * 0.11).toInt()
+                    : (MediaQuery.of(context).size.width * 0.23).toInt(),
               ),
               // ClipOval(
               //   child: Container(
@@ -2354,18 +2238,18 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0),
+        padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 20 : 0),
         child: Container(
           child: CachedNetworkImage(
             imageUrl: getImageVAlidUrl(categoriesModel.photo.toString()),
             imageBuilder: (context, imageProvider) => Container(
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(0),
-                image: DecorationImage(
-                  image: imageProvider,
-                  fit: BoxFit.fill,
-                ),
+                borderRadius: BorderRadius.circular(kIsWeb ? 20 : 0),
+              ),
+              child: Image(
+                image: imageProvider,
+                fit: BoxFit.fill,
               ),
             ),
             color: Colors.black.withOpacity(0.5),
@@ -3242,9 +3126,10 @@ class _HomeScreenState extends State<HomeScreen> {
         vendors = value.toSet().toList();
         vendors.forEach((e) => print(e.title));
         print("EL PAÍS ES $count");
-        if (count != null && MyAppState.currentUser!.defaultRestaurant == null)
+        if (count != null &&
+            MyAppState.currentUser!.defaultRestaurant == null) {
           selectedCountry = count;
-        else
+        } else {
           selectedCountry = vendors.isNotEmpty
               ? (MyAppState.currentUser!.defaultRestaurant != null)
                   ? vendors
@@ -3257,6 +3142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       .country
                   : vendors.first.country
               : placeMark.isoCountryCode;
+        }
         print(MyAppState.currentUser!.defaultRestaurant);
         selectedRest = vendors.isNotEmpty
             ? (MyAppState.currentUser!.defaultRestaurant != null)
@@ -3712,4 +3598,13 @@ class _MoreStoriesState extends State<MoreStories> {
       ],
     ));
   }
+}
+
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }

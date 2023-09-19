@@ -374,7 +374,8 @@ class _CurrentAddressChangeScreenState
                               ),
                               onTap: () async {
                                 setState(() => charging = true);
-                                Position position =
+                                
+                                Position position = 
                                     await Geolocator.getCurrentPosition(
                                             desiredAccuracy:
                                                 LocationAccuracy.high)

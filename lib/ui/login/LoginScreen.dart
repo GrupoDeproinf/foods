@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart' as apple;
 import 'package:custom_food/constants.dart';
 import 'package:custom_food/main.dart';
@@ -10,6 +11,8 @@ import 'package:custom_food/services/helper.dart';
 import 'package:custom_food/ui/container/ContainerScreen.dart';
 import 'package:custom_food/ui/phoneAuth/PhoneNumberInputScreen.dart';
 import 'package:custom_food/ui/resetPasswordScreen/ResetPasswordScreen.dart';
+
+import '../home/SelectRestaurant.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -350,12 +353,22 @@ class _LoginScreen extends State<LoginScreen> {
         email.trim(), password.trim());
     await hideProgress();
     if (result != null && result is User && result.role == USER_ROLE_CUSTOMER) {
-      result.fcmToken = await FireStoreUtils.firebaseMessaging.getToken() ?? '';
-      await FireStoreUtils.updateCurrentUser(result).then((value) {
+      result.fcmToken =
+          kIsWeb ? "" : await FireStoreUtils.firebaseMessaging.getToken() ?? '';
+      await FireStoreUtils.updateCurrentUser(result).then((value) async {
         MyAppState.currentUser = result;
         print(MyAppState.currentUser!.active.toString() + "===S");
         if (MyAppState.currentUser!.active == true) {
-          pushAndRemoveUntil(context, ContainerScreen(user: result), false);
+          if ((kIsWeb &&
+                  (MyAppState.currentUser!.defaultRestaurant == null ||
+                      MyAppState.currentUser!.defaultRestaurant!.isEmpty)) ||
+              (!kIsWeb && (MyAppState().activatedLocation == null ||
+                        !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
+                        !MyAppState().locationActive!))) {
+            pushReplacement(context, SelectRestaurant());
+          } else {
+            pushReplacement(context, ContainerScreen(user: result));
+          }
         } else {
           showAlertDialog(
               context, "accountDisabledContactAdmin".tr(), "", true);
@@ -386,7 +399,16 @@ class _LoginScreen extends State<LoginScreen> {
         MyAppState.currentUser = result;
         print("AQUI");
         if (MyAppState.currentUser!.active == true) {
-          pushAndRemoveUntil(context, ContainerScreen(user: result), false);
+          if ((kIsWeb &&
+                  (MyAppState.currentUser!.defaultRestaurant == null ||
+                      MyAppState.currentUser!.defaultRestaurant!.isEmpty)) ||
+              (!kIsWeb && (MyAppState().activatedLocation == null ||
+                        !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
+                        !MyAppState().locationActive!))) {
+            pushReplacement(context, SelectRestaurant());
+          } else {
+            pushReplacement(context, ContainerScreen(user: result));
+          }
         } else {
           showAlertDialog(
               context, "accountDisabledContactAdmin".tr(), "", true);

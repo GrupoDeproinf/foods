@@ -112,6 +112,7 @@ class ContainerScreenState extends State<ContainerScreen> {
     _drawerSelection = widget.drawerSelection;
     //getKeyHash();
     /// On iOS, we request notification permissions, Does nothing and returns null on Android
+    if(!kIsWeb)
     FireStoreUtils.firebaseMessaging.requestPermission(
       alert: true,
       announcement: false,

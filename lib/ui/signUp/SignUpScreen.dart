@@ -13,9 +13,11 @@ import 'package:custom_food/ui/container/ContainerScreen.dart';
 import 'package:custom_food/ui/phoneAuth/PhoneNumberInputScreen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import '../home/SelectRestaurant.dart';
 
 File? _image;
-
 class SignUpScreen extends StatefulWidget {
   @override
   State createState() => _SignUpState();
@@ -313,7 +315,8 @@ class _SignUpState extends State<SignUpScreen> {
                 shape: BoxShape.rectangle,
                 border: Border.all(color: Colors.grey.shade200)),
             child: InternationalPhoneNumberInput(
-              locale: context.locale.countryCode,
+              locale: context.locale.languageCode,
+              searchBoxDecoration: InputDecoration(labelText: 'Search by country name or dial code'.tr()),
               errorMessage: "validNumber".tr(),
               onInputChanged: (PhoneNumber number) =>
                   mobile = number.phoneNumber,
@@ -615,7 +618,12 @@ class _SignUpState extends State<SignUpScreen> {
     await hideProgress();
     if (result != null && result is User) {
       MyAppState.currentUser = result;
-      pushAndRemoveUntil(context, ContainerScreen(user: result), false);
+      if(kIsWeb || (!kIsWeb && (MyAppState().activatedLocation == null ||
+                        !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
+                        !MyAppState().locationActive!)) ){
+        pushAndRemoveUntil(context, SelectRestaurant(), false);
+      }else{
+      pushAndRemoveUntil(context, ContainerScreen(user: result), false);}
     } else if (result != null && result is String) {
       showAlertDialog(context, 'failed'.tr(), result, true);
     } else {

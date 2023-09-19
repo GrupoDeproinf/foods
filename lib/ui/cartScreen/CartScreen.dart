@@ -135,9 +135,15 @@ class _CartScreenState extends State<CartScreen> {
                   .toStringAsFixed(decimal);
               setState(() {});
             } else {
-              deliveryCharges = deliveryChargeModel.minimumDeliveryCharges
-                  .toDouble()
-                  .toStringAsFixed(decimal);
+              deliveryCharges = (kIsWeb ||
+                      (!kIsWeb &&
+                          (MyAppState().activatedLocation == null ||
+                              !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
+                        !MyAppState().locationActive!)))
+                  ? "0.00"
+                  : deliveryChargeModel.minimumDeliveryCharges
+                      .toDouble()
+                      .toStringAsFixed(decimal);
               setState(() {});
             }
           } else {
@@ -145,29 +151,51 @@ class _CartScreenState extends State<CartScreen> {
             if (vendorModel != null && vendorModel!.deliveryCharge != null) {
               if (km >
                   vendorModel!.deliveryCharge!.minimumDeliveryChargesWithinKm) {
-                deliveryCharges =
-                    (km * vendorModel!.deliveryCharge!.deliveryChargesPerKm)
+                deliveryCharges = (kIsWeb ||
+                        (!kIsWeb &&
+                            (MyAppState().activatedLocation == null ||
+                                !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
+                        !MyAppState().locationActive!)))
+                    ? "0.00"
+                    : (km * vendorModel!.deliveryCharge!.deliveryChargesPerKm)
                         .toDouble()
                         .toStringAsFixed(decimal);
                 setState(() {});
               } else {
-                deliveryCharges = vendorModel!
-                    .deliveryCharge!.minimumDeliveryCharges
-                    .toDouble()
-                    .toStringAsFixed(decimal);
+                deliveryCharges = (kIsWeb ||
+                        (!kIsWeb &&
+                            (MyAppState().activatedLocation == null ||
+                                !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
+                        !MyAppState().locationActive!)))
+                    ? "0.00"
+                    : vendorModel!.deliveryCharge!.minimumDeliveryCharges
+                        .toDouble()
+                        .toStringAsFixed(decimal);
                 setState(() {});
               }
             } else {
               if (km > deliveryChargeModel.minimumDeliveryChargesWithinKm) {
-                deliveryCharges =
-                    (km * deliveryChargeModel.deliveryChargesPerKm)
+                deliveryCharges = (kIsWeb ||
+                        (!kIsWeb &&
+                            (MyAppState().activatedLocation == null ||
+                                !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
+                        !MyAppState().locationActive!)))
+                    ? "0.00"
+                    : (km * deliveryChargeModel.deliveryChargesPerKm)
                         .toDouble()
                         .toStringAsFixed(decimal);
                 setState(() {});
               } else {
-                deliveryCharges = deliveryChargeModel.minimumDeliveryCharges
-                    .toDouble()
-                    .toStringAsFixed(decimal);
+                deliveryCharges = (kIsWeb ||
+                        (!kIsWeb &&
+                            (MyAppState().activatedLocation == null ||
+                                !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
+                        !MyAppState().locationActive!)))
+                    ? "0.00"
+                    : deliveryChargeModel.minimumDeliveryCharges
+                        .toDouble()
+                        .toStringAsFixed(decimal);
+
                 setState(() {});
               }
             }
@@ -229,7 +257,7 @@ class _CartScreenState extends State<CartScreen> {
           : const Color(0xffFFFFFF),
       body: kIsWeb
           ? Builder(builder: (context) {
-              if (webCartProducts == null) {
+              if (webCart == null || webCartProducts == null) {
                 return Center(
                   child: CircularProgressIndicator.adaptive(
                     valueColor: AlwaysStoppedAnimation(Color(COLOR_PRIMARY)),
@@ -1551,31 +1579,36 @@ class _CartScreenState extends State<CartScreen> {
               //             ),
               //           ],
               //         ))),
-              Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Delivery Option: ".tr(),
-                        style: TextStyle(fontFamily: "Oswald", fontSize: _font),
-                      ),
-                      Text(
-                        selctedOrderTypeValue == "Delivery"
-                            ? "Delivery (${symbol + double.parse(deliveryCharges).toStringAsFixed(decimal)})"
-                            : selctedOrderTypeValue! + " (Free)",
-                        style: TextStyle(
-                            fontFamily: "Oswald",
-                            color: isDarkMode(context)
-                                ? const Color(0xffFFFFFF)
-                                : const Color(0xff333333),
-                            fontSize: selctedOrderTypeValue == "Delivery"
-                                ? _font
-                                : 15),
-                      ),
-                    ],
-                  )),
+              if (!kIsWeb &&
+                  MyAppState().activatedLocation != null &&
+                  MyAppState().activatedLocation! && MyAppState().locationActive != null &&
+                        MyAppState().locationActive!)
+                Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Delivery Option: ".tr(),
+                          style:
+                              TextStyle(fontFamily: "Oswald", fontSize: _font),
+                        ),
+                        Text(
+                          selctedOrderTypeValue == "Delivery"
+                              ? "Delivery (${symbol + double.parse(deliveryCharges).toStringAsFixed(decimal)})"
+                              : selctedOrderTypeValue! + " (Free)",
+                          style: TextStyle(
+                              fontFamily: "Oswald",
+                              color: isDarkMode(context)
+                                  ? const Color(0xffFFFFFF)
+                                  : const Color(0xff333333),
+                              fontSize: selctedOrderTypeValue == "Delivery"
+                                  ? _font
+                                  : 15),
+                        ),
+                      ],
+                    )),
               const Divider(
                 color: Color(0xffE2E8F0),
                 height: 0.1,

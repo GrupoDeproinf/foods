@@ -15,7 +15,7 @@ class CodegenLoader extends AssetLoader {
   }
 
   static const Map<String, dynamic> en = {
-    "appName": "Salón Cantón",
+    "appName": "FOODS",
     "feed": "Feed",
     "chat": "Chat",
     "friends": "Friends",

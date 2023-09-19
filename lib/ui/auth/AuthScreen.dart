@@ -17,12 +17,15 @@ class AuthScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Center(
-              child: Image.asset(
-                'assets/images/logoSC-03.png',
-                color: Color(0xFFbd9028),
-                fit: BoxFit.cover,
-                height: 150,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: Center(
+                child: Image.asset(
+                  'assets/images/logoSC-03.png',
+                  color: Color.fromARGB(255, 247, 179, 22),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
               ),
             ),
             Padding(

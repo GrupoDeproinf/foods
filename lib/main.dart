@@ -19,15 +19,19 @@ import 'package:custom_food/services/localDatabase.dart';
 import 'package:custom_food/services/web_cart/webCart.dart';
 import 'package:custom_food/ui/auth/AuthScreen.dart';
 import 'package:custom_food/ui/container/ContainerScreen.dart';
+import 'package:custom_food/ui/home/SelectRestaurant.dart';
 import 'package:custom_food/ui/onBoarding/OnBoardingScreen.dart';
 import 'package:custom_food/userPrefrence.dart';
 import 'package:custom_food/utils/DarkThemeProvider.dart';
 import 'package:custom_food/utils/Styles.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'model/User.dart';
+import 'package:location/location.dart' as loc;
+
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
 
@@ -36,14 +40,12 @@ Future<void> main() async {
   if (kIsWeb) {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
-            apiKey: "AIzaSyBiUIRQGEGMcMDdLX25U2QZ_sM-JhoMW_w",
-            authDomain: "salon-canton.firebaseapp.com",
-            databaseURL: "https://salon-canton-default-rtdb.firebaseio.com",
-            projectId: "salon-canton",
-            storageBucket: "salon-canton.appspot.com",
-            messagingSenderId: "1067265015919",
-            appId: "1:1067265015919:web:3e5c6724a15c8583450d9a",
-            measurementId: "G-H0J8M0MHHB"));
+            apiKey: "AIzaSyCyAFAjxHVbovGGHhd1Mmyy1Zm5kdWvB4I",
+  authDomain: "foods-422a1.firebaseapp.com",
+  projectId: "foods-422a1",
+  storageBucket: "foods-422a1.appspot.com",
+  messagingSenderId: "1029045028391",
+  appId: "1:1029045028391:web:ba5116c7222c92157a7002"));
   } else
     await Firebase.initializeApp();
   await EasyLocalization.ensureInitialized();
@@ -56,15 +58,19 @@ Future<void> main() async {
     sound: true,
   );
 
-  await FirebaseMessaging.instance.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
+  if (!kIsWeb) {
+    await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    await Permission.location.request();
+  }
 
   await UserPreference.init();
   runApp(
@@ -73,7 +79,9 @@ Future<void> main() async {
         Provider<CartDatabase>(
           create: (_) => CartDatabase(),
         ),
-        ChangeNotifierProvider<WebCart>(create: (_) => WebCart(),)
+        ChangeNotifierProvider<WebCart>(
+          create: (_) => WebCart(),
+        )
       ],
       child: EasyLocalization(
           supportedLocales: [
@@ -147,7 +155,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       const NotificationDetails notificationDetails = NotificationDetails(
           android: AndroidNotificationDetails(
         "01",
-        "custom_food",
+        "foodie_customer",
         importance: Importance.max,
         icon: '@mipmap/ic_launcher',
         priority: Priority.high,
@@ -163,6 +171,27 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       );
     } on Exception catch (e) {
       debugPrint(e.toString());
+    }
+  }
+
+  bool? activatedLocation = kIsWeb ? false : null;
+  bool? locationActive = kIsWeb ? false : null;
+
+  Future<void> activationStream() async {
+    if(!kIsWeb){
+      activatedLocation =
+        (await Permission.location.status == PermissionStatus.granted);
+      locationActive = (await loc.Location().serviceEnabled());
+    }
+    if (!kIsWeb) {
+      Permission.location.status.asStream().listen((event) {
+        print("El resultado es $event");
+        activatedLocation = (event == PermissionStatus.granted);
+      });
+      loc.Location().serviceEnabled().asStream().listen((event) {
+        print("El resultado es $event");
+        locationActive = event;
+      });
     }
   }
 
@@ -222,14 +251,16 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       //   appVersion = value.data()!['app_version'].toString();
       // });
 
-      tokenStream =
-          FireStoreUtils.firebaseMessaging.onTokenRefresh.listen((event) {
-        debugPrint('token $event');
-        if (currentUser != null) {
-          currentUser!.fcmToken = event;
-          FireStoreUtils.updateCurrentUser(currentUser!);
-        }
-      });
+      if (!kIsWeb) {
+        tokenStream =
+            FireStoreUtils.firebaseMessaging.onTokenRefresh.listen((event) {
+          debugPrint('token $event');
+          if (currentUser != null) {
+            currentUser!.fcmToken = event;
+            FireStoreUtils.updateCurrentUser(currentUser!);
+          }
+        });
+      }
 
       setState(() {
         _initialized = true;
@@ -339,6 +370,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     initializeFlutterFire();
     setupInteractedMessage(context);
+    activationStream();
     WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
@@ -392,19 +424,36 @@ class OnBoardingState extends State<OnBoarding> {
           if (user.active) {
             user.active = true;
             user.role = USER_ROLE_CUSTOMER;
-            user.fcmToken =
-                await FireStoreUtils.firebaseMessaging.getToken() ?? '';
+            user.fcmToken = kIsWeb
+                ? ""
+                : await FireStoreUtils.firebaseMessaging.getToken() ?? '';
             await FireStoreUtils.updateCurrentUser(user);
             MyAppState.currentUser = user;
-            pushReplacement(context, ContainerScreen(user: user));
+            if ((kIsWeb &&
+                    (MyAppState.currentUser!.defaultRestaurant == null ||
+                        MyAppState.currentUser!.defaultRestaurant!.isEmpty)) ||
+                (!kIsWeb &&
+                    (MyAppState().activatedLocation == null ||
+                        !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
+                        !MyAppState().locationActive!) &&
+                    (MyAppState.currentUser!.defaultRestaurant == null ||
+                        MyAppState.currentUser!.defaultRestaurant!.isEmpty))) {
+              pushReplacement(context, SelectRestaurant());
+            } else {
+              pushReplacement(context, ContainerScreen(user: user));
+            }
           } else {
             user.lastOnlineTimestamp = Timestamp.now();
             user.fcmToken = "";
             await FireStoreUtils.updateCurrentUser(user);
             await auth.FirebaseAuth.instance.signOut();
             MyAppState.currentUser = null;
-            Provider.of<CartDatabase>(context, listen: false)
-                .deleteAllProducts();
+            if (kIsWeb) {
+              Provider.of<WebCart>(context, listen: false).deleteAllProducts();
+            } else {
+              Provider.of<CartDatabase>(context, listen: false)
+                  .deleteAllProducts();
+            }
             pushAndRemoveUntil(context, AuthScreen(), false);
           }
         } else {
