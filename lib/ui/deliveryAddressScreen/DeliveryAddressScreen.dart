@@ -506,11 +506,11 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
                                 setState(() => charging = true);
                                 Position position = (kIsWeb ||
                                         (!kIsWeb &&
-                                            (MyAppState().activatedLocation ==
+                                            (MyAppState.activatedLocation ==
                                                     null ||
-                                                !MyAppState()
-                                                    .activatedLocation! || MyAppState().locationActive == null ||
-                        !MyAppState().locationActive!)))
+                                                !MyAppState
+                                                    .activatedLocation! || MyAppState.locationActive == null ||
+                        !MyAppState.locationActive!)))
                                     ? Position(
                                         longitude:
                                             widget.vendorModel!.longitude,

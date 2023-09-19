@@ -652,5 +652,12 @@
   "Continue with this location": "Seguir a esta dirección",
   "Tap on map to get address":"Toca el mapa para obtener la dirección",
   "Tap to show more results":"Más resultados",
-  "You can also use the following options": "Más direcciones"
+  "You can also use the following options": "Más direcciones",
+  "couldNotGetCountries":"Algo salió mal...",
+  "wantRetry": "¿Quieres intentarlo nuevamente?",
+  "try again":"Intentar de nuevo",
+  "firstSelect":"Selecciona el país donde quieres ordenar",
+  "secondSelect":"Selecciona tu restaurante favorito",
+  "Search by country name or dial code":"Busca por nombre o código",
+  "This field can't be empty.": "Este campo no puede estar vacío."
 }

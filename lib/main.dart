@@ -174,8 +174,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  bool? activatedLocation = kIsWeb ? false : null;
-  bool? locationActive = kIsWeb ? false : null;
+  static bool? activatedLocation = kIsWeb ? false : null;
+  static bool? locationActive = kIsWeb ? false : null;
 
   Future<void> activationStream() async {
     if(!kIsWeb){
@@ -433,9 +433,9 @@ class OnBoardingState extends State<OnBoarding> {
                     (MyAppState.currentUser!.defaultRestaurant == null ||
                         MyAppState.currentUser!.defaultRestaurant!.isEmpty)) ||
                 (!kIsWeb &&
-                    (MyAppState().activatedLocation == null ||
-                        !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
-                        !MyAppState().locationActive!) &&
+                    (MyAppState.activatedLocation == null ||
+                        !MyAppState.activatedLocation! || MyAppState.locationActive == null ||
+                        !MyAppState.locationActive!) &&
                     (MyAppState.currentUser!.defaultRestaurant == null ||
                         MyAppState.currentUser!.defaultRestaurant!.isEmpty))) {
               pushReplacement(context, SelectRestaurant());

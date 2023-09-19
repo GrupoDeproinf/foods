@@ -137,9 +137,9 @@ class _CartScreenState extends State<CartScreen> {
             } else {
               deliveryCharges = (kIsWeb ||
                       (!kIsWeb &&
-                          (MyAppState().activatedLocation == null ||
-                              !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
-                        !MyAppState().locationActive!)))
+                          (MyAppState.activatedLocation == null ||
+                              !MyAppState.activatedLocation! || MyAppState.locationActive == null ||
+                        !MyAppState.locationActive!)))
                   ? "0.00"
                   : deliveryChargeModel.minimumDeliveryCharges
                       .toDouble()
@@ -153,9 +153,9 @@ class _CartScreenState extends State<CartScreen> {
                   vendorModel!.deliveryCharge!.minimumDeliveryChargesWithinKm) {
                 deliveryCharges = (kIsWeb ||
                         (!kIsWeb &&
-                            (MyAppState().activatedLocation == null ||
-                                !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
-                        !MyAppState().locationActive!)))
+                            (MyAppState.activatedLocation == null ||
+                                !MyAppState.activatedLocation! || MyAppState.locationActive == null ||
+                        !MyAppState.locationActive!)))
                     ? "0.00"
                     : (km * vendorModel!.deliveryCharge!.deliveryChargesPerKm)
                         .toDouble()
@@ -164,9 +164,9 @@ class _CartScreenState extends State<CartScreen> {
               } else {
                 deliveryCharges = (kIsWeb ||
                         (!kIsWeb &&
-                            (MyAppState().activatedLocation == null ||
-                                !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
-                        !MyAppState().locationActive!)))
+                            (MyAppState.activatedLocation == null ||
+                                !MyAppState.activatedLocation! || MyAppState.locationActive == null ||
+                        !MyAppState.locationActive!)))
                     ? "0.00"
                     : vendorModel!.deliveryCharge!.minimumDeliveryCharges
                         .toDouble()
@@ -177,9 +177,9 @@ class _CartScreenState extends State<CartScreen> {
               if (km > deliveryChargeModel.minimumDeliveryChargesWithinKm) {
                 deliveryCharges = (kIsWeb ||
                         (!kIsWeb &&
-                            (MyAppState().activatedLocation == null ||
-                                !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
-                        !MyAppState().locationActive!)))
+                            (MyAppState.activatedLocation == null ||
+                                !MyAppState.activatedLocation! || MyAppState.locationActive == null ||
+                        !MyAppState.locationActive!)))
                     ? "0.00"
                     : (km * deliveryChargeModel.deliveryChargesPerKm)
                         .toDouble()
@@ -188,9 +188,9 @@ class _CartScreenState extends State<CartScreen> {
               } else {
                 deliveryCharges = (kIsWeb ||
                         (!kIsWeb &&
-                            (MyAppState().activatedLocation == null ||
-                                !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
-                        !MyAppState().locationActive!)))
+                            (MyAppState.activatedLocation == null ||
+                                !MyAppState.activatedLocation! || MyAppState.locationActive == null ||
+                        !MyAppState.locationActive!)))
                     ? "0.00"
                     : deliveryChargeModel.minimumDeliveryCharges
                         .toDouble()
@@ -1580,9 +1580,9 @@ class _CartScreenState extends State<CartScreen> {
               //           ],
               //         ))),
               if (!kIsWeb &&
-                  MyAppState().activatedLocation != null &&
-                  MyAppState().activatedLocation! && MyAppState().locationActive != null &&
-                        MyAppState().locationActive!)
+                  MyAppState.activatedLocation != null &&
+                  MyAppState.activatedLocation! && MyAppState.locationActive != null &&
+                        MyAppState.locationActive!)
                 Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 20),

@@ -362,9 +362,9 @@ class _LoginScreen extends State<LoginScreen> {
           if ((kIsWeb &&
                   (MyAppState.currentUser!.defaultRestaurant == null ||
                       MyAppState.currentUser!.defaultRestaurant!.isEmpty)) ||
-              (!kIsWeb && (MyAppState().activatedLocation == null ||
-                        !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
-                        !MyAppState().locationActive!))) {
+              (!kIsWeb && (MyAppState.activatedLocation == null ||
+                        !MyAppState.activatedLocation! || MyAppState.locationActive == null ||
+                        !MyAppState.locationActive!))) {
             pushReplacement(context, SelectRestaurant());
           } else {
             pushReplacement(context, ContainerScreen(user: result));
@@ -402,9 +402,9 @@ class _LoginScreen extends State<LoginScreen> {
           if ((kIsWeb &&
                   (MyAppState.currentUser!.defaultRestaurant == null ||
                       MyAppState.currentUser!.defaultRestaurant!.isEmpty)) ||
-              (!kIsWeb && (MyAppState().activatedLocation == null ||
-                        !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
-                        !MyAppState().locationActive!))) {
+              (!kIsWeb && (MyAppState.activatedLocation == null ||
+                        !MyAppState.activatedLocation! || MyAppState.locationActive == null ||
+                        !MyAppState.locationActive!))) {
             pushReplacement(context, SelectRestaurant());
           } else {
             pushReplacement(context, ContainerScreen(user: result));

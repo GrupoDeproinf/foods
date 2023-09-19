@@ -618,9 +618,9 @@ class _SignUpState extends State<SignUpScreen> {
     await hideProgress();
     if (result != null && result is User) {
       MyAppState.currentUser = result;
-      if(kIsWeb || (!kIsWeb && (MyAppState().activatedLocation == null ||
-                        !MyAppState().activatedLocation! || MyAppState().locationActive == null ||
-                        !MyAppState().locationActive!)) ){
+      if(kIsWeb || (!kIsWeb && (MyAppState.activatedLocation == null ||
+                        !MyAppState.activatedLocation! || MyAppState.locationActive == null ||
+                        !MyAppState.locationActive!)) ){
         pushAndRemoveUntil(context, SelectRestaurant(), false);
       }else{
       pushAndRemoveUntil(context, ContainerScreen(user: result), false);}

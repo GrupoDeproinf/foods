@@ -616,5 +616,11 @@
   "No Item are available.":"No Items available.",
   "notLoginFacebook": "Couldn't sign in with Google.",
   "wantChangeCountryOption":"Do you want to change your order's country?",
-  "wantChangeRestaurantOption": "Do you want to change your order's restaurant?"
+  "wantChangeRestaurantOption": "Do you want to change your order's restaurant?",
+  "couldNotGetCountries":"Couldn't get the countries where we are available.",
+  "wantRetry": "Do you want to try again?",
+  "try again":"Try Again",
+  "firstSelect":"Choose the country where you'd like to order",
+  "secondSelect":"Choose the restaurant you prefer",
+  "Search by country name or dial code":"Search by country name or dial code"
 }

@@ -273,9 +273,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     if (!kIsWeb) {
-      if (MyAppState().activatedLocation != null &&
-          MyAppState().activatedLocation! && MyAppState().locationActive != null &&
-                        MyAppState().locationActive!) {
+      if (MyAppState.activatedLocation != null &&
+          MyAppState.activatedLocation! && MyAppState.locationActive != null &&
+                        MyAppState.locationActive!) {
         getLoc();
       } else {
         getData(null);
@@ -336,13 +336,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     bool isLocationAvail =
-        kIsWeb ? false : ((MyAppState().activatedLocation ?? false) == true && (MyAppState().locationActive ?? false) == true);
+        kIsWeb ? false : ((MyAppState.activatedLocation ?? false) == true && (MyAppState.locationActive ?? false) == true);
     return SafeArea(
       child: Scaffold(
           backgroundColor: const Color(0xffE7E7E7),
           body: !kIsWeb &&
                   isLocationAvail &&
-                  MyAppState().activatedLocation != null && MyAppState().locationActive != null &&
+                  MyAppState.activatedLocation != null && MyAppState.locationActive != null &&
                   (MyAppState.selectedPosotion.latitude == 0 &&
                       MyAppState.selectedPosotion.longitude == 0)
               ? Center(
@@ -375,9 +375,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (!kIsWeb &&
-                            MyAppState().activatedLocation != null &&
-                            MyAppState().activatedLocation! && MyAppState().locationActive != null &&
-                        MyAppState().locationActive!)
+                            MyAppState.activatedLocation != null &&
+                            MyAppState.activatedLocation! && MyAppState.locationActive != null &&
+                        MyAppState.locationActive!)
                           Container(
                             padding: EdgeInsets.only(bottom: 10),
                             color: Color(COLOR_APPBAR),
