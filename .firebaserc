@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "foods-422a1"
+  },
+  "targets": {
+    "foods-422a1": {
+      "hosting": {
+        "foodsweb": [
+          "foods-422a1.firebaseapp.com"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
