@@ -22,7 +22,7 @@ class AuthScreen extends StatelessWidget {
               child: Center(
                 child: Image.asset(
                   'assets/images/logoSC-03.png',
-                  color: Color.fromARGB(255, 247, 179, 22),
+                  
                   fit: BoxFit.cover,
                   width: double.infinity,
                 ),
